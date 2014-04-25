@@ -13,7 +13,7 @@
 /**
  * @struct Round
  *
- * @brief Round structure.
+ * @brief Round structure. Structure used to keep informations about a round. 
  *
  * @var Round::roundType
  *      Variable used to indicate the round type (1, 2, 3, 4, 5, 6, 7, 8).
@@ -34,7 +34,7 @@ struct Round {
     int bids[MAX_GAME_PLAYERS];
     int pointsNumber[MAX_GAME_PLAYERS];
     struct Players *players[MAX_GAME_PLAYERS];
-    struct Hand *hands[MAX_GAME_PLAYERS];
+    struct Hand *hands[MAX_GAME_HANDS];
 };
 
 #endif
