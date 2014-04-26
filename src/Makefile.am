@@ -3,4 +3,8 @@ CFLAGS += -std=c99 -Wall
 
 lib_LTLIBRARIES = libWhistGame.la
 
-libWhistGame_la_SOURCES = libWhistGame/
+libWhistGame_la_SOURCES = libWhistGame/deck.c \
+                          libWhistGame/player.c \
+                          libWhistGame/hand.c \
+                          libWhistGame/round.c \
+                          libWhistGame/game.c
