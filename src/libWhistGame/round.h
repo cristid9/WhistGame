@@ -34,7 +34,7 @@ struct Round {
     int bids[MAX_GAME_PLAYERS];
     int pointsNumber[MAX_GAME_PLAYERS];
     struct Players *players[MAX_GAME_PLAYERS];
-    struct Hand *hands[MAX_GAME_HANDS];
+    struct Hand *hands[MAX_ROUND_HANDS];
 };
 
 #endif
