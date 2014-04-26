@@ -21,7 +21,7 @@
  * @var Game::gameType
  *      The game type (1 for 1-8-1 or 8 for 8-1-8).
  * @var Game::deck
-        Pointer to the deck of cards of the game.
+ *      Pointer to the deck of cards of the game.
  * @var Game::players
  *      Pointer to the players of the game.
  * @var Game::rounds
