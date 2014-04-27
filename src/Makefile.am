@@ -1,5 +1,5 @@
 LDFLAGS = -no-undefined
-CFLAGS += -std=c99 -Wall
+CFLAGS += -std=c99 -g -Wall
 
 lib_LTLIBRARIES = libWhistGame.la
 
