@@ -36,5 +36,15 @@ struct Deck {
     struct Card *cards[DECK_SIZE];
 };
 
+/**
+ * @brief Allocates and initializes a card.
+ *
+ * @param suit The suit of the new card.
+ * @param value The value of the new card.
+ *
+ * @return Pointer to the new card on success or NULL on failure.
+ */
+struct Card *deck_createCard(enum Suit suit, int value);
+
 #endif
 

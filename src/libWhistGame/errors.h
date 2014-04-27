@@ -8,5 +8,15 @@
 #ifndef ERRORS_H
 #define ERRORS_H
 
+/**
+ * @enum ERROR_CODES
+ * 
+ * @brief Specifies the error codes used to specify the wrong behaviour of the
+ *        functions used in this game.
+ */
+enum ERROR_CODES {
+    NO_ERROR =  0
+};
+
 #endif
 
