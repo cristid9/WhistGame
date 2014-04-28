@@ -15,7 +15,8 @@
  *        functions used in this game.
  */
 enum ERROR_CODES {
-    NO_ERROR =  0
+    NO_ERROR  =  0,
+    CARD_NULL = -1
 };
 
 #endif

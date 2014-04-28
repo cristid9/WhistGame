@@ -1,5 +1,6 @@
 #include <deck.h>
 #include <constants.h>
+#include <errors.h>
 
 #include <cutter.h>
 
@@ -16,5 +17,14 @@ void test_deck_createCard()
             cut_assert_equal_int(card->suit, i);
             cut_assert_equal_int(card->value, VALUES[j]);
         }
+
+    deck_deleteCard(card);
+}
+
+void test_deck_deleteCard()
+{
+    struct Card *card = deck_createCard(DIAMONDS, VALUES[0]);
+    cut_assert_equal_int(CARD_NULL, deck_deleteCard(NULL));
+    cut_assert_equal_int(NO_ERROR, deck_deleteCard(card));
 }
 
