@@ -31,6 +31,11 @@ const int VALUES[13];
 #define MAX_GAME_PLAYERS 6
 
 /**
+ * @brief The minimum number of players in a game.
+ */
+#define MIN_GAME_PLAYERS 3
+
+/**
  * @brief The maximum number of rounds in a game.
  */
 #define MAX_GAME_ROUNDS 30
