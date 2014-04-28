@@ -55,5 +55,14 @@ struct Card *deck_createCard(enum Suit suit, int value);
  */
 int deck_deleteCard(struct Card *card);
 
+/**
+ * @brief Allocates and initializes a deck.
+ *
+ * @param playersNumber The players number from game.
+ *
+ * @return Pointer to the new deck on success or NULL on failure.
+ */
+struct Deck *deck_createDeck(int playersNumber);
+
 #endif
 
