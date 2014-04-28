@@ -51,3 +51,25 @@ int deck_deleteCard(struct Card *card)
     return NO_ERROR;
 }
 
+struct Deck *deck_createDeck(int playersNumber)
+{
+    if (playersNumber > MAX_GAME_PLAYERS || playersNumber < MIN_GAME_PLAYERS)
+        return NULL;
+
+    struct Deck *deck = malloc(sizeof(struct Deck));
+    if (deck == NULL)
+        return NULL;
+
+    int k = 0;
+    for (int i = 0 + (MAX_GAME_PLAYERS - playersNumber) * 2;
+         VALUES[i] != -1; i++)
+    for (int j = 0; j != SuitEnd; j++) {
+        deck->cards[k++] = deck_createCard(j, VALUES[i]);
+    }
+
+    for (int i = k; i < DECK_SIZE; i++)
+        deck->cards[i] = NULL;
+
+    return deck;
+}
+
