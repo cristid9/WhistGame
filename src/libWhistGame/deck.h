@@ -46,5 +46,14 @@ struct Deck {
  */
 struct Card *deck_createCard(enum Suit suit, int value);
 
+/**
+ * @brief Function releases the memory of a card and makes the pointer NULL.
+ *
+ * @param card Pointer to the card which to be released.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int deck_deleteCard(struct Card *card);
+
 #endif
 
