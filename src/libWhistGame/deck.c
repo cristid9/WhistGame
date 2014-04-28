@@ -6,6 +6,7 @@
  */
 
 #include "deck.h"
+#include "errors.h"
 
 #include <stdlib.h>
 
@@ -37,5 +38,16 @@ struct Card *deck_createCard(enum Suit suit, int value)
     card->value = value;
 
     return card;
+}
+
+int deck_deleteCard(struct Card *card)
+{
+    if (card == NULL)
+        return CARD_NULL;
+
+    free(card);
+    card = NULL;
+
+    return NO_ERROR;
 }
 
