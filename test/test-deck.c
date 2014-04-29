@@ -16,9 +16,8 @@ void test_deck_createCard()
             card = deck_createCard(i, VALUES[j]);
             cut_assert_equal_int(card->suit, i);
             cut_assert_equal_int(card->value, VALUES[j]);
+            deck_deleteCard(card);
         }
-
-    deck_deleteCard(card);
 }
 
 void test_deck_deleteCard()
@@ -54,9 +53,8 @@ void test_deck_createDeck()
                     deck->cards[k]->value == deck->cards[j]->value)
                     duplicates++;
         cut_assert_equal_int(0, duplicates);
+        deck_deleteDeck(deck);
     }
-
-    deck_deleteDeck(deck);
 }
 
 void test_deck_deleteDeck()
