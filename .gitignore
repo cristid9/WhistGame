@@ -1,23 +1,26 @@
-# Object files
 *.o
-*.ko
-*.obj
-*.elf
-
-# Libraries
-*.lib
-*.a
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+*.la
+*.lo
+*.in
+*.m4
+*.log
+config.status
+libtool
+Makefile
+config
+configure
+test/.deps/
+test/.libs/
+src/.deps/
+src/.libs/
+src/libWhistGame/.deps/
+src/libWhistGame/.dirstamp
+src/config.h
+src/stamp-h1
+autom4te.cache/
+test/run-test.sh.trs
+ipch/
+*.suo
+*.sdf
+*.opensdf
+Debug/

@@ -64,5 +64,14 @@ int deck_deleteCard(struct Card *card);
  */
 struct Deck *deck_createDeck(int playersNumber);
 
+/**
+ * @brief Function realeses the memory of a deck and makes the pointer NULL.
+ *
+ * @param deck Pointer to the deck whick to be released.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int deck_deleteDeck(struct Deck *deck);
+
 #endif
 
