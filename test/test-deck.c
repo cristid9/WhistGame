@@ -58,3 +58,10 @@ void test_deck_createDeck()
 
 }
 
+void test_deck_deleteDeck()
+{
+    cut_assert_equal_int(DECK_NULL, deck_deleteDeck(NULL));
+    struct Deck *deck = deck_createDeck(MAX_GAME_PLAYERS);
+    cut_assert_equal_int(NO_ERROR, deck_deleteDeck(deck));
+}
+
