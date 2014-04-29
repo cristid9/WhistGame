@@ -56,6 +56,7 @@ void test_deck_createDeck()
         cut_assert_equal_int(0, duplicates);
     }
 
+    deck_deleteDeck(deck);
 }
 
 void test_deck_deleteDeck()
