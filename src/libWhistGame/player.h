@@ -28,6 +28,15 @@ struct Player {
     struct Card *hand[MAX_CARDS];
 };
 
+/**
+ * @brief Allocates and initializes a player.
+ *
+ * @param name The name of the player.
+ * @param isHuman Indicate the player type.
+ *
+ * @return Pointer to the new player on success or NULL on failure.
+ */
+struct Player *player_createPlayer(char *name, int isHuman);
 
 #endif
 
