@@ -5,6 +5,7 @@
  */
 
 #include "player.h"
+#include "errors.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -30,5 +31,19 @@ struct Player *player_createPlayer(char *name, int isHuman)
         player->hand[i] = NULL;
 
     return player;
+}
+
+int player_deletePlayer(struct Player *player)
+{
+    if (player == NULL)
+        return PLAYER_NULL;
+
+    free(player->name);
+    player->name = NULL;
+
+    free(player);
+    player = NULL;
+
+    return NO_ERROR;
 }
 
