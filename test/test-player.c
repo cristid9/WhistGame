@@ -25,3 +25,10 @@ void test_player_createPlayer()
     }
 }
 
+void test_player_deletePlayer()
+{
+    struct Player *player = player_createPlayer("A", 1);
+    cut_assert_equal_int(PLAYER_NULL, player_deletePlayer(NULL));
+    cut_assert_equal_int(NO_ERROR, player_deletePlayer(player));
+}
+
