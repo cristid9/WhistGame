@@ -47,3 +47,26 @@ int player_deletePlayer(struct Player *player)
     return NO_ERROR;
 }
 
+int player_addCard(struct Player *player, struct Card *card)
+{
+    if (player == NULL)
+        return PLAYER_NULL;
+    if (card == NULL)
+        return CARD_NULL;
+
+    int position = -1;
+    for (int i = 0; i < MAX_CARDS; i++) {
+        if (player->hand[i] == card)
+            return DUPLICATE;
+        if (position == -1 && player->hand[i] == NULL)
+            position = i;
+    }
+
+    if (position != -1) {
+        player->hand[position] = card;
+        return NO_ERROR;
+    }
+
+    return FULL;
+}
+
