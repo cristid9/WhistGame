@@ -11,5 +11,5 @@ TESTS = run-test.sh
 noinst_LTLIBRARIES = test_game.la
 LIBS = $(CUTTER_LIBS) ${top_builddir}/src/libWhistGame.la
 
-test_game_la_SOURCES = test-deck.c test-player.c
+test_game_la_SOURCES = test-deck.c test-player.c test-hand.c
 
