@@ -9,6 +9,7 @@
 #include "errors.h"
 
 #include <stdlib.h>
+#include <time.h>
 
 /**
  * Constants for game values
@@ -104,6 +105,7 @@ int deck_shuffleDeck(struct Deck *deck)
     if (deck == NULL)
         return DECK_NULL;
 
+    srand(time(NULL));
     int deckSize = deck_getDeckSize(deck);
     for (int i = 0; i < SWAPS_NUMBER; i++) {
         int a = rand() % deckSize;
