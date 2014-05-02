@@ -114,9 +114,25 @@ int deck_shuffleDeck(struct Deck *deck)
         }
         struct Card *card = deck->cards[a];
         deck->cards[a] = deck->cards[b];
-        deck->cards[b] = deck->cards[a];
+        deck->cards[b] = card;
     }
 
     return NO_ERROR;
+}
+
+int deck_compareCards(struct Card *card1, struct Card *card2, enum Suit trump)
+{
+    if (card1 == NULL || card2 == NULL)
+        return CARD_NULL;
+
+    if (card1->suit == card2->suit && card1->value == card2->value)
+        return 0;
+
+    if ((card1->suit == trump && card2->suit != trump) ||
+        (card1->suit == card2->suit && card1->value > card2->value) ||
+        (card1->suit != card2->suit && card2->suit != trump))
+        return 1;
+
+    return 2;
 }
 
