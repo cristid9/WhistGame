@@ -41,13 +41,15 @@ struct Card *deck_createCard(enum Suit suit, int value)
     return card;
 }
 
-int deck_deleteCard(struct Card *card)
+int deck_deleteCard(struct Card **card)
 {
     if (card == NULL)
+        return POINTER_NULL;
+    if (*card == NULL)
         return CARD_NULL;
 
-    free(card);
-    card = NULL;
+    free(*card);
+    *card = NULL;
 
     return NO_ERROR;
 }
@@ -74,16 +76,18 @@ struct Deck *deck_createDeck(int playersNumber)
     return deck;
 }
 
-int deck_deleteDeck(struct Deck *deck)
+int deck_deleteDeck(struct Deck **deck)
 {
     if (deck == NULL)
+        return POINTER_NULL;
+    if (*deck == NULL)
         return DECK_NULL;
 
     for (int i = 0; i < DECK_SIZE; i++)
-        deck_deleteCard(deck->cards[i]);
+        deck_deleteCard(&((*deck)->cards[i]));
 
-    free(deck);
-    deck = NULL;
+    free(*deck);
+    *deck = NULL;
 
     return NO_ERROR;
 }
