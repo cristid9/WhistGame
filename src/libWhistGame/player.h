@@ -41,11 +41,11 @@ struct Player *player_createPlayer(char *name, int isHuman);
 /**
  * @brief Function releases the memory of a player and makes pointer NULL.
  *
- * @param player Pointer to the player which to be released.
+ * @param player Pointer to pointer to the player which to be released.
  *
  * @return NO_ERROR or 0 on success, other value on failure.
  */
-int player_deletePlayer(struct Player *player);
+int player_deletePlayer(struct Player **player);
 
 /**
  * @brief Function add the card of the player.
