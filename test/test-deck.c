@@ -39,15 +39,11 @@ void test_deck_createDeck()
         if (deck == NULL)
             check++;
         cut_assert_equal_int(0, check);
-
-        int k = 0;
-        while (deck->cards[k] != NULL)
-            k++;
-        cut_assert_equal_int((double)MAX_CARDS, (double)++k / i);
+        cut_assert_equal_int(i * MAX_CARDS, deck_getDeckSize(deck));
         
         int duplicates = 0;
         for (int j = 0; j < DECK_SIZE; j++)
-            for (k = 0; k < DECK_SIZE; k++)
+            for (int k = 0; k < DECK_SIZE; k++)
                 if (k != j && deck->cards[k] != NULL && deck->cards[j] != NULL
                     && deck->cards[k]->suit == deck->cards[j]->suit &&
                     deck->cards[k]->value == deck->cards[j]->value)
