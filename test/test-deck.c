@@ -3,6 +3,7 @@
 #include <errors.h>
 
 #include <cutter.h>
+#include <string.h>
 
 void test_deck_createCard()
 {
@@ -92,5 +93,36 @@ void test_deck_shuffleDeck()
     }
 
     deck_deleteDeck(deck);
+}
+
+void test_deck_compareCards()
+{
+    struct Card *card1 = deck_createCard(DIAMONDS, VALUES[2]);
+    struct Card *card2 = deck_createCard(DIAMONDS, VALUES[2]);
+
+    cut_assert_equal_int(CARD_NULL, deck_compareCards(card1, NULL, DIAMONDS));
+    cut_assert_equal_int(CARD_NULL, deck_compareCards(NULL, card2, DIAMONDS));
+    cut_assert_equal_int(CARD_NULL, deck_compareCards(NULL, NULL, DIAMONDS));
+
+    cut_assert_equal_int(0, deck_compareCards(card1, card2, SuitEnd));
+
+    card1->value = VALUES[3];
+    cut_assert_equal_int(1, deck_compareCards(card1, card2, SuitEnd));
+    cut_assert_equal_int(1, deck_compareCards(card1, card2, DIAMONDS));
+    cut_assert_equal_int(1, deck_compareCards(card1, card2, CLUBS));
+    cut_assert_equal_int(2, deck_compareCards(card2, card1, SuitEnd));
+    cut_assert_equal_int(2, deck_compareCards(card2, card1, DIAMONDS));
+    cut_assert_equal_int(2, deck_compareCards(card2, card1, CLUBS));
+
+    card2->suit = CLUBS;
+    cut_assert_equal_int(1, deck_compareCards(card1, card2, DIAMONDS));
+    cut_assert_equal_int(1, deck_compareCards(card1, card2, SuitEnd));
+    cut_assert_equal_int(1, deck_compareCards(card1, card2, SPADES));
+    cut_assert_equal_int(2, deck_compareCards(card2, card1, DIAMONDS));
+    cut_assert_equal_int(1, deck_compareCards(card2, card1, SuitEnd));
+    cut_assert_equal_int(1, deck_compareCards(card2, card1, SPADES));
+
+    deck_deleteCard(card1);
+    deck_deleteCard(card2);
 }
 
