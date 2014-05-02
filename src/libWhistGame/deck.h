@@ -83,5 +83,14 @@ int deck_deleteDeck(struct Deck *deck);
  */
 int deck_getDeckSize(struct Deck *deck);
 
+/**
+ * @brief Function shuffle the cards from a deck.
+ *
+ * @param deck Pointer to the deck which to be shuffled.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int deck_shuffleDeck(struct Deck *deck);
+
 #endif
 
