@@ -64,3 +64,15 @@ void test_deck_deleteDeck()
     cut_assert_equal_int(NO_ERROR, deck_deleteDeck(deck));
 }
 
+void test_deck_getDeckSize()
+{
+    cut_assert_equal_int(DECK_NULL, deck_getDeckSize(NULL));
+    struct Deck *deck;
+
+    for (int i = MIN_GAME_PLAYERS; i <= MAX_GAME_PLAYERS; i++) {
+        deck = deck_createDeck(i);
+        cut_assert_equal_int(i * MAX_CARDS, deck_getDeckSize(deck));
+        deck_deleteDeck(deck);
+    }
+}
+
