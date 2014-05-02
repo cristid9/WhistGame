@@ -49,11 +49,11 @@ struct Card *deck_createCard(enum Suit suit, int value);
 /**
  * @brief Function releases the memory of a card and makes the pointer NULL.
  *
- * @param card Pointer to the card which to be released.
+ * @param card Pointer to pointer to the card which to be released.
  *
  * @return NO_ERROR or 0 on success, other value on failure.
  */
-int deck_deleteCard(struct Card *card);
+int deck_deleteCard(struct Card **card);
 
 /**
  * @brief Allocates and initializes a deck.
@@ -67,11 +67,11 @@ struct Deck *deck_createDeck(int playersNumber);
 /**
  * @brief Function realeses the memory of a deck and makes the pointer NULL.
  *
- * @param deck Pointer to the deck whick to be released.
+ * @param deck Pointer to pointer to the deck whick to be released.
  *
  * @return NO_ERROR or 0 on success, other value on failure.
  */
-int deck_deleteDeck(struct Deck *deck);
+int deck_deleteDeck(struct Deck **deck);
 
 /**
  * @brief Function counting the cards from a deck.
