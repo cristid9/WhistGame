@@ -47,5 +47,15 @@ struct Player *player_createPlayer(char *name, int isHuman);
  */
 int player_deletePlayer(struct Player *player);
 
+/**
+ * @brief Function add the card of the player.
+ *
+ * @param player The player which receives the card.
+ * @param card The card which is added.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int player_addCard(struct Player *player, struct Card *card);
+
 #endif
 
