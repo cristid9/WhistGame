@@ -72,3 +72,25 @@ void test_deck_getDeckSize()
     }
 }
 
+void test_deck_shuffleDeck()
+{
+    cut_assert_equal_int(DECK_NULL, deck_shuffleDeck(NULL));
+    struct Deck *deck = deck_createDeck(MAX_GAME_PLAYERS);
+    struct Deck *shuffled_deck = malloc(sizeof(struct Deck));
+    memcpy(shuffled_deck, deck, sizeof(struct Deck));
+    cut_assert_equal_int(NO_ERROR, deck_shuffleDeck(shuffled_deck));
+
+    int deckSize = deck_getDeckSize(deck);
+    int differences = 0;
+    for (int j = 0; j < 100; j++) {
+        differences = 0;
+        for (int i = 0; i < deckSize; i++)
+            if (deck->cards[i]->suit  != shuffled_deck->cards[i]->suit ||
+                deck->cards[i]->value != shuffled_deck->cards[i]->value)
+                differences++;
+        cut_assert_not_equal_int(0, differences);
+    }
+
+    deck_deleteDeck(deck);
+}
+
