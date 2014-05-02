@@ -26,5 +26,42 @@ struct Hand {
     struct Player *players[MAX_GAME_PLAYERS];
 };
 
+/**
+ * @brief Function allocates and initializes a hand.
+ *
+ * @return Pointer to the new hand on success, NULL on failure.
+ */
+struct Hand *hand_createHand();
+
+/**
+ * @brief Function releases the memory a hand.
+ *
+ * @param hand Pointer to pointer to the hand which to be released.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int hand_deleteHand(struct Hand **hand);
+
+/**
+ * @brief Function adds a player in a hand.
+ *
+ * @param hand Pointer to the hand in which is added the player.
+ * @param player Pointer to the player which to be added.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int hand_addPlayer(struct Hand *hand, struct Player *player);
+
+/**
+ * @brief Function adds a card in a hand.
+ *
+ * @param hand Pointer to the hand in which to be added the card.
+ * @param player Pointer to the player which places the card.
+ * @param card Pointer to pointer to the card which is added.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card);
+
 #endif
 
