@@ -17,15 +17,17 @@ void test_deck_createCard()
             card = deck_createCard(i, VALUES[j]);
             cut_assert_equal_int(card->suit, i);
             cut_assert_equal_int(card->value, VALUES[j]);
-            deck_deleteCard(card);
+            deck_deleteCard(&card);
         }
 }
 
 void test_deck_deleteCard()
 {
     struct Card *card = deck_createCard(DIAMONDS, VALUES[0]);
-    cut_assert_equal_int(CARD_NULL, deck_deleteCard(NULL));
-    cut_assert_equal_int(NO_ERROR, deck_deleteCard(card));
+    cut_assert_equal_int(POINTER_NULL, deck_deleteCard(NULL));
+    cut_assert_equal_int(NO_ERROR, deck_deleteCard(&card));
+    cut_assert_equal_pointer(NULL, card);
+    cut_assert_equal_int(CARD_NULL, deck_deleteCard(&card));
 }
 
 void test_deck_createDeck()
@@ -50,15 +52,17 @@ void test_deck_createDeck()
                     deck->cards[k]->value == deck->cards[j]->value)
                     duplicates++;
         cut_assert_equal_int(0, duplicates);
-        deck_deleteDeck(deck);
+        deck_deleteDeck(&deck);
     }
 }
 
 void test_deck_deleteDeck()
 {
-    cut_assert_equal_int(DECK_NULL, deck_deleteDeck(NULL));
+    cut_assert_equal_int(POINTER_NULL, deck_deleteDeck(NULL));
     struct Deck *deck = deck_createDeck(MAX_GAME_PLAYERS);
-    cut_assert_equal_int(NO_ERROR, deck_deleteDeck(deck));
+    cut_assert_equal_int(NO_ERROR, deck_deleteDeck(&deck));
+    cut_assert_equal_pointer(NULL, deck);
+    cut_assert_equal_int(DECK_NULL, deck_deleteDeck(&deck));
 }
 
 void test_deck_getDeckSize()
@@ -69,7 +73,7 @@ void test_deck_getDeckSize()
     for (int i = MIN_GAME_PLAYERS; i <= MAX_GAME_PLAYERS; i++) {
         deck = deck_createDeck(i);
         cut_assert_equal_int(i * MAX_CARDS, deck_getDeckSize(deck));
-        deck_deleteDeck(deck);
+        deck_deleteDeck(&deck);
     }
 }
 
@@ -92,7 +96,7 @@ void test_deck_shuffleDeck()
         cut_assert_not_equal_int(0, differences);
     }
 
-    deck_deleteDeck(deck);
+    deck_deleteDeck(&deck);
 }
 
 void test_deck_compareCards()
@@ -122,7 +126,7 @@ void test_deck_compareCards()
     cut_assert_equal_int(1, deck_compareCards(card2, card1, SuitEnd));
     cut_assert_equal_int(1, deck_compareCards(card2, card1, SPADES));
 
-    deck_deleteCard(card1);
-    deck_deleteCard(card2);
+    deck_deleteCard(&card1);
+    deck_deleteCard(&card2);
 }
 

@@ -22,14 +22,17 @@ void test_player_createPlayer()
             if (player->hand[j] != NULL)
                 check++;
         cut_assert_equal_int(0, check);
+        player_deletePlayer(&player);
     }
 }
 
 void test_player_deletePlayer()
 {
     struct Player *player = player_createPlayer("A", 1);
-    cut_assert_equal_int(PLAYER_NULL, player_deletePlayer(NULL));
-    cut_assert_equal_int(NO_ERROR, player_deletePlayer(player));
+    cut_assert_equal_int(POINTER_NULL, player_deletePlayer(NULL));
+    cut_assert_equal_int(NO_ERROR, player_deletePlayer(&player));
+    cut_assert_equal_pointer(NULL, player);
+    cut_assert_equal_int(PLAYER_NULL, player_deletePlayer(&player));
 }
 
 void test_player_addCard()
@@ -49,7 +52,7 @@ void test_player_addCard()
     }
     cut_assert_equal_int(FULL, player_addCard(player, deck->cards[++i]));
 
-    player_deletePlayer(player);
-    deck_deleteDeck(deck);
+    player_deletePlayer(&player);
+    deck_deleteDeck(&deck);
 }
 
