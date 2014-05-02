@@ -87,3 +87,15 @@ int deck_deleteDeck(struct Deck *deck)
     return NO_ERROR;
 }
 
+int deck_getDeckSize(struct Deck *deck)
+{
+    if (deck == NULL)
+        return DECK_NULL;
+
+    int deckSize = 0;
+    while (deck->cards[deckSize] != NULL && deckSize < DECK_SIZE)
+        deckSize++;
+
+    return deckSize;
+}
+
