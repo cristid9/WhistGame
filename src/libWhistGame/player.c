@@ -33,16 +33,18 @@ struct Player *player_createPlayer(char *name, int isHuman)
     return player;
 }
 
-int player_deletePlayer(struct Player *player)
+int player_deletePlayer(struct Player **player)
 {
     if (player == NULL)
+        return POINTER_NULL;
+    if (*player == NULL)
         return PLAYER_NULL;
 
-    free(player->name);
-    player->name = NULL;
+    free((*player)->name);
+    (*player)->name = NULL;
 
-    free(player);
-    player = NULL;
+    free(*player);
+    *player = NULL;
 
     return NO_ERROR;
 }
