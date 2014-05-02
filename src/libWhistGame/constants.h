@@ -10,6 +10,7 @@
  * @brief Constants for suit.
  *
  * SuitEnd is a flag used when iterating.
+ * SuitEnd is used when not exist trump.
  */
 enum Suit {DIAMONDS = 0, CLUBS, SPADES, HEARTS, SuitEnd};
 
