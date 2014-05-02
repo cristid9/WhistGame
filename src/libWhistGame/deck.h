@@ -73,5 +73,15 @@ struct Deck *deck_createDeck(int playersNumber);
  */
 int deck_deleteDeck(struct Deck *deck);
 
+/**
+ * @brief Function counting the cards from a deck.
+ *
+ * @param deck Pointer to the deck in which are the cards.
+ *
+ * @return An positive integer value contained between 0 and DECK_SIZE on 
+ *         success, an negative value on failure.
+ */
+int deck_getDeckSize(struct Deck *deck);
+
 #endif
 
