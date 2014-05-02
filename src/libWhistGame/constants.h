@@ -50,5 +50,10 @@ const int VALUES[13];
  */ 
 #define MAX_ROUND_HANDS 8
 
+/**
+ * @brief The swaps number made at shuffling of the deck.
+ */
+#define SWAPS_NUMBER 100
+
 #endif
 
