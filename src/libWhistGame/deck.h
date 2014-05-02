@@ -92,5 +92,19 @@ int deck_getDeckSize(struct Deck *deck);
  */
 int deck_shuffleDeck(struct Deck *deck);
 
+/**
+ * @brief Function compare two cards.
+ *
+ * @param card1 Pointer to the first card which to be compared.
+ * @param card2 Pointer to the second card which to be compared.
+ * @param trump The trump which is set in game.
+ *
+ * @return 0 If the cards are equal.
+ *         1 If the first card (card1) is the winning.
+ *         2 If the second card (card2) is the winning. 
+ *         Other value on failure.
+ */
+int deck_compareCards(struct Card *card1, struct Card *card2, enum Suit trump);
+
 #endif
 
