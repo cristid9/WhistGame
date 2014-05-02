@@ -99,3 +99,24 @@ int deck_getDeckSize(struct Deck *deck)
     return deckSize;
 }
 
+int deck_shuffleDeck(struct Deck *deck)
+{
+    if (deck == NULL)
+        return DECK_NULL;
+
+    int deckSize = deck_getDeckSize(deck);
+    for (int i = 0; i < SWAPS_NUMBER; i++) {
+        int a = rand() % deckSize;
+        int b = rand() % deckSize;
+        while (a == b) {
+            a = rand() % deckSize;
+            b = rand() % deckSize;
+        }
+        struct Card *card = deck->cards[a];
+        deck->cards[a] = deck->cards[b];
+        deck->cards[b] = deck->cards[a];
+    }
+
+    return NO_ERROR;
+}
+
