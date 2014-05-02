@@ -18,7 +18,9 @@ enum ERROR_CODES {
     NO_ERROR    =  0,
     CARD_NULL   = -1,
     DECK_NULL   = -2,
-    PLAYER_NULL = -3
+    PLAYER_NULL = -3,
+    DUPLICATE   = -4,
+    FULL        = -5
 };
 
 #endif
