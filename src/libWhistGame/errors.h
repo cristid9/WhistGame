@@ -23,7 +23,8 @@ enum ERROR_CODES {
     FULL         = -5,
     HAND_NULL    = -6,
     NOT_FOUND    = -7,
-    POINTER_NULL = -8
+    POINTER_NULL = -8,
+    ROUND_NULL   = -9
 };
 
 #endif
