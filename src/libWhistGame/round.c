@@ -49,4 +49,26 @@ int round_deleteRound(struct Round **round)
     return NO_ERROR;
 }
 
+int round_addPlayer(struct Round *round, struct Player *player)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+    if (player == NULL)
+        return PLAYER_NULL;
+
+    int position = -1;
+    for (int i = MAX_GAME_PLAYERS - 1; i >= 0; i--) {
+        if (round->players[i] == player)
+            return DUPLICATE;
+        if (round->players[i] == NULL)
+            position = i;
+    }
+
+    if (position != -1) {
+        round->players[position] = player;
+        return NO_ERROR;
+    }
+
+    return FULL;
+}
 
