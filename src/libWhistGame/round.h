@@ -18,7 +18,7 @@
  * @var Round::roundType
  *      Variable used to indicate the round type (1, 2, 3, 4, 5, 6, 7, 8).
  * @var Round::trump
- *      The trump of the round, if this exists.
+ *      Pointer to the card which is the trump of the round, if this exists.
  * @var Round::bids
  *      The bids of the players.
  * @var Round::pointsNumber
@@ -26,7 +26,7 @@
  * @var Round::players
  *      Pointer to the players of the round.
  * @var Round::hands
- *      Pointer to the hands of the round.
+ *      Pointer to the hand of the round.
  */
 struct Round {
     int roundType;
