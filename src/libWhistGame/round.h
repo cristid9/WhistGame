@@ -30,11 +30,11 @@
  */
 struct Round {
     int roundType;
-    enum Suit trump;
+    struct Card *trump;
     int bids[MAX_GAME_PLAYERS];
     int pointsNumber[MAX_GAME_PLAYERS];
     struct Players *players[MAX_GAME_PLAYERS];
-    struct Hand *hands[MAX_ROUND_HANDS];
+    struct Hand *hand;
 };
 
 #endif
