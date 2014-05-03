@@ -5,6 +5,9 @@
  */
 
 #include "round.h"
+#include "errors.h"
+
+#include <stdlib.h>
 
 struct Round *round_createRound(int roundType)
 {
@@ -27,4 +30,23 @@ struct Round *round_createRound(int roundType)
 
     return round;
 }
+
+int round_deleteRound(struct Round **round)
+{
+    if (round == NULL)
+        return POINTER_NULL;
+    if (*round == NULL)
+        return ROUND_NULL;
+
+    if ((*round)->hand != NULL)
+        hand_deleteHand(&((*round)->hand));
+    if ((*round)->trump != NULL)
+        deck_deleteCard(&((*round)->trump));
+    
+    free(*round);
+    *round = NULL;
+
+    return NO_ERROR;
+}
+
 
