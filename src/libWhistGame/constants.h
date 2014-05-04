@@ -10,7 +10,6 @@
  * @brief Constants for suit.
  *
  * SuitEnd is a flag used when iterating.
- * SuitEnd is used when not exist trump.
  */
 enum Suit {DIAMONDS = 0, CLUBS, SPADES, HEARTS, SuitEnd};
 
@@ -45,12 +44,7 @@ const int VALUES[13];
  * @brief The maximum number of cards in a player's hand.
  */
 #define MAX_CARDS 8
-
-/**
- * @brief The maximum number of hands in a round.
- */ 
-#define MAX_ROUND_HANDS 8
-
+ 
 /**
  * @brief The swaps number made at shuffling of the deck.
  */
