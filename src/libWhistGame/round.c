@@ -72,3 +72,33 @@ int round_addPlayer(struct Round *round, struct Player *player)
     return FULL;
 }
 
+int round_addHand(struct Round *round, struct Hand *hand)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+    if (hand == NULL)
+        return HAND_NULL;
+
+    if (round->hand != NULL)
+        hand_deleteHand(&(round->hand));
+
+    round->hand = hand;
+
+    return NO_ERROR;
+}
+
+int round_addTrump(struct Round *round, struct Card *trump)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+    if (trump == NULL)
+        return CARD_NULL;
+
+    if (round->trump != NULL)
+        deck_deleteCard(&(round->trump));
+
+    round->trump = trump;
+
+    return NO_ERROR;
+}
+
