@@ -11,7 +11,7 @@
 
 struct Round *round_createRound(int roundType)
 {
-    if (roundType < 1 || roundType > 8)
+    if (roundType < MIN_CARDS || roundType > MAX_CARDS)
         return NULL;
 
     struct Round *round = malloc(sizeof(struct Round));
