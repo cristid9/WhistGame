@@ -44,6 +44,11 @@ const int VALUES[13];
  * @brief The maximum number of cards in a player's hand.
  */
 #define MAX_CARDS 8
+
+/**
+ * @brief The minimum number of cards in a player's hand at start.
+ */
+#define MIN_CARDS 1
  
 /**
  * @brief The swaps number made at shuffling of the deck.
