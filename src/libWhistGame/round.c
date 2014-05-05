@@ -119,11 +119,10 @@ int round_addPlayersInHand(struct Round *round, int firstPlayer)
     if (playersNumber < MIN_GAME_PLAYERS)
         return INSUFFICIENT_PLAYERS;
 
-    playersNumber = -1;
     for (int i = firstPlayer; i < MAX_GAME_PLAYERS; i++)
-        round->hand->players[++playersNumber] = round->players[i];
+        hand_addPlayer(round->hand, round->players[i]);
     for (int i = 0; i < firstPlayer; i++)
-        round->hand->players[++playersNumber] = round->players[i];
+        hand_addPlayer(round->hand, round->players[i]);
 
     return NO_ERROR;
 }
