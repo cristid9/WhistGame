@@ -85,5 +85,15 @@ int round_addHand(struct Round *round, struct Hand *hand);
  */
 int round_addTrump(struct Round *round, struct Card *trump);
 
+/**
+ * @brief Function adds players in hand in a certain order.
+ *
+ * @param round Pointer to the round from which are added the players.
+ * @param firstPlayer The player id from round which is the first added in hand.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int round_addPlayersInHand(struct Round *round, int firstPlayer);
+
 #endif
 
