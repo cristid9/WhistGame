@@ -26,7 +26,8 @@ enum ERROR_CODES {
     POINTER_NULL         = - 8,
     ROUND_NULL           = - 9,
     ILLEGAL_VALUE        = -10,
-    INSUFFICIENT_PLAYERS = -11
+    INSUFFICIENT_PLAYERS = -11,
+    INSUFFICIENT_CARDS   = -12
 };
 
 #endif
