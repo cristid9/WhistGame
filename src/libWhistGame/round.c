@@ -102,3 +102,29 @@ int round_addTrump(struct Round *round, struct Card *trump)
     return NO_ERROR;
 }
 
+int round_addPlayersInHand(struct Round *round, int firstPlayer)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+    if (firstPlayer < 0 || firstPlayer >= MAX_GAME_PLAYERS)
+        return ILLEGAL_VALUE;
+    if (round->hand == NULL)
+        return HAND_NULL;
+
+    int playersNumber = 0;
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (round->players[i] != NULL)
+            playersNumber++;
+
+    if (playersNumber < MIN_GAME_PLAYERS)
+        return INSUFFICIENT_PLAYERS;
+
+    playersNumber = -1;
+    for (int i = firstPlayer; i < MAX_GAME_PLAYERS; i++)
+        round->hand->players[++playersNumber] = round->players[i];
+    for (int i = 0; i < firstPlayer; i++)
+        round->hand->players[++playersNumber] = round->players[i];
+
+    return NO_ERROR;
+}
+
