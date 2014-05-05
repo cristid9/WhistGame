@@ -127,3 +127,34 @@ int round_addPlayersInHand(struct Round *round, int firstPlayer)
     return NO_ERROR;
 }
 
+int round_distributeCard(struct Round *round, struct Deck *deck)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+    if (deck == NULL)
+        return DECK_NULL;
+
+    int playersNumber = 0;
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        if (round->players[i] != NULL)
+            playersNumber++;
+    }
+
+    if (playersNumber < MIN_GAME_PLAYERS)
+        return INSUFFICIENT_PLAYERS;
+
+    int deckSize = deck_getDeckSize(deck);
+    if (deckSize < playersNumber)
+        return INSUFFICIENT_CARDS;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (round->players[i] != NULL)
+            for (int j = 0; j < DECK_SIZE; j++)
+                if (deck->cards[j] != NULL) {
+                    player_addCard(round->players[i], deck->cards[j]);
+                    break;
+                }
+
+    return NO_ERROR;
+}
+
