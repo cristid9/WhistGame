@@ -158,3 +158,23 @@ int round_distributeCard(struct Round *round, struct Deck *deck)
     return NO_ERROR;
 }
 
+int round_distributeDeck(struct Round *round, struct Deck *deck)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+    if (deck == NULL)
+        return DECK_NULL;
+
+    for (int i = MIN_CARDS; i <= round->roundType; i++)
+        round_distributeCard(round, deck);
+
+    int i = 0;
+    while (deck->cards[i] == NULL && i < DECK_SIZE)
+        i++;
+
+    if (i < DECK_SIZE)
+        round_addTrump(round, deck->cards[--i]);
+
+    return NO_ERROR;
+}
+
