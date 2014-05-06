@@ -40,17 +40,17 @@ void test_player_addCard()
     struct Deck *deck = deck_createDeck(MIN_GAME_PLAYERS);
     struct Player *player = player_createPlayer("A", 1);
 
-    cut_assert_equal_int(PLAYER_NULL, player_addCard(NULL, deck->cards[0]));
-    cut_assert_equal_int(CARD_NULL, player_addCard(player, NULL));
+    cut_assert_equal_int(PLAYER_NULL, player_addCard(NULL, &deck->cards[0]));
+    cut_assert_equal_int(POINTER_NULL, player_addCard(player, NULL));
     cut_assert_operator_int(0, >, player_addCard(NULL, NULL));
 
     int i;
     for (i = 0; i < MAX_CARDS; i++) {
-        cut_assert_equal_int(NO_ERROR, player_addCard(player, deck->cards[i]));
-        cut_assert_equal_int(DUPLICATE, 
-                             player_addCard(player, deck->cards[i]));
+        cut_assert_equal_int(NO_ERROR, player_addCard(player, &deck->cards[i]));
+        cut_assert_equal_int(CARD_NULL, 
+                             player_addCard(player, &deck->cards[i]));
     }
-    cut_assert_equal_int(FULL, player_addCard(player, deck->cards[++i]));
+    cut_assert_equal_int(FULL, player_addCard(player, &deck->cards[++i]));
 
     player_deletePlayer(&player);
     deck_deleteDeck(&deck);
