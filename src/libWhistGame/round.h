@@ -95,5 +95,25 @@ int round_addTrump(struct Round *round, struct Card *trump);
  */
 int round_addPlayersInHand(struct Round *round, int firstPlayer);
 
+/**
+ * @brief Function distributes one card each player from round.
+ *
+ * @param round Pointer to the round in which are the players.
+ * @param deck Pointer to the deck from which are distributed the cards.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int round_distributeCard(struct Round *round, struct Deck *deck);
+
+/**
+ * @brief Function distributes the cards of the players.
+ *
+ * @param round Pointer to the round in which are the players.
+ * @param deck Pointer to the deck which is distributed.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int round_distributeDeck(struct Round *round, struct Deck *deck);
+
 #endif
 
