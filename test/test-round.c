@@ -96,3 +96,43 @@ void test_round_addTrump()
     round_deleteRound(&round);
 }
 
+void test_round_addPlayersInHand()
+{
+    struct Round *round = round_createRound(MIN_CARDS);
+    cut_assert_equal_int(ROUND_NULL, round_addPlayersInHand(NULL, 0));
+    cut_assert_equal_int(ILLEGAL_VALUE, round_addPlayersInHand(round, -1));
+    cut_assert_equal_int(ILLEGAL_VALUE,
+                         round_addPlayersInHand(round, MAX_GAME_PLAYERS + 1));
+    cut_assert_equal_int(HAND_NULL, round_addPlayersInHand(round, 0));
+    round->hand = hand_createHand();
+    cut_assert_equal_int(INSUFFICIENT_PLAYERS,
+                         round_addPlayersInHand(round, 0));
+
+    struct Player *players[MAX_GAME_PLAYERS];
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        players[i] = player_createPlayer("A", i);
+        round_addPlayer(round, players[i]);
+    }
+
+    for (int i = 0 ; i < MAX_GAME_PLAYERS; i++) {
+        cut_assert_equal_int(NO_ERROR, round_addPlayersInHand(round, i));
+        int position = 0;
+        for (int j = i; j < MAX_GAME_PLAYERS; j++) {
+            cut_assert_equal_pointer(round->players[j],
+                                     round->hand->players[position]);
+            position++;
+        }
+        for (int j = 0; j < i; j++) {
+            cut_assert_equal_pointer(round->players[j],
+                                     round->hand->players[position]);
+            position++;
+        }
+        hand_deleteHand(&round->hand);
+        round->hand = hand_createHand(); 
+    }
+
+    round_deleteRound(&round);
+    for(int i = 0; i < MAX_GAME_PLAYERS; i++)
+        player_deletePlayer(&players[i]);
+}
+
