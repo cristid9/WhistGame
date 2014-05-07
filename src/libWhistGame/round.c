@@ -151,7 +151,7 @@ int round_distributeCard(struct Round *round, struct Deck *deck)
         if (round->players[i] != NULL)
             for (int j = 0; j < DECK_SIZE; j++)
                 if (deck->cards[j] != NULL) {
-                    player_addCard(round->players[i], deck->cards[j]);
+                    player_addCard(round->players[i], &deck->cards[j]);
                     break;
                 }
 
