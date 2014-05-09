@@ -98,8 +98,9 @@ int deck_getDeckSize(struct Deck *deck)
         return DECK_NULL;
 
     int deckSize = 0;
-    while (deck->cards[deckSize] != NULL && deckSize < DECK_SIZE)
-        deckSize++;
+    for (int i  = 0; i < DECK_SIZE; i++)
+        if (deck->cards[i] != NULL)
+            deckSize++;
 
     return deckSize;
 }
