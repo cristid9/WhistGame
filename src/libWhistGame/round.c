@@ -147,13 +147,18 @@ int round_distributeCard(struct Round *round, struct Deck *deck)
     if (deckSize < playersNumber)
         return INSUFFICIENT_CARDS;
 
-    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
-        if (round->players[i] != NULL)
-            for (int j = 0; j < DECK_SIZE; j++)
-                if (deck->cards[j] != NULL) {
-                    player_addCard(round->players[i], &deck->cards[j]);
-                    break;
-                }
+    int i,j;
+    for (i = 0, j = 0; i < MAX_GAME_PLAYERS && j < DECK_SIZE; i++, j++) {
+        while (deck->cards[j] == NULL && j < DECK_SIZE)
+            j++;
+        while (round->players[i] == NULL && i < MAX_GAME_PLAYERS)
+            i++;
+        if (i < MAX_GAME_PLAYERS && j < DECK_SIZE) {
+            int check = player_addCard(round->players[i], &deck->cards[j]);
+            if (check != NO_ERROR)
+                return check;
+        }
+    }
 
     return NO_ERROR;
 }
