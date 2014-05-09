@@ -170,15 +170,18 @@ int round_distributeDeck(struct Round *round, struct Deck *deck)
     if (deck == NULL)
         return DECK_NULL;
 
-    for (int i = MIN_CARDS; i <= round->roundType; i++)
-        round_distributeCard(round, deck);
+    for (int i = MIN_CARDS; i <= round->roundType; i++) {
+        int check = round_distributeCard(round, deck);
+        if (check != NO_ERROR)
+            return check;
+    }
 
     int i = 0;
     while (deck->cards[i] == NULL && i < DECK_SIZE)
         i++;
 
     if (i < DECK_SIZE)
-        round_addTrump(round, deck->cards[--i]);
+        round_addTrump(round, deck->cards[i]);
 
     return NO_ERROR;
 }
