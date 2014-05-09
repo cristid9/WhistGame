@@ -136,3 +136,38 @@ void test_round_addPlayersInHand()
         player_deletePlayer(&players[i]);
 }
 
+void test_round_disitrbuteCard()
+{
+    struct Round *round = round_createRound(MAX_CARDS);
+    struct Deck  *deck  = deck_createDeck(MAX_GAME_PLAYERS);
+    struct Player *players[MAX_GAME_PLAYERS];
+    
+    cut_assert_equal_int(ROUND_NULL, round_distributeCard(NULL, deck));
+    cut_assert_equal_int(DECK_NULL, round_distributeCard(round, NULL));
+    cut_assert_equal_int(INSUFFICIENT_PLAYERS,
+                         round_distributeCard(round, deck));
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        players[i] = player_createPlayer("A", i);
+        round_addPlayer(round, players[i]);
+    }
+
+    for (int i = 0; i < MAX_CARDS; i++) {
+        cut_assert_equal_int(NO_ERROR, round_distributeCard(round, deck));
+        cut_assert_equal_int(DECK_SIZE - (i + 1) * MAX_GAME_PLAYERS,
+                             deck_getDeckSize(deck));
+        for (int j = 0; j < MAX_GAME_PLAYERS; j++) {
+            int cardsNumber = 0;
+            for (int k = 0; k < MAX_CARDS; k++)
+                if (round->players[j]->hand[k] != NULL)
+                    cardsNumber++;
+            cut_assert_equal_int(i + 1, cardsNumber);
+        }
+    }
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        player_deletePlayer(&players[i]);
+    round_deleteRound(&round);
+    deck_deleteDeck(&deck);
+}
+
