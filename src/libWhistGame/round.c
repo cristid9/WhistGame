@@ -87,17 +87,20 @@ int round_addHand(struct Round *round, struct Hand *hand)
     return NO_ERROR;
 }
 
-int round_addTrump(struct Round *round, struct Card *trump)
+int round_addTrump(struct Round *round, struct Card **trump)
 {
     if (round == NULL)
         return ROUND_NULL;
     if (trump == NULL)
+        return POINTER_NULL;
+    if (*trump == NULL)
         return CARD_NULL;
 
     if (round->trump != NULL)
         deck_deleteCard(&(round->trump));
 
-    round->trump = trump;
+    round->trump = *trump;
+    *trump = NULL;
 
     return NO_ERROR;
 }
@@ -181,7 +184,7 @@ int round_distributeDeck(struct Round *round, struct Deck *deck)
         i++;
 
     if (i < DECK_SIZE)
-        round_addTrump(round, deck->cards[i]);
+        round_addTrump(round, &deck->cards[i]);
 
     return NO_ERROR;
 }
