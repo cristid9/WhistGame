@@ -88,3 +88,41 @@ int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card)
     return NOT_FOUND;
 }
 
+int hand_checkCard(struct Hand *hand, struct Player *player,
+                   int cardId, struct Card *trump)
+{
+    if (hand == NULL)
+        return HAND_NULL;
+    if (player == NULL)
+        return PLAYER_NULL;
+    if (cardId < 0 || cardId > MAX_CARDS - 1)
+        return ILLEGAL_VALUE;
+    if (player->hand[cardId] == NULL)
+        return CARD_NULL;
+    if (hand->cards[0] == NULL)
+        return 1;
+
+    int playerFirstCard  = 0;
+    int playerSuitTrump  = 0;
+    enum Suit suitTrump;
+    if (trump != NULL)
+        suitTrump = trump->suit;
+    else
+        suitTrump = SuitEnd;
+
+    for (int i = 0; i < MAX_CARDS; i++) {
+        if (player->hand[i]->suit == hand->cards[0]->suit)
+            playerFirstCard = 1;
+        if (suitTrump != SuitEnd && player->hand[i]->suit == trump->suit)
+            playerSuitTrump = 1;
+    }
+
+    if ((player->hand[cardId]->suit == hand->cards[0]->suit) ||
+        (suitTrump == SuitEnd && playerFirstCard == 0) ||
+        (playerFirstCard == 0 && playerSuitTrump == 0) ||
+        (player->hand[cardId]->suit == suitTrump && playerFirstCard == 0))
+        return 1;
+
+    return 0;
+}
+
