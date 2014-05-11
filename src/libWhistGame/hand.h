@@ -63,5 +63,21 @@ int hand_addPlayer(struct Hand *hand, struct Player *player);
  */
 int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card);
 
+/**
+ * @brief Function checks if a card can be put down.
+ *
+ * @param hand Pointer to the hand in which checks it if the card can be put
+ *             down.
+ * @param player Pointer to the player which has the card.
+ * @param cardId The id of the card from player's hand.
+ * @param trump Pointer to the card which is the trump of the round.
+ *
+ * @return 1 if the card can be put down.
+ *         0 if the card can't be put down. 
+ *         other value on failure.
+ */
+int hand_checkCard(struct Hand *hand, struct Player *player,
+                   int cardId, struct Card *trump);
+
 #endif
 
