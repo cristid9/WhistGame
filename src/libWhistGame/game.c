@@ -5,6 +5,7 @@
  */
 
 #include "game.h"
+#include "errors.h"
 
 #include <stdlib.h>
 
@@ -29,5 +30,26 @@ struct Game *game_createGame(int playersNumber, int gameType)
         game->rounds[i] = NULL;
 
     return game;
+}
+
+int game_deleteGame(struct Game **game)
+{
+    if (game == NULL)
+        return POINTER_NULL;
+    if (*game == NULL)
+        return GAME_NULL;
+
+    if ((*game)->deck != NULL)
+        deck_deleteDeck(&((*game)->deck));
+
+    for (int i = 0; i < MAX_GAME_ROUNDS; i++)
+        if ((*game)->rounds[i] != NULL)
+            round_deleteRound(&((*game)->rounds[i]));
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if ((*game)->players[i] != NULL)
+            player_deletePlayer(&((*game)->players[i]));
+
+    return NO_ERROR;
 }
 
