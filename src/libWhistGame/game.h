@@ -35,5 +35,24 @@ struct Game {
     struct Round *rounds[MAX_GAME_ROUNDS];
 };
 
+/**
+ * @brief Function allocates and initializes a game.
+ *
+ * @param playersNumber The number of the players which plays in this game.
+ * @param gameType The type of the game (1 or 8).
+ *
+ * @return Pointer to the new game on success, NULL on failure.
+ */
+struct Game *game_createGame(int playersNumber, int gameType);
+
+/**
+ * @brief Function releases the memory a game and makes pointer NULL.
+ *
+ * @param game Pointer to pointer to the game which to be released.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int game_deleteGame(struct Game **game);
+
 #endif
 
