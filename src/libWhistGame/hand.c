@@ -111,10 +111,12 @@ int hand_checkCard(struct Hand *hand, struct Player *player,
         suitTrump = SuitEnd;
 
     for (int i = 0; i < MAX_CARDS; i++) {
-        if (player->hand[i]->suit == hand->cards[0]->suit)
-            playerFirstCard = 1;
-        if (suitTrump != SuitEnd && player->hand[i]->suit == trump->suit)
-            playerSuitTrump = 1;
+        if (player->hand[i] != NULL) {
+            if (player->hand[i]->suit == hand->cards[0]->suit)
+                playerFirstCard = 1;
+            if (suitTrump != SuitEnd && player->hand[i]->suit == trump->suit)
+               playerSuitTrump = 1;
+        }
     }
 
     if ((player->hand[cardId]->suit == hand->cards[0]->suit) ||
