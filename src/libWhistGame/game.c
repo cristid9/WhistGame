@@ -50,6 +50,9 @@ int game_deleteGame(struct Game **game)
         if ((*game)->players[i] != NULL)
             player_deletePlayer(&((*game)->players[i]));
 
+    free(*game);
+    *game = NULL;
+
     return NO_ERROR;
 }
 
