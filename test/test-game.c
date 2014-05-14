@@ -31,3 +31,12 @@ void test_game_createGame()
     cut_assert_equal_pointer(NULL, game_createGame(MAX_GAME_PLAYERS + 1, 5));
 }
 
+void test_game_deleteGame()
+{
+    struct Game *game = game_createGame(MIN_GAME_PLAYERS, 1);
+    cut_assert_equal_int(POINTER_NULL, game_deleteGame(NULL));
+    cut_assert_equal_int(NO_ERROR, game_deleteGame(&game));
+    cut_assert_equal_int(GAME_NULL, game_deleteGame(&game));
+    cut_assert_equal_pointer(NULL, game);
+}
+
