@@ -86,3 +86,54 @@ void test_hand_addCard()
     hand_deleteHand(&hand);
 }
 
+void test_hand_checkCard()
+{
+    struct Hand *hand = hand_createHand();
+    struct Player *players[3];
+    struct Card *card;
+
+    for (int i = 0; i < 3; i++) {
+        players[i] = player_createPlayer("A", i);
+        hand_addPlayer(hand, players[i]);
+    }
+
+    for (int i = 0; i != SuitEnd; i++ )
+        for (int j = 0; j < 6; j++) {
+            card = deck_createCard(i, VALUES[j]);
+            player_addCard(players[j % 3], &card);
+        }
+
+    cut_assert_equal_int(1, hand_checkCard(hand, players[0], 0, NULL));
+    cut_assert_equal_int(1, hand_checkCard(hand, players[0], 2, NULL));
+    cut_assert_equal_int(1, hand_checkCard(hand, players[0], 4, NULL));
+    cut_assert_equal_int(1, hand_checkCard(hand, players[0], 6, NULL));
+    hand_addCard(hand, players[0], &players[0]->hand[0]); 
+    cut_assert_equal_int(0, hand_checkCard(hand, players[1], 2, NULL));
+    cut_assert_equal_int(1, hand_checkCard(hand, players[1], 0, NULL));
+    deck_deleteCard(&(players[1]->hand[0]));
+    deck_deleteCard(&(players[1]->hand[1]));
+    cut_assert_equal_int(1, hand_checkCard(hand, players[1], 2, NULL));
+    hand_addCard(hand, players[1], &players[1]->hand[2]);
+    card = deck_createCard(CLUBS, VALUES[6]);
+    cut_assert_equal_int(0, hand_checkCard(hand, players[2], 2, card));
+    cut_assert_equal_int(0, hand_checkCard(hand, players[2], 4, card));
+    cut_assert_equal_int(1, hand_checkCard(hand, players[2], 0, card));
+    cut_assert_equal_int(1, hand_checkCard(hand, players[2], 1, card));
+    deck_deleteCard(&(players[2]->hand[0]));
+    deck_deleteCard(&(players[2]->hand[1]));
+    cut_assert_equal_int(1, hand_checkCard(hand, players[2], 2, card));
+    cut_assert_equal_int(0, hand_checkCard(hand, players[2], 4, card));
+    deck_deleteCard(&(players[2]->hand[2]));
+    deck_deleteCard(&(players[2]->hand[3]));
+    cut_assert_equal_int(1, hand_checkCard(hand, players[2], 4, card));
+    cut_assert_equal_int(1, hand_checkCard(hand, players[2], 6, card));
+
+    deck_deleteCard(&card);
+    hand_deleteHand(&hand);     
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < MAX_CARDS; j++)
+            deck_deleteCard(&players[i]->hand[j]);
+        player_deletePlayer(&players[i]);
+    }
+}
+
