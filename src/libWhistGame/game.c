@@ -93,3 +93,22 @@ int game_addPlayer(struct Game *game, struct Player **player)
     return FULL;
 }
 
+int game_addRound(struct Game *game, struct Round **round)
+{
+    if (game == NULL)
+        return GAME_NULL;
+    if (round == NULL)
+        return POINTER_NULL;
+    if (*round == NULL)
+        return ROUND_NULL;
+
+    for (int i = 0; i < MAX_GAME_ROUNDS; i++)
+        if (game->rounds[i] == NULL) {
+            game->rounds[i] = *round;
+            *round = NULL;
+            return NO_ERROR;
+        }
+
+    return FULL;
+}
+
