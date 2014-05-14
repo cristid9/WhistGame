@@ -56,3 +56,21 @@ int game_deleteGame(struct Game **game)
     return NO_ERROR;
 }
 
+int game_addDeck(struct Game *game, struct Deck **deck)
+{
+    if (game == NULL)
+        return GAME_NULL;
+    if (deck == NULL)
+        return POINTER_NULL;
+    if (*deck == NULL)
+        return DECK_NULL;
+
+    if (game->deck != NULL)
+        deck_deleteDeck(&game->deck);
+
+    game->deck = *deck;
+    *deck = NULL;
+
+    return NO_ERROR;
+}
+
