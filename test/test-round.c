@@ -73,11 +73,16 @@ void test_round_addHand()
     struct Round *round = round_createRound(MIN_CARDS);
     struct Hand  *hand  = hand_createHand();
 
-    cut_assert_equal_int(ROUND_NULL, round_addHand(NULL, hand));
-    cut_assert_equal_int(HAND_NULL, round_addHand(round, NULL));
+    cut_assert_equal_int(ROUND_NULL, round_addHand(NULL, &hand));
+    cut_assert_equal_int(POINTER_NULL, round_addHand(round, NULL));
     cut_assert_operator_int(0, >, round_addHand(NULL, NULL));
-    cut_assert_equal_int(NO_ERROR, round_addHand(round, hand));
-    cut_assert_equal_pointer(hand, round->hand);
+    cut_assert_equal_int(NO_ERROR, round_addHand(round, &hand));
+    cut_assert_equal_int(HAND_NULL, round_addHand(round, &hand));
+    cut_assert_equal_pointer(NULL, hand);
+    int check = 0;
+    if (round->hand == NULL)
+        check++;
+    cut_assert_equal_int(0, check);
 
     round_deleteRound(&round);
 }
