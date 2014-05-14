@@ -72,17 +72,20 @@ int round_addPlayer(struct Round *round, struct Player *player)
     return FULL;
 }
 
-int round_addHand(struct Round *round, struct Hand *hand)
+int round_addHand(struct Round *round, struct Hand **hand)
 {
     if (round == NULL)
         return ROUND_NULL;
     if (hand == NULL)
+        return POINTER_NULL;
+    if (*hand == NULL)
         return HAND_NULL;
 
     if (round->hand != NULL)
         hand_deleteHand(&(round->hand));
 
-    round->hand = hand;
+    round->hand = *hand;
+    *hand = NULL;    
 
     return NO_ERROR;
 }
