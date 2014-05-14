@@ -74,3 +74,22 @@ int game_addDeck(struct Game *game, struct Deck **deck)
     return NO_ERROR;
 }
 
+int game_addPlayer(struct Game *game, struct Player **player)
+{
+    if (game == NULL)
+        return GAME_NULL;
+    if (player == NULL)
+        return POINTER_NULL;
+    if (*player == NULL)
+        return PLAYER_NULL;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (game->players[i] != NULL) {
+            game->players[i] = *player;
+            *player = NULL;
+            return NO_ERROR;
+        }
+
+    return FULL;
+}
+
