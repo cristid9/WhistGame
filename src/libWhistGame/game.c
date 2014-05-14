@@ -84,7 +84,7 @@ int game_addPlayer(struct Game *game, struct Player **player)
         return PLAYER_NULL;
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++)
-        if (game->players[i] != NULL) {
+        if (game->players[i] == NULL) {
             game->players[i] = *player;
             *player = NULL;
             return NO_ERROR;
