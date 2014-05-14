@@ -69,11 +69,11 @@ int round_addPlayer(struct Round *round, struct Player *player);
  * @brief Function adds a hand in a round.
  *
  * @param round Pointer to the round in which is added the hand.
- * @param hand Pointer to the hand which to be added.
+ * @param hand Pointer to pointer to the hand which to be added.
  *
  * @return NO_ERROR or 0 on success, other value on failure.
  */
-int round_addHand(struct Round *round, struct Hand *hand);
+int round_addHand(struct Round *round, struct Hand **hand);
 
 /**
  * @brief Function adds the trump in a round.
