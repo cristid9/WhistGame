@@ -54,5 +54,15 @@ struct Game *game_createGame(int playersNumber, int gameType);
  */
 int game_deleteGame(struct Game **game);
 
+/**
+ * @brief Function adds deck in game.
+ *
+ * @param game Pointer to the game in which will be added the deck.
+ * @param deck Pointer to pointer to the deck which to be added.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int game_addDeck(struct Game *game, struct Deck **deck);
+
 #endif
 
