@@ -74,5 +74,15 @@ int game_addDeck(struct Game *game, struct Deck **deck);
  */
 int game_addPlayer(struct Game *game, struct Player **player);
 
+/**
+ * @brief Function adds a round in game.
+ *
+ * @param game Pointer to the game in which to be added the round.
+ * @param player Pointer to pointer to the round which to be added.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int game_addRound(struct Game *game, struct Round **round);
+
 #endif
 
