@@ -83,6 +83,15 @@ int game_addPlayer(struct Game *game, struct Player **player)
     if (*player == NULL)
         return PLAYER_NULL;
 
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        if (game->players[i] == *player)
+            return DUPLICATE;
+        if (game->players[i] != NULL && 
+            game->players[i]->name == (*player)->name)
+            return DUPLICATE_NAME;
+    }
+
+
     for (int i = 0; i < MAX_GAME_PLAYERS; i++)
         if (game->players[i] == NULL) {
             game->players[i] = *player;
