@@ -57,3 +57,38 @@ void test_game_addDeck()
     game_deleteGame(&game);
 }
 
+void *getName(int i, char name[4])
+{
+    i++;
+    int j = 0;
+    while (i != 0) {
+        name[j++] = 48 + i % 10;
+        i /= 10;
+    }
+    name[j] = '\0';
+}
+
+void test_game_addPlayer()
+{
+    struct Game *game = game_createGame(MAX_GAME_PLAYERS, 1);
+    struct Player *player1;
+    struct Player *player2;
+    char name[4];
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        getName(i, name);
+        player1 = player_createPlayer(name, 1);
+        player2 = player1;
+        cut_assert_equal_int(NO_ERROR, game_addPlayer(game, &player1));
+        cut_assert_equal_pointer(NULL, player1);
+        cut_assert_equal_int(DUPLICATE, game_addPlayer(game, &player2));
+        player1 = player_createPlayer(name, 1);
+        cut_assert_equal_int(DUPLICATE_NAME, game_addPlayer(game, &player1));
+        cut_assert_equal_int(i + 1, game->playersNumber);
+    }
+
+    getName(MAX_GAME_PLAYERS, name);
+    player1 = player_createPlayer(name, 1);
+    cut_assert_equal_int(FULL, game_addPlayer(game, &player1));
+}
+
