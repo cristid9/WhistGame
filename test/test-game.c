@@ -88,3 +88,32 @@ void test_game_addPlayer()
     cut_assert_equal_int(FULL, game_addPlayer(game, &player1));
 }
 
+void test_game_addRound()
+{
+    struct Game *game = game_createGame(1);
+    struct Round *round1;
+    struct Round *round2;
+
+    round1 = round_createRound(1);
+    cut_assert_equal_int(GAME_NULL, game_addRound(NULL, &round1));
+    cut_assert_equal_int(POINTER_NULL, game_addRound(game, NULL));
+    round_deleteRound(&round1);
+    cut_assert_equal_int(ROUND_NULL, game_addRound(game, &round1));
+
+    for (int i = 0; i < MAX_GAME_ROUNDS; i++) {
+        round1 = round_createRound(1);
+        round2 = round1;
+        cut_assert_equal_int(NO_ERROR, game_addRound(game, &round1));
+        cut_assert_equal_int(DUPLICATE, game_addRound(game, &round2));
+        cut_assert_equal_pointer(NULL, round1);
+        int check = 0;
+        for (int j = 0; j < MAX_GAME_ROUNDS; j++)
+            if (game->rounds[j] == round2)
+                check++;
+        cut_assert_equal_int(1, check);
+    }
+
+    round2 = NULL;
+    game_deleteGame(&game);
+}
+
