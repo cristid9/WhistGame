@@ -8,6 +8,7 @@
 #include "errors.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 struct Game *game_createGame(int playersNumber, int gameType)
 {
@@ -87,7 +88,7 @@ int game_addPlayer(struct Game *game, struct Player **player)
         if (game->players[i] == *player)
             return DUPLICATE;
         if (game->players[i] != NULL && 
-            game->players[i]->name == (*player)->name)
+            !strcmp(game->players[i]->name, (*player)->name))
             return DUPLICATE_NAME;
     }
 
@@ -96,6 +97,7 @@ int game_addPlayer(struct Game *game, struct Player **player)
         if (game->players[i] == NULL) {
             game->players[i] = *player;
             *player = NULL;
+            game->playersNumber++;
             return NO_ERROR;
         }
 
