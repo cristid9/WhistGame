@@ -260,6 +260,9 @@ void test_round_checkBid()
 {
     struct Round *round = round_createRound(8);
     struct Player *players[MAX_GAME_PLAYERS];
+    struct Player *player = player_createPlayer("A", 1);
+
+    cut_assert_equal_int(NOT_FOUND, round_checkBid(round, player, 1));
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
         players[i] = player_createPlayer("A", i);
