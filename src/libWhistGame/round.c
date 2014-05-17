@@ -228,8 +228,11 @@ int round_checkBid(struct Round *round, struct Player *player, int bid)
     if (bid < MIN_CARDS - 1 || bid > round->roundType)
         return ILLEGAL_VALUE;
 
-    int i;
-    for (i = round_getPlayerId(round, player) + 1; i < MAX_GAME_PLAYERS; i++)
+    int position = round_getPlayerId(round, player);
+    if (position < 0)
+        return position;
+
+    for (int i = position + 1; i < MAX_GAME_PLAYERS; i++)
         if (round->players[i] != NULL)
             return NO_ERROR;
 
