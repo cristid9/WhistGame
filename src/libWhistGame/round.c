@@ -192,3 +192,50 @@ int round_distributeDeck(struct Round *round, struct Deck *deck)
     return NO_ERROR;
 }
 
+int round_getPlayerId(struct Round *round, struct Player *player)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+    if (player == NULL)
+        return PLAYER_NULL;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (round->players[i] == player)
+            return i;
+
+    return NOT_FOUND;
+}
+
+int round_getBidsSum(struct Round *round)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+
+    int sum = 0;
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (round->players[i] != NULL)
+            sum += round->bids[i];
+
+    return sum;
+}
+
+int round_checkBid(struct Round *round, struct Player *player, int bid)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+    if (player == NULL)
+        return PLAYER_NULL;
+    if (bid < MIN_CARDS - 1 || bid > round->roundType)
+        return ILLEGAL_VALUE;
+
+    int i;
+    for (i = round_getPlayerId(round, player) + 1; i < MAX_GAME_PLAYERS; i++)
+        if (round->players[i] != NULL)
+            return NO_ERROR;
+
+    if (round_getBidsSum(round) + bid == round->roundType)
+        return ILLEGAL_VALUE;
+
+    return NO_ERROR;
+}
+
