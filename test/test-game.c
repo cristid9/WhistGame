@@ -76,6 +76,12 @@ void test_game_addPlayer()
         player1 = player_createPlayer(name, 1);
         player2 = player1;
         cut_assert_equal_int(NO_ERROR, game_addPlayer(game, &player1));
+
+        int check = 0;
+        for (int j = 0; j < MAX_GAME_PLAYERS; j++)
+            if (game->players[j] == player2)
+                check++;
+        cut_assert_equal_int(1, check);
         cut_assert_equal_pointer(NULL, player1);
         cut_assert_equal_int(DUPLICATE, game_addPlayer(game, &player2));
         player1 = player_createPlayer(name, 1);
@@ -86,6 +92,10 @@ void test_game_addPlayer()
     getName(MAX_GAME_PLAYERS, name);
     player1 = player_createPlayer(name, 1);
     cut_assert_equal_int(FULL, game_addPlayer(game, &player1));
+
+    player_deletePlayer(&player1);
+    player2 = NULL;
+    game_deleteGame(&game);
 }
 
 void test_game_addRound()
