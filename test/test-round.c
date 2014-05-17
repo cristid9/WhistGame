@@ -217,3 +217,25 @@ void test_round_distributeDeck()
         player_deletePlayer(&players[i]);
 }
 
+void test_round_getPlayerId()
+{
+    struct Round *round = round_createRound(1);
+    struct Player *players[MAX_GAME_PLAYERS + 1];
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        players[i] = player_createPlayer("A", i);
+        round_addPlayer(round, players[i]);
+        cut_assert_equal_int(i, round_getPlayerId(round, players[i]));
+    }
+
+    players[MAX_GAME_PLAYERS] = player_createPlayer("A", 1);
+    cut_assert_equal_int(NOT_FOUND, 
+                         round_getPlayerId(round, players[MAX_GAME_PLAYERS]));
+    cut_assert_equal_int(ROUND_NULL, round_getPlayerId(NULL, players[0]));
+    cut_assert_equal_int(PLAYER_NULL, round_getPlayerId(round, NULL));
+
+    round_deleteRound(&round);
+    for (int i = 0; i <= MAX_GAME_PLAYERS; i++)
+        player_deletePlayer(&players[i]);
+}
+
