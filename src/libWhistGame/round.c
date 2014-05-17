@@ -239,3 +239,15 @@ int round_checkBid(struct Round *round, struct Player *player, int bid)
     return NO_ERROR;
 }
 
+int round_placeBid(struct Round *round, struct Player *player, int bid)
+{
+    int check = round_checkBid(round, player, bid);
+    if (check != 0)
+        return check;
+
+    int position = round_getPlayerId(round, player);
+    round->bids[position] = bid;
+
+    return NO_ERROR;
+}
+
