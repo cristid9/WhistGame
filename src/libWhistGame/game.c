@@ -125,3 +125,23 @@ int game_addRound(struct Game *game, struct Round **round)
     return FULL;
 }
 
+int game_addPlayersInRound(struct Game *game, struct Round *round,
+                           int firstPlayer)
+{
+    if (game == NULL)
+        return GAME_NULL;
+    if (round == NULL)
+        return ROUND_NULL;
+    if (firstPlayer < 0 || firstPlayer >= MAX_GAME_PLAYERS)
+        return ILLEGAL_VALUE;
+    if (game->playersNumber < MIN_GAME_PLAYERS)
+        return INSUFFICIENT_PLAYERS;
+
+    for (int i = firstPlayer; i < MAX_GAME_PLAYERS; i++)
+        round_addPlayer(round, game->players[i]);
+    for (int i = 0; i < firstPlayer; i++)
+        round_addPlayer(round, game->players[i]);
+
+    return NO_ERROR;
+}
+
