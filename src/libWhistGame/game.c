@@ -112,6 +112,10 @@ int game_addRound(struct Game *game, struct Round **round)
         return ROUND_NULL;
 
     for (int i = 0; i < MAX_GAME_ROUNDS; i++)
+        if (game->rounds[i] == *round)
+            return DUPLICATE;
+
+    for (int i = 0; i < MAX_GAME_ROUNDS; i++)
         if (game->rounds[i] == NULL) {
             game->rounds[i] = *round;
             *round = NULL;
