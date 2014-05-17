@@ -115,5 +115,37 @@ int round_distributeCard(struct Round *round, struct Deck *deck);
  */
 int round_distributeDeck(struct Round *round, struct Deck *deck);
 
+/**
+ * @brief Function get the id of the player.
+ *
+ * @param round Pointer to the round in which is the player.
+ * @param player Pointer to the player for which it get the id.
+ *
+ * @return A number between 0 and MAX_GAME_PLAYERS on success, a negative value
+ *         on failure.
+ */
+int round_getPlayerId(struct Round *round, struct Player *player);
+
+/**
+ * @brief Function get the sum of the bids from a round.
+ *
+ * @param round Pointer to the round for which is calculated the sum of the 
+ *              bids.
+ *
+ * @return A positive value on success, a negative value on failure.
+ */
+int round_getBidsSum(struct Round *round);
+
+/**
+ * @brief Function checks if a bid can be bid.
+ *
+ * @param round Pointer to the round in which is checked the bid.
+ * @param player Pointer to the player who bids.
+ * @param bid The bid which is bid.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int round_checkBid(struct Round *round, struct Player *player, int bid);
+
 #endif
 
