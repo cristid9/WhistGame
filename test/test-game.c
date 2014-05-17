@@ -113,6 +113,10 @@ void test_game_addRound()
         cut_assert_equal_int(1, check);
     }
 
+    round1 = round_createRound(1);
+    cut_assert_equal_int(FULL, game_addRound(game, &round1));
+    
+    round_deleteRound(&round1);
     round2 = NULL;
     game_deleteGame(&game);
 }
