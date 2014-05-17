@@ -147,5 +147,16 @@ int round_getBidsSum(struct Round *round);
  */
 int round_checkBid(struct Round *round, struct Player *player, int bid);
 
+/**
+ * @brief Function places a bid of a player.
+ *
+ * @param round Pointer to the round in which is found the player.
+ * @param player Pointer to the player who places the bid.
+ * @param bid The value of the bid.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int round_placeBid(struct Round *round, struct Player *player, int bid);
+
 #endif
 
