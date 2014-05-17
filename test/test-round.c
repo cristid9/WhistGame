@@ -239,3 +239,20 @@ void test_round_getPlayerId()
         player_deletePlayer(&players[i]);
 }
 
+void test_round_getBidsSum()
+{
+    struct Round *round = round_createRound(1);
+    struct Player *players[MAX_GAME_PLAYERS];
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        players[i] = player_createPlayer("A", i);
+        round_addPlayer(round, players[i]);
+        round->bids[i] = 1;
+        cut_assert_equal_int(i + 1, round_getBidsSum(round));
+    }
+
+    round_deleteRound(&round);
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        player_deletePlayer(&players[i]);
+}
+
