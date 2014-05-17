@@ -256,3 +256,35 @@ void test_round_getBidsSum()
         player_deletePlayer(&players[i]);
 }
 
+void test_round_checkBid()
+{
+    struct Round *round = round_createRound(8);
+    struct Player *players[MAX_GAME_PLAYERS];
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        players[i] = player_createPlayer("A", i);
+        round_addPlayer(round, players[i]);
+    }
+
+    cut_assert_equal_int(ROUND_NULL, round_checkBid(NULL, players[0], 1));
+    cut_assert_equal_int(PLAYER_NULL, round_checkBid(round, NULL, 1));
+    cut_assert_equal_int(ILLEGAL_VALUE,
+                         round_checkBid(round, players[0], MIN_CARDS - 2));
+    cut_assert_equal_int(ILLEGAL_VALUE,
+                         round_checkBid(round, players[0], MAX_CARDS + 1));
+
+    for (int i = 0; i < MAX_GAME_PLAYERS - 1; i++) {
+        cut_assert_equal_int(NO_ERROR, round_checkBid(round, players[i], 1));
+        round->bids[i] = 1;
+    }
+
+    int i = MAX_GAME_PLAYERS - 1;
+    cut_assert_equal_int(NO_ERROR, round_checkBid(round, players[i], 1));
+    cut_assert_equal_int(ILLEGAL_VALUE, round_checkBid(round, players[i],
+                                                       MAX_CARDS - i));
+
+    round_deleteRound(&round);
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        player_deletePlayer(&players[i]);
+}
+
