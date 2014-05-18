@@ -55,5 +55,11 @@ const int VALUES[13];
  */
 #define SWAPS_NUMBER 100
 
+/**
+ * @brief The points number on which a player earns them when the won hands
+ *        number is equal with the hands number on which he bid them.
+ */
+#define POINTS_PER_ROUND 5
+ 
 #endif
 
