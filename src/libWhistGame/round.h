@@ -21,6 +21,8 @@
  *      Pointer to the card which is the trump of the round, if this exists.
  * @var Round::bids
  *      The bids of the players.
+ * @var Round::handsNumber
+ *      The number of the won hands of each players.
  * @var Round::pointsNumber
  *      The score of the players.
  * @var Round::players
@@ -32,6 +34,7 @@ struct Round {
     int roundType;
     struct Card *trump;
     int bids[MAX_GAME_PLAYERS];
+    int handsNumber[MAX_GAME_PLAYERS];
     int pointsNumber[MAX_GAME_PLAYERS];
     struct Player *players[MAX_GAME_PLAYERS];
     struct Hand *hand;
