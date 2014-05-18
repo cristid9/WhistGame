@@ -289,3 +289,23 @@ struct Player *round_getPlayerWhichWonHand(struct Round *round)
     return winningPlayer;
 }
 
+int round_determinesScore(struct Round *round)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (round->players[i] != NULL) {
+            if (round->handsNumber[i] == round->bids[i])
+                round->pointsNumber[i] += POINTS_PER_ROUND + round->bids[i];
+            else {
+                int difference = round->handsNumber[i] - round->bids[i];
+                if (difference < 0)
+                    difference = -difference;
+                round->pointsNumber[i] -= difference;
+            }
+        }
+
+    return NO_ERROR;
+}
+
