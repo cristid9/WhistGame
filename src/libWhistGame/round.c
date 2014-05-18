@@ -21,6 +21,7 @@ struct Round *round_createRound(int roundType)
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
         round->bids[i]         = 0;
         round->pointsNumber[i] = 0;
+        round->handsNumber[i]  = 0;
         round->players[i]      = NULL;
     }
 
