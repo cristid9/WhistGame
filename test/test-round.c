@@ -19,6 +19,7 @@ void test_round_createRound()
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
         cut_assert_equal_pointer(NULL, round->players[i]);
         cut_assert_equal_int(0, round->bids[i]);
+        cut_assert_equal_int(0, round->handsNumber[i]);
         cut_assert_equal_int(0, round->pointsNumber[i]);
     }
 
