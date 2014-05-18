@@ -83,5 +83,18 @@ int game_addPlayer(struct Game *game, struct Player **player);
  */
 int game_addRound(struct Game *game, struct Round **round);
 
+/**
+ * @brief Function adds the players from game in round as from the position 
+ *        firstPlayer.
+ *
+ * @param game Pointer to the game from which are added the players.
+ * @param round Pointer to the round in which to be added the players.
+ * @param firstPlayer The player id from game which is the first added in round.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int game_addPlayersInRound(struct Game *game, struct Round *round,
+                           int firstPlayer);
+
 #endif
 
