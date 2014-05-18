@@ -161,5 +161,16 @@ int round_checkBid(struct Round *round, struct Player *player, int bid);
  */
 int round_placeBid(struct Round *round, struct Player *player, int bid);
 
+/**
+ * @brief Function determines who won the hand and incremets handsNumber for
+ *        the winning player.
+ *
+ * @param round Pointer to the round in which is the hand for which is 
+ *              determinated the winning player.
+ *
+ * @return Pointer to the winning player on success, NULL on failure.
+ */
+struct Player *round_getPlayerWhichWonHand(struct Round *round);
+
 #endif
 
