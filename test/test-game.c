@@ -131,3 +131,40 @@ void test_game_addRound()
     game_deleteGame(&game);
 }
 
+void test_game_addPlayersInRound()
+{
+    struct Game *game = game_createGame(1);
+    struct Round *round = round_createRound(1);
+    struct Player *players[MAX_GAME_PLAYERS];
+
+    cut_assert_equal_int(GAME_NULL, game_addPlayersInRound(NULL, round, 0));
+    cut_assert_equal_int(ROUND_NULL, game_addPlayersInRound(game, NULL, 0));
+    cut_assert_equal_int(ILLEGAL_VALUE,
+                         game_addPlayersInRound(game, round, -1));
+    cut_assert_equal_int(INSUFFICIENT_PLAYERS,
+                         game_addPlayersInRound(game, round, 0));
+    round_deleteRound(&round);
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        char name[4];
+        getName(i, name);
+        players[i] = player_createPlayer(name, i);
+        game_addPlayer(game, &players[i]);
+    }
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        round = round_createRound(1);
+        cut_assert_equal_int(NO_ERROR, game_addPlayersInRound(game, round, i));
+        int position = 0;
+        for (int j = i; j < MAX_GAME_PLAYERS; j++)
+            cut_assert_equal_pointer(game->players[j],
+                                     round->players[position++]);
+        for (int j = 0; j < i; j++)
+            cut_assert_equal_pointer(game->players[j],
+                                     round->players[position++]);
+        round_deleteRound(&round);
+    }
+
+    game_deleteGame(&game);
+}
+
