@@ -255,3 +255,37 @@ int round_placeBid(struct Round *round, struct Player *player, int bid)
     return NO_ERROR;
 }
 
+struct Player *round_getPlayerWhichWonHand(struct Round *round)
+{
+    if (round == NULL || round->hand == NULL)
+        return NULL;
+
+    int playersNumber = 0;
+    int cardsNumber = 0;
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        if (round->hand->players[i] != NULL)
+            playersNumber++;
+        if (round->hand->cards[i] != NULL)
+            cardsNumber++;
+    }
+
+    if (playersNumber < MIN_GAME_PLAYERS || playersNumber != cardsNumber)
+        return NULL;
+
+    struct Player *winningPlayer = round->hand->players[0];
+    struct Card   *winningCard   = round->hand->cards[0];
+    enum Suit trump;
+    if (round->trump == NULL)
+        trump = SuitEnd;
+    else
+        trump = round->trump->suit;
+
+    for (int i = 1; i < MAX_GAME_PLAYERS; i++)
+        if (deck_compareCards(winningCard, round->hand->cards[i], trump) == 2) {
+            winningPlayer = round->hand->players[i];
+            winningCard   = round->hand->cards[i];
+        }
+
+    return winningPlayer;
+}
+
