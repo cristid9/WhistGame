@@ -97,8 +97,6 @@ int round_addTrump(struct Round *round, struct Card **trump)
         return ROUND_NULL;
     if (trump == NULL)
         return POINTER_NULL;
-    if (*trump == NULL)
-        return CARD_NULL;
 
     if (round->trump != NULL)
         deck_deleteCard(&(round->trump));
