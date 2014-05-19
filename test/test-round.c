@@ -322,3 +322,66 @@ void test_round_placeBid()
         player_deletePlayer(&players[i]);
 }
 
+void test_round_getPlayerWhichWonHand()
+{
+    struct Round *round = round_createRound(1);
+    struct Player *player;
+    struct Card *cards[6];
+    round->hand = hand_createHand();
+
+    for (int i = 0; i < 6; i++) {
+        player = player_createPlayer("A", i);
+        round_addPlayer(round, player);
+        hand_addPlayer(round->hand, player);
+        player = NULL;
+    }
+
+    cards[0] = deck_createCard(DIAMONDS, 6);
+    cards[1] = deck_createCard(DIAMONDS, 7);
+    cards[2] = deck_createCard(DIAMONDS, 8);
+    cards[3] = deck_createCard(DIAMONDS, 11);
+    cards[4] = deck_createCard(CLUBS, 14);
+    cards[5] = deck_createCard(SPADES, 7);
+
+    for (int i = 0; i < 6; i++)
+        hand_addCard(round->hand, round->hand->players[i], &cards[i]);
+
+    struct Card *trump = deck_createCard(DIAMONDS, 14);
+
+    cut_assert_equal_pointer(round->hand->players[3],
+                             round_getPlayerWhichWonHand(round));
+    round->trump = trump;
+    cut_assert_equal_pointer(round->hand->players[3],
+                             round_getPlayerWhichWonHand(round));
+    round->trump->suit = CLUBS;
+    cut_assert_equal_pointer(round->hand->players[4], 
+                             round_getPlayerWhichWonHand(round));
+    round->trump->suit = SPADES;
+    cut_assert_equal_pointer(round->hand->players[5],
+                             round_getPlayerWhichWonHand(round));
+    round->trump->suit = HEARTS;
+    cut_assert_equal_pointer(round->hand->players[3],
+                             round_getPlayerWhichWonHand(round));
+    round->hand->cards[0]->suit = HEARTS;
+    cut_assert_equal_pointer(round->hand->players[0],
+                             round_getPlayerWhichWonHand(round));
+    round->trump = NULL; 
+    cut_assert_equal_pointer(round->hand->players[0],
+                             round_getPlayerWhichWonHand(round));
+    round->trump = trump;
+    round->trump->suit = DIAMONDS;
+    cut_assert_equal_pointer(round->hand->players[3],
+                             round_getPlayerWhichWonHand(round));
+    round->trump->suit = CLUBS;
+    cut_assert_equal_pointer(round->hand->players[4],
+                             round_getPlayerWhichWonHand(round));
+    round->trump->suit = SPADES;
+    cut_assert_equal_pointer(round->hand->players[5],
+                             round_getPlayerWhichWonHand(round));
+
+    for (int i = 0; i < 6; i++)
+        player_deletePlayer(&round->players[i]);
+
+    round_deleteRound(&round);
+}
+
