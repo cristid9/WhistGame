@@ -172,5 +172,14 @@ int round_placeBid(struct Round *round, struct Player *player, int bid);
  */
 struct Player *round_getPlayerWhichWonHand(struct Round *round);
 
+/**
+ * @brief Function determines score after what the round ended.
+ *
+ * @param round Pointer to the round for which is determined the score.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int round_determinesScore(struct Round *round);
+
 #endif
 
