@@ -90,19 +90,19 @@ void test_round_addHand()
 
 void test_round_addTrump()
 {
-    struct Round *round = round_createRound(MIN_CARDS);
-    struct Card  *trump = deck_createCard(DIAMONDS, VALUES[0]);
+    struct Round *round  = round_createRound(MIN_CARDS);
+    struct Card  *trump  = deck_createCard(DIAMONDS, VALUES[0]);
+    struct Card  *trump2 = trump;
 
     cut_assert_equal_int(ROUND_NULL, round_addTrump(NULL, &trump));
     cut_assert_equal_int(POINTER_NULL, round_addTrump(round, NULL));
     cut_assert_operator_int(0, >, round_addTrump(NULL, NULL));
     cut_assert_equal_int(NO_ERROR, round_addTrump(round, &trump));
-    cut_assert_equal_int(CARD_NULL, round_addTrump(round, &trump));
     cut_assert_equal_pointer(NULL, trump);
-    int check = 0;
-    if (round->trump == NULL)
-        check++;
-    cut_assert_equal_int(0, check);
+    cut_assert_equal_pointer(trump2, round->trump);
+    cut_assert_equal_int(NO_ERROR, round_addTrump(round, &trump));
+    cut_assert_equal_pointer(NULL, trump);
+    cut_assert_equal_pointer(NULL, round->trump);
 
     round_deleteRound(&round);
 }
