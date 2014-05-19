@@ -43,6 +43,9 @@ int round_deleteRound(struct Round **round)
         hand_deleteHand(&((*round)->hand));
     if ((*round)->trump != NULL)
         deck_deleteCard(&((*round)->trump));
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        (*round)->players[i] = NULL;
     
     free(*round);
     *round = NULL;
