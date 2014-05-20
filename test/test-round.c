@@ -385,3 +385,35 @@ void test_round_getPlayerWhichWonHand()
     round_deleteRound(&round);
 }
 
+void test_round_determinesScore()
+{
+    struct Round *round = round_createRound(1);
+    struct Player *player;
+
+    for (int i = 0; i < 3; i++) {
+        player = player_createPlayer("A", i);
+        round_addPlayer(round, player);
+        player = NULL;
+    }
+
+    cut_assert_equal_int(ROUND_NULL, round_determinesScore(NULL));
+
+    round->bids[0]        = 2;
+    round->handsNumber[0] = 2;
+    round->bids[1]        = 3;
+    round->handsNumber[1] = 2;
+    round->bids[2]        = 2;
+    round->handsNumber[2] = 3;
+
+    cut_assert_equal_int(NO_ERROR, round_determinesScore(round));
+
+    cut_assert_equal_int(7, round->pointsNumber[0]);
+    cut_assert_equal_int(-1, round->pointsNumber[1]);
+    cut_assert_equal_int(-1, round->pointsNumber[2]);
+ 
+    for (int i = 0; i < 6; i++)
+        player_deletePlayer(&round->players[i]);
+
+    round_deleteRound(&round);
+}
+
