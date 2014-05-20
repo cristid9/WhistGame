@@ -327,7 +327,11 @@ void test_round_getPlayerWhichWonHand()
     struct Round *round = round_createRound(1);
     struct Player *player;
     struct Card *cards[6];
+
+    cut_assert_equal_pointer(NULL, round_getPlayerWhichWonHand(NULL));
+    cut_assert_equal_pointer(NULL, round_getPlayerWhichWonHand(round));
     round->hand = hand_createHand();
+    cut_assert_equal_pointer(NULL, round_getPlayerWhichWonHand(round));
 
     for (int i = 0; i < 6; i++) {
         player = player_createPlayer("A", i);
@@ -343,6 +347,8 @@ void test_round_getPlayerWhichWonHand()
     cards[4] = deck_createCard(CLUBS, 14);
     cards[5] = deck_createCard(SPADES, 7);
 
+    cut_assert_equal_pointer(NULL, round_getPlayerWhichWonHand(round));
+    
     for (int i = 0; i < 6; i++)
         hand_addCard(round->hand, round->hand->players[i], &cards[i]);
 
