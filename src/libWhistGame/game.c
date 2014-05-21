@@ -145,3 +145,51 @@ int game_addPlayersInRound(struct Game *game, struct Round *round,
     return NO_ERROR;
 }
 
+int game_createAndAddRounds(struct Game *game)
+{
+    if (game == NULL)
+        return GAME_NULL;
+
+    struct Round *round;
+    for (int i = 0; i < game->playersNumber; i++) {
+        round = round_createRound(game->gameType);
+        game_addRound(game, &round);
+    }
+
+    int roundType;
+    int type;
+    if (game->gameType == 8) {
+        roundType = -1;
+        type = 1;
+    } else {
+        roundType = 1;
+        type = 8;
+    }
+
+    for (int i = 0; i < 6; i++) {
+        int type2 = game->rounds[game->playersNumber + i - 1]->roundType + 
+                    roundType;
+        round = round_createRound(type2);
+        game_addRound(game, &round);
+    }
+
+    for (int i = 0; i < game->playersNumber; i++) {
+        round = round_createRound(type);
+        game_addRound(game, &round);
+    }
+
+    for (int i = 0; i < 6; i++) {
+        int type = game->rounds[game->playersNumber + i - 1]->roundType - 
+                   roundType;
+        round = round_createRound(type);
+        game_addRound(game, &round);
+    }
+
+    for (int i = 0; i < game->playersNumber; i++) {
+        round = round_createRound(game->gameType);
+        game_addRound(game, &round);
+    }
+
+    return NO_ERROR;
+}
+
