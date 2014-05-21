@@ -181,5 +181,15 @@ struct Player *round_getPlayerWhichWonHand(struct Round *round);
  */
 int round_determinesScore(struct Round *round);
 
+/**
+ * @brief Function copy the score from round1 in round2.
+ *
+ * @param round1 Pointer to the round from which is copied the score.
+ * @param round2 Pointer to the round in which is added the score from round1.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int round_copyScore(struct Round *round1, struct Round *round2);
+
 #endif
 
