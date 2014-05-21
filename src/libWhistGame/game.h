@@ -96,5 +96,14 @@ int game_addRound(struct Game *game, struct Round **round);
 int game_addPlayersInRound(struct Game *game, struct Round *round,
                            int firstPlayer);
 
+/**
+ * @brief Function creates and adds all the rounds in game.
+ *
+ * @param game Pointer to the game in which to be added the rounds.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int game_createAndAddRounds(struct Game *game);
+
 #endif
 
