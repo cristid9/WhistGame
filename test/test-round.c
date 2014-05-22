@@ -423,3 +423,31 @@ void test_round_determinesScore()
     round_deleteRound(&round);
 }
 
+void test_round_copyScore()
+{
+    struct Round *round1 = round_createRound(1);
+    struct Round *round2 = round_createRound(1);
+    struct Player *players[MAX_GAME_PLAYERS];
+
+    cut_assert_equal_int(ROUND_NULL, round_copyScore(NULL, round2));
+    cut_assert_equal_int(ROUND_NULL, round_copyScore(round1, NULL));
+    cut_assert_equal_int(ROUND_NULL, round_copyScore(NULL, NULL));
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        players[i] = player_createPlayer("A", i);
+        round_addPlayer(round1, players[i]);
+        round_addPlayer(round2, players[i]);
+        round1->pointsNumber[i] = i;
+    }
+
+    cut_assert_equal_int(NO_ERROR, round_copyScore(round1, round2));
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        cut_assert_equal_int(round1->pointsNumber[i], round2->pointsNumber[i]);
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        player_deletePlayer(&players[i]);
+
+    round_deleteRound(&round1);
+    round_deleteRound(&round2);
+}
+
