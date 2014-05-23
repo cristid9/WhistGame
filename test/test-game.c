@@ -2,6 +2,7 @@
 #include <errors.h>
 
 #include <cutter.h>
+#include <stdio.h>
 
 void test_game_createGame()
 {
@@ -164,6 +165,63 @@ void test_game_addPlayersInRound()
                                      round->players[position++]);
         round_deleteRound(&round);
     }
+
+    game_deleteGame(&game);
+}
+
+void test_game_createAndAddRounds()
+{
+    struct Game *game = game_createGame(1);
+    game->playersNumber = MIN_GAME_PLAYERS;
+
+    cut_assert_equal_int(GAME_NULL, game_createAndAddRounds(NULL));
+    cut_assert_equal_int(NO_ERROR, game_createAndAddRounds(game));
+    
+    int i;
+    for (i = 0; i < MIN_GAME_PLAYERS; i++)
+        cut_assert_equal_int(1, game->rounds[i]->roundType);
+
+    int type = 1;
+    for (; i < MIN_GAME_PLAYERS + 6; i++) {
+        type++;
+        cut_assert_equal_int(type, game->rounds[i]->roundType);
+    }
+
+    for (; i < 2 * MIN_GAME_PLAYERS + 6; i++)
+        cut_assert_equal_int(8, game->rounds[i]->roundType);
+
+    for (; i < 2 * MIN_GAME_PLAYERS + 12; i++) {
+        cut_assert_equal_int(type, game->rounds[i]->roundType);
+        type--;
+    }
+
+    for (; i < 3 * MIN_GAME_PLAYERS + 12; i++)
+        cut_assert_equal_int(1, game->rounds[i]->roundType);
+
+    game_deleteGame(&game);
+    game = game_createGame(8);
+    game->playersNumber = MIN_GAME_PLAYERS;
+    cut_assert_equal_int(NO_ERROR, game_createAndAddRounds(game));
+
+    for (i = 0; i < MIN_GAME_PLAYERS; i++)
+        cut_assert_equal_int(8, game->rounds[i]->roundType);
+
+    type = 8;
+    for (; i < MIN_GAME_PLAYERS + 6; i++) {
+        type--;
+        cut_assert_equal_int(type, game->rounds[i]->roundType);
+    }
+
+    for (; i < 2 * MIN_GAME_PLAYERS + 6; i++)
+        cut_assert_equal_int(1, game->rounds[i]->roundType);
+
+    for (; i < 2 * MIN_GAME_PLAYERS + 12; i++) {
+        cut_assert_equal_int(type, game->rounds[i]->roundType);
+        type++;
+    }
+
+    for (; i < 3 * MIN_GAME_PLAYERS + 12; i++)
+        cut_assert_equal_int(8, game->rounds[i]->roundType);
 
     game_deleteGame(&game);
 }
