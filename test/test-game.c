@@ -2,7 +2,6 @@
 #include <errors.h>
 
 #include <cutter.h>
-#include <stdio.h>
 
 void test_game_createGame()
 {
