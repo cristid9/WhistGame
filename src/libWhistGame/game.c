@@ -178,11 +178,12 @@ int game_createAndAddRounds(struct Game *game)
         game_addRound(game, &round);
     }
 
+    int position = 2 * game->playersNumber + 5;
     for (int i = 0; i < 6; i++) {
-        int type = game->rounds[game->playersNumber + i - 1]->roundType - 
-                   roundType;
+        int type = game->rounds[position]->roundType - roundType;
         round = round_createRound(type);
         game_addRound(game, &round);
+        position++;
     }
 
     for (int i = 0; i < game->playersNumber; i++) {
