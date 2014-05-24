@@ -327,3 +327,16 @@ int round_copyScore(struct Round *round1, struct Round *round2)
     return NO_ERROR;
 }
 
+int round_replayRound(struct Round *round)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (round->players[i] != NULL && 
+            round->bids[i] == round->handsNumber[i])
+            return NO_ERROR;
+
+    return 1;
+}
+
