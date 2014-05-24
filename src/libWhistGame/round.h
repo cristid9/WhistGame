@@ -191,5 +191,18 @@ int round_determinesScore(struct Round *round);
  */
 int round_copyScore(struct Round *round1, struct Round *round2);
 
+/**
+ * @brief Function checks if in round exists at least a player which won the 
+ *        correct number of hands.
+ *
+ * @param round Pointer to the round for which the function checks if will be
+ *              replayed or not.
+ *
+ * @return NO_ERROR or 0 if the function doen't will be replayed.
+ *         1 if the function will be replayed.
+ *         A negative value on failure.
+ */
+int round_replayRound(struct Round *round);
+
 #endif
 
