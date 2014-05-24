@@ -239,7 +239,7 @@ int round_checkBid(struct Round *round, struct Player *player, int bid)
             return NO_ERROR;
 
     if (round_getBidsSum(round) + bid == round->roundType)
-        return ILLEGAL_VALUE;
+        return 1;
 
     return NO_ERROR;
 }
