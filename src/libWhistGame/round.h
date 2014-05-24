@@ -146,7 +146,9 @@ int round_getBidsSum(struct Round *round);
  * @param player Pointer to the player who bids.
  * @param bid The bid which is bid.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return NO_ERROR or 0 if the player introduced a correct bid.
+ *         1 if the player introduced a wrong bid.
+ *         A negative value on failure.
  */
 int round_checkBid(struct Round *round, struct Player *player, int bid);
 
