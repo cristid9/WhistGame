@@ -451,3 +451,30 @@ void test_round_copyScore()
     round_deleteRound(&round2);
 }
 
+void test_round_replayRound()
+{
+    struct Round *round = round_createRound(1);
+    struct Player *players[MAX_GAME_PLAYERS];
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        players[i] = player_createPlayer("A", i);
+        round_addPlayer(round, players[i]);
+    }
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        round->bids[i] = i;
+        round->handsNumber[i] = i + 1;
+    }
+
+    cut_assert_equal_int(ROUND_NULL, round_replayRound(NULL));
+    cut_assert_equal_int(1, round_replayRound(round));
+
+    round->handsNumber[0] = 0;
+    cut_assert_equal_int(NO_ERROR, round_replayRound(round));
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        player_deletePlayer(&players[i]);
+
+    round_deleteRound(&round);
+}
+
