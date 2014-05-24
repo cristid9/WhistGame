@@ -340,3 +340,16 @@ int round_replayRound(struct Round *round)
     return 1;
 }
 
+int round_reinitializeRound(struct Round *round)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        round->bids[i]        = 0;
+        round->handsNumber[i] = 0;
+    }
+
+    return NO_ERROR;
+}
+
