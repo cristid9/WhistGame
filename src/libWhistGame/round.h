@@ -204,5 +204,15 @@ int round_copyScore(struct Round *round1, struct Round *round2);
  */
 int round_replayRound(struct Round *round);
 
+/**
+ * @brief Function reinitializes the round. This function will be used when a
+ *        round will be replayed.
+ *
+ * @param round Pointer to the round which to be reinitialized.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int round_reinitializeRound(struct Round *round);
+
 #endif
 
