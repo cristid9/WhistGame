@@ -478,3 +478,23 @@ void test_round_replayRound()
     round_deleteRound(&round);
 }
 
+void test_round_reinitializeRound()
+{
+    struct Round *round = round_createRound(1);
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        round->bids[i] = i;
+        round->handsNumber[i] = i + 1;
+    }
+
+    cut_assert_equal_int(ROUND_NULL, round_reinitializeRound(NULL));
+    cut_assert_equal_int(NO_ERROR, round_reinitializeRound(round));
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        cut_assert_equal_int(0, round->bids[i]);
+        cut_assert_equal_int(0, round->handsNumber[i]);
+    }
+
+    round_deleteRound(&round);
+}
+
