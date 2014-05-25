@@ -21,6 +21,7 @@ void test_round_createRound()
         cut_assert_equal_int(0, round->bids[i]);
         cut_assert_equal_int(0, round->handsNumber[i]);
         cut_assert_equal_int(0, round->pointsNumber[i]);
+        cut_assert_equal_int(0, round->bonus[i]);
     }
 
     cut_assert_equal_int(MIN_CARDS, round->roundType);
