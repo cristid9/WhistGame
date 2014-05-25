@@ -23,6 +23,10 @@
  *      The bids of the players.
  * @var Round::handsNumber
  *      The number of the won hands of each players.
+ * @var Round::bonus
+ *      This member retain for each player if was awarded or not. If the value
+ *      is 1 then mean that the player was awarded, if the value is 0 then mean
+ *      that the player didn't was awarded.
  * @var Round::pointsNumber
  *      The score of the players.
  * @var Round::players
@@ -35,6 +39,7 @@ struct Round {
     struct Card *trump;
     int bids[MAX_GAME_PLAYERS];
     int handsNumber[MAX_GAME_PLAYERS];
+    int bonus[MAX_GAME_PLAYERS];
     int pointsNumber[MAX_GAME_PLAYERS];
     struct Player *players[MAX_GAME_PLAYERS];
     struct Hand *hand;
