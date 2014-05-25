@@ -60,6 +60,14 @@ const int VALUES[13];
  *        number is equal with the hands number on which he bid them.
  */
 #define POINTS_PER_ROUND 5
+
+/**
+ * @brief In this game the players can be awarded on positive or on negative.
+ *        When a player is awarded on positive then he receives +BONUS points
+ *        to the score his. When a player is awarded on negative then he 
+ *        receives -BONUS points to the score his.
+ */
+#define BONUS 10
  
 #endif
 
