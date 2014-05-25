@@ -68,6 +68,13 @@ const int VALUES[13];
  *        receives -BONUS points to the score his.
  */
 #define BONUS 10
+
+/**
+ * @brief This constant represents the number of rounds on which a player
+ *        should them win or to them lose like he to be awarded on positive
+ *        or negative.
+ */
+#define BONUS_ROUNDS_NUMBER 5
  
 #endif
 
