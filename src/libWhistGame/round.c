@@ -328,7 +328,7 @@ int round_copyScore(struct Round *round1, struct Round *round2)
     return NO_ERROR;
 }
 
-int round_replayRound(struct Round *round)
+int round_repeatRound(struct Round *round)
 {
     if (round == NULL)
         return ROUND_NULL;

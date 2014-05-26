@@ -451,7 +451,7 @@ void test_round_copyScore()
     round_deleteRound(&round2);
 }
 
-void test_round_replayRound()
+void test_round_repeatRound()
 {
     struct Round *round = round_createRound(1);
     struct Player *players[MAX_GAME_PLAYERS];
@@ -466,11 +466,11 @@ void test_round_replayRound()
         round->handsNumber[i] = i + 1;
     }
 
-    cut_assert_equal_int(ROUND_NULL, round_replayRound(NULL));
-    cut_assert_equal_int(1, round_replayRound(round));
+    cut_assert_equal_int(ROUND_NULL, round_repeatRound(NULL));
+    cut_assert_equal_int(1, round_repeatRound(round));
 
     round->handsNumber[0] = 0;
-    cut_assert_equal_int(NO_ERROR, round_replayRound(round));
+    cut_assert_equal_int(NO_ERROR, round_repeatRound(round));
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++)
         player_deletePlayer(&players[i]);

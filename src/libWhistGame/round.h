@@ -209,7 +209,7 @@ int round_copyScore(struct Round *round1, struct Round *round2);
  *         1 if the function will be replayed.
  *         A negative value on failure.
  */
-int round_replayRound(struct Round *round);
+int round_repeatRound(struct Round *round);
 
 /**
  * @brief Function reinitializes the round. This function will be used when a
