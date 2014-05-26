@@ -224,10 +224,10 @@ int game_determineBonusPlayer(struct Game *game, struct Player *player,
                     lostRounds++;
             }
         } else {
-            return ROUNDS_NULL;
+            return ROUND_NULL;
         }
 
-    int position = round_getPlayerId(game->rounds[currentPlayer], player);
+    int position = round_getPlayerId(game->rounds[currentRound], player);
     if (wonRounds == BONUS_ROUNDS_NUMBER) {
         game->rounds[currentRound]->pointsNumber[position] += BONUS;
         game->rounds[currentRound]->bonus[position]         = 1;
