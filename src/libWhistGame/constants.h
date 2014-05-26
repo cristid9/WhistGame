@@ -62,16 +62,16 @@ const int VALUES[13];
 #define POINTS_PER_ROUND 5
 
 /**
- * @brief In this game the players can be awarded on positive or on negative.
- *        When a player is awarded on positive then he receives +BONUS points
- *        to the score his. When a player is awarded on negative then he 
+ * @brief In this game the players can be rewarded on positive or on negative.
+ *        When a player is rewarded on positive then he receives +BONUS points
+ *        to the score his. When a player is rewarded on negative then he 
  *        receives -BONUS points to the score his.
  */
 #define BONUS 10
 
 /**
  * @brief This constant represents the number of rounds on which a player
- *        should them win or to them lose like he to be awarded on positive
+ *        should them win or to them lose like he to be rewarded on positive
  *        or negative.
  */
 #define BONUS_ROUNDS_NUMBER 5
