@@ -194,8 +194,8 @@ int game_createAndAddRounds(struct Game *game)
     return NO_ERROR;
 }
 
-int game_determineBonusPlayer(struct Game *game, struct Player *player,
-                              int currentRound)
+int game_rewardsPlayer(struct Game *game, struct Player *player,
+                       int currentRound)
 {
     if (game == NULL)
         return GAME_NULL;
