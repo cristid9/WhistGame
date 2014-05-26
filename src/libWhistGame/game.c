@@ -194,3 +194,51 @@ int game_createAndAddRounds(struct Game *game)
     return NO_ERROR;
 }
 
+int game_determineBonusPlayer(struct Game *game, struct Player *player,
+                              int currentRound)
+{
+    if (game == NULL)
+        return GAME_NULL;
+    if (player == NULL)
+        return PLAYER_NULL;
+    if (currentRound < 0 || currentRound >= MAX_GAME_ROUNDS)
+        return ILLEGAL_VALUE;
+    if (currentRound - BONUS_ROUNDS_NUMBER < 0)
+        return NO_ERROR;
+
+    int wonRounds  = 0;
+    int lostRounds = 0;
+    int i = currentRound - BONUS_ROUNDS_NUMBER;
+
+    for (; i <= currentRound; i++)
+        if (game->rounds[i] != NULL) {
+            int position = round_getPlayerId(game->rounds[i], player);
+            if (position < 0)
+                return position;
+            if (game->rounds[i]->bonus[position] == 0 && 
+                game->rounds[i]->roundType != 1) {
+                if (game->rounds[i]->bids[position] == 
+                    game->rounds[i]->handsNumber[position])
+                    wonRounds++;
+                else
+                    lostRounds++;
+            }
+        } else {
+            return ROUNDS_NULL;
+        }
+
+    int position = round_getPlayerId(game->rounds[currentPlayer], player);
+    if (wonRounds == BONUS_ROUNDS_NUMBER) {
+        game->rounds[currentRound]->pointsNumber[position] += BONUS;
+        game->rounds[currentRound]->bonus[position]         = 1;
+        return 1;
+    }
+    if (lostRounds == BONUS_ROUNDS_NUMBER) {
+        game->rounds[currentRound]->pointsNumber[position] -= BONUS;
+        game->rounds[currentRound]->bonus[position]         = 1;
+        return 2;
+    }
+
+    return NO_ERROR;
+}
+
