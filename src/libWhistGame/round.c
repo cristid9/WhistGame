@@ -22,7 +22,7 @@ struct Round *round_createRound(int roundType)
         round->bids[i]         = 0;
         round->pointsNumber[i] = 0;
         round->handsNumber[i]  = 0;
-        round->bonus           = 0;
+        round->bonus[i]        = 0;
         round->players[i]      = NULL;
     }
 
