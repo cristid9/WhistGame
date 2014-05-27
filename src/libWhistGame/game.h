@@ -121,5 +121,17 @@ int game_createAndAddRounds(struct Game *game);
 int game_rewardsPlayer(struct Game *game, struct Player *player,
                        int currentRound);
 
+/**
+ * @brief This function check if players from a game must rewarded and if in a
+ *        game exists players which must to be rewarded then the function him
+ *        rewards.
+ *
+ * @param game Pointer to the game in which are the players and the rounds.
+ * @param currentRound The id of the current round.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int game_rewardsPlayersFromGame(struct Game *game, int currentRound);
+
 #endif
 
