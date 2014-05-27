@@ -242,3 +242,23 @@ int game_rewardsPlayer(struct Game *game, struct Player *player,
     return NO_ERROR;
 }
 
+int game_rewardsPlayersFromGame(struct Game *game, int currentRound)
+{
+    if (game == NULL)
+        return GAME_NULL;
+    if (currentRound < 0 || currentRound >= MAX_GAME_ROUNDS)
+        return ILLEGAL_VALUE;
+    if (currentRound - BONUS_ROUNDS_NUMBER < 0)
+        return NO_ERROR;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (game->players[i] != NULL) {
+            int result = game_rewardsPlayer(game, game->players[i],
+                                            currentRound);
+            if (result < 0)
+                return result;
+        }
+
+    return NO_ERROR;
+}
+
