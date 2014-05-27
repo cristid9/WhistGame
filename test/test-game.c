@@ -225,3 +225,61 @@ void test_game_createAndAddRounds()
     game_deleteGame(&game);
 }
 
+void test_game_rewardsPlayer()
+{
+    struct Game   *game   = game_createGame(1);
+    struct Player *player = player_createPlayer("A", 1);
+    game_addPlayer(game, &player);
+
+    cut_assert_equal_int(GAME_NULL, 
+                         game_rewardsPlayer(NULL, game->players[0], 0));
+    cut_assert_equal_int(PLAYER_NULL, game_rewardsPlayer(game, NULL, 0));
+    cut_assert_equal_int(ILLEGAL_VALUE,
+                         game_rewardsPlayer(game, game->players[0], -1));
+    cut_assert_equal_int(ILLEGAL_VALUE,
+                         game_rewardsPlayer(game, game->players[0],
+                                            MAX_GAME_ROUNDS));
+    cut_assert_equal_int(NO_ERROR, game_rewardsPlayer(game, game->players[0],
+                                                      BONUS_ROUNDS_NUMBER - 2));
+
+    game->playersNumber = 3;
+    game_createAndAddRounds(game);
+    for (int i = 0; i <= 7; i++) {
+        round_addPlayer(game->rounds[i], game->players[0]);
+        game->rounds[i]->bids[0] = 2;
+        game->rounds[i]->handsNumber[0] = 2;
+    }
+
+    cut_assert_equal_int(NO_ERROR,
+                         game_rewardsPlayer(game, game->players[0], 4));
+    cut_assert_equal_int(1, game_rewardsPlayer(game, game->players[0], 7));
+    cut_assert_equal_int(BONUS, game->rounds[7]->pointsNumber[0]);
+    cut_assert_equal_int(1, game->rounds[7]->bonus[0]);
+    game->rounds[4]->bonus[0] = 1;
+    cut_assert_equal_int(NO_ERROR,
+                         game_rewardsPlayer(game, game->players[0], 7));
+    game->rounds[4]->bonus[0] = 0;
+    game->rounds[4]->handsNumber[0]++;
+    cut_assert_equal_int(NO_ERROR,
+                         game_rewardsPlayer(game, game->players[0], 7));
+
+    for (int i = 3; i <= 7; i++)
+        game->rounds[i]->handsNumber[0]++;
+
+    cut_assert_equal_int(NO_ERROR,
+                         game_rewardsPlayer(game, game->players[0], 4));
+    game->rounds[7]->bonus[0] = 0;
+    cut_assert_equal_int(2, game_rewardsPlayer(game, game->players[0], 7));
+    cut_assert_equal_int(0, game->rounds[7]->pointsNumber[0]);
+    cut_assert_equal_int(1, game->rounds[7]->bonus[0]);
+    game->rounds[4]->bonus[0] = 1;
+    cut_assert_equal_int(NO_ERROR,
+                         game_rewardsPlayer(game, game->players[0], 7));
+    game->rounds[4]->bonus[0] = 0;
+    game->rounds[4]->handsNumber[0] -= 2;
+    cut_assert_equal_int(NO_ERROR,
+                         game_rewardsPlayer(game, game->players[0], 7));
+
+    game_deleteGame(&game);
+}
+
