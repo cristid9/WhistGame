@@ -203,12 +203,12 @@ int game_rewardsPlayer(struct Game *game, struct Player *player,
         return PLAYER_NULL;
     if (currentRound < 0 || currentRound >= MAX_GAME_ROUNDS)
         return ILLEGAL_VALUE;
-    if (currentRound - BONUS_ROUNDS_NUMBER < 0)
+    if (currentRound - BONUS_ROUNDS_NUMBER + 1 < 0)
         return NO_ERROR;
 
     int wonRounds  = 0;
     int lostRounds = 0;
-    int i = currentRound - BONUS_ROUNDS_NUMBER;
+    int i = currentRound - BONUS_ROUNDS_NUMBER + 1;
 
     for (; i <= currentRound; i++)
         if (game->rounds[i] != NULL) {
