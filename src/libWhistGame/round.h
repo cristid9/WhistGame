@@ -221,5 +221,15 @@ int round_repeatRound(struct Round *round);
  */
 int round_reinitializeRound(struct Round *round);
 
+/**
+ * @brief Function adds the score from round1 in round2.
+ *
+ * @param round1 Pointer to the round from which is took the score.
+ * @param round2 Pointer to the round in which is added the score.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int round_addScore(struct Round *round1, struct Round *round2);
+
 #endif
 
