@@ -354,3 +354,19 @@ int round_reinitializeRound(struct Round *round)
     return NO_ERROR;
 }
 
+int round_addScore(struct Round *round1, struct Round *round2)
+{
+    if (round1 == NULL || round2 == NULL)
+        return ROUND_NULL;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (round1->players[i] != NULL) {
+            int position = round_getPlayerId(round2, round1->players[i]);
+            if (position < 0)
+                return position;
+            round2->pointsNumber[position] = round1->pointsNumber[i];
+        }
+
+    return NO_ERROR;
+}
+
