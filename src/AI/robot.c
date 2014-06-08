@@ -34,7 +34,7 @@ int robot_getBid(struct Player *player, struct Round *round)
         int bids = 0;
         for (int i = 0; i < MAX_CARDS; i++)
             if (player->hand[i] != NULL) {
-                if (player->hand[i]->value == 11 ||
+                if (player->hand[i]->value == 15 ||
                     player->hand[i]->value == 14)
                     bids++;
             }
@@ -50,7 +50,7 @@ int robot_getBid(struct Player *player, struct Round *round)
     for (int i = 0; i < MAX_CARDS; i++)
         if (player->hand[i] != NULL) {
             if ((player->hand[i]->suit == round->trump->suit &&
-                player->hand[i]->value >= 10) || player->hand[i]->value == 14)
+                player->hand[i]->value >= 10) || player->hand[i]->value == 15)
                 bids++;
         }
     if (round_checkBid(round, player, bids) == NO_ERROR)
