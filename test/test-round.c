@@ -343,7 +343,7 @@ void test_round_getPlayerWhichWonHand()
     cards[0] = deck_createCard(DIAMONDS, 6);
     cards[1] = deck_createCard(DIAMONDS, 7);
     cards[2] = deck_createCard(DIAMONDS, 8);
-    cards[3] = deck_createCard(DIAMONDS, 11);
+    cards[3] = deck_createCard(DIAMONDS, 15);
     cards[4] = deck_createCard(CLUBS, 14);
     cards[5] = deck_createCard(SPADES, 7);
 
