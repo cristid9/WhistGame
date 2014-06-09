@@ -19,5 +19,17 @@
  */
 int robot_getBid(struct Player *player, struct Round *round);
 
+/**
+ * @brief Function determines the position of the card on which the robot her 
+ *        will put down.
+ *
+ * @param player Pointer to the player which is robot.
+ * @param round  Pointer to the round in which is the robot.
+ *
+ * @return A value between 0 and roundType on success, a negative value on
+ *         failure.
+ */
+int robot_getCardId(struct Player *player, struct Round *round);
+
 #endif
 
