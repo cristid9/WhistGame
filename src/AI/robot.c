@@ -61,7 +61,7 @@ int robot_getBid(struct Player *player, struct Round *round)
         return bids - 1;
 }
 
-int robot_getCard(struct Player *player, struct Round *round)
+int robot_getCardId(struct Player *player, struct Round *round)
 {
     if (player == NULL)
         return PLAYER_NULL;
