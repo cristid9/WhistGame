@@ -14,7 +14,7 @@
 /**
  * Constants for game values
  */
-const int VALUES[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, -1};
+const int VALUES[] = {3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, -1};
 
 struct Card *deck_createCard(enum Suit suit, int value)
 {
@@ -137,10 +137,6 @@ int deck_compareCards(struct Card *card1, struct Card *card2, enum Suit trump)
 
     int value1 = card1->value;
     int value2 = card2->value;
-    if (value1 == 11)
-        value1 = 15;
-    if (value2 == 11)
-        value2 = 15;
 
     if ((card1->suit == trump && card2->suit != trump) ||
         (card1->suit == card2->suit && value1 > value2) ||
