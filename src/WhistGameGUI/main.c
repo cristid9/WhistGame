@@ -1,12 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "gui.h"
 
-struct Input {
-    GtkWidget *name;
-    GtkWidget *robotsNumber;
-    GtkWidget *gameType;
-};
+#include "gui.h"
 
 int WhistGameLogic(GtkWidget *button, struct Input *input)
 {
@@ -37,49 +32,10 @@ int main(int argc, char *argv[])
 
     gtk_init(&argc, &argv);
 
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-    gtk_widget_set_size_request(window, 230, 200);
-    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-    gtk_window_set_title(GTK_WINDOW(window), "Whist Game");
-    g_signal_connect(G_OBJECT(window), "destroy",
-                     G_CALLBACK(gtk_main_quit), NULL);
-
-    fixed = gtk_fixed_new();
-    gtk_container_add(GTK_CONTAINER(window), fixed);
-    gtk_widget_show(fixed);
-
-    labelName = gtk_label_new("Name ");
-    gtk_fixed_put(GTK_FIXED(fixed), labelName, 10, 15);
-    gtk_widget_show(labelName);
-
-    name = gtk_entry_new();
-    gtk_entry_set_max_length(GTK_ENTRY(name), 10);
-    gtk_fixed_put(GTK_FIXED(fixed), name, 50, 10);
-    gtk_widget_show(name);
-
-    labelType = gtk_label_new("Choose the game type");
-    gtk_fixed_put(GTK_FIXED(fixed), labelType, 10, 40);
-    gtk_widget_show(labelType);
-
-    radio1 = gtk_radio_button_new_with_label(NULL, "11-88-11");
-    radio8 = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(radio1), "88-11-88");
-    gtk_widget_show(radio1);
-    gtk_widget_show(radio8);
-    vbox = gtk_vbox_new(FALSE, 5);
-    gtk_box_pack_start_defaults(GTK_BOX(vbox), radio8);
-    gtk_box_pack_start_defaults(GTK_BOX(vbox), radio1);
-    gtk_fixed_put(GTK_FIXED(fixed), vbox, 10, 60);
-    gtk_widget_show(vbox);
-
-    labelNumber = gtk_label_new("Choose the robots number");
-    gtk_fixed_put(GTK_FIXED(fixed), labelNumber, 10, 110);
-    gtk_widget_show(labelNumber);
-
-    number = GTK_ADJUSTMENT(gtk_adjustment_new(2.0, 2.0, 5.0, 1.0, 0.0, 0.0));
-    spinNumber = gtk_spin_button_new(number, 1.0, 0);
-    gtk_fixed_put(GTK_FIXED(fixed), spinNumber, 10, 130);
-    gtk_widget_show(spinNumber);
+    init(&window, &fixed, "Whist Game", 230, 200);
+    playerName(window, fixed, &labelName, &name);
+    gameType(window, fixed, &labelType, &radio1, &radio8, &vbox);
+    noOfBots(window, fixed, &labelNumber, &spinNumber, &number);
 
     input->name = name;
     input->robotsNumber = spinNumber;
@@ -90,8 +46,6 @@ int main(int argc, char *argv[])
     g_signal_connect(G_OBJECT(button), "clicked", 
                      G_CALLBACK(WhistGameLogic), input);
     gtk_widget_show(button);
-    
-    gtk_widget_show(window);
 
     gtk_main();
 
