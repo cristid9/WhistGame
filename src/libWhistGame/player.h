@@ -36,7 +36,7 @@ struct Player {
  *
  * @return Pointer to the new player on success or NULL on failure.
  */
-struct Player *player_createPlayer(char *name, int isHuman);
+struct Player *player_createPlayer(const char *name, int isHuman);
 
 /**
  * @brief Function releases the memory of a player and makes pointer NULL.
