@@ -5,8 +5,11 @@
 
 int WhistGameLogic(GtkWidget *button, struct Input *input)
 {
+    if (input == NULL)
+        return POINTER_NULL;
+
     const char *playerName = gtk_entry_get_text(GTK_ENTRY(input->name));
-    int playerNumber = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON
+    int botsNumber = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON
                                                         (input->robotsNumber));
     int gameType;
     if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(input->gameType)))
@@ -14,7 +17,27 @@ int WhistGameLogic(GtkWidget *button, struct Input *input)
     else
         gameType = 8;
 
-    return 0;
+    struct Game *game = game_createGame(gameType);
+    struct Player *player = player_createPlayer(playerName, 1);
+    game_addPlayer(game, &player);
+
+    for (int i = 1; i <= botsNumber; i++) {
+        char no = (char)(((int)'0') + i);
+        char name[7] = "robot";
+        name[5] = no;
+        name[6] = '\0';
+        player = player_createPlayer(name, 0);
+        game_addPlayer(game, &player);
+    }
+
+    GtkWidget *windowTable, *fixedTable;
+    
+    gui_init(&windowTable, &fixedTable, "Whist Game", 798, 520);
+    g_signal_connect(G_OBJECT(windowTable), "delete-event",
+                     G_CALLBACK(gtk_widget_hide_on_delete), NULL);
+    gui_setBackground(windowTable, fixedTable, "pictures/table.png");
+
+    return NO_ERROR;
 }
 
 int main(int argc, char *argv[])
@@ -32,10 +55,12 @@ int main(int argc, char *argv[])
 
     gtk_init(&argc, &argv);
 
-    init(&window, &fixed, "Whist Game", 230, 200);
-    playerName(window, fixed, &labelName, &name);
-    gameType(window, fixed, &labelType, &radio1, &radio8, &vbox);
-    noOfBots(window, fixed, &labelNumber, &spinNumber, &number);
+    gui_init(&window, &fixed, "Whist Game", 230, 200);
+    g_signal_connect(G_OBJECT(window), "destroy",
+                     G_CALLBACK(gtk_main_quit), NULL);
+    gui_playerName(window, fixed, &labelName, &name);
+    gui_gameType(window, fixed, &labelType, &radio1, &radio8, &vbox);
+    gui_noOfBots(window, fixed, &labelNumber, &spinNumber, &number);
 
     input->name = name;
     input->robotsNumber = spinNumber;
@@ -50,7 +75,7 @@ int main(int argc, char *argv[])
     gtk_main();
 
     free(input);
-    
+   
     return 0;
 }
 
