@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-struct Player *player_createPlayer(char *name, int isHuman)
+struct Player *player_createPlayer(const char *name, int isHuman)
 {
     if (name == NULL)
         return NULL;
