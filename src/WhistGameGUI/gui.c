@@ -5,8 +5,8 @@
 
 #include "gui.h"
 
-int init(GtkWidget **window, GtkWidget **fixed, char *title, 
-         int width, int height)
+int gui_init(GtkWidget **window, GtkWidget **fixed, char *title, 
+             int width, int height)
 {
     if (window == NULL || fixed == NULL || title == NULL)
         return POINTER_NULL;
@@ -16,8 +16,6 @@ int init(GtkWidget **window, GtkWidget **fixed, char *title,
     gtk_widget_set_size_request(*window, width, height);
     gtk_window_set_position(GTK_WINDOW(*window), GTK_WIN_POS_CENTER);
     gtk_window_set_title(GTK_WINDOW(*window), title);
-    g_signal_connect(G_OBJECT(*window), "destroy",
-                     G_CALLBACK(gtk_main_quit), NULL);
     *fixed = gtk_fixed_new();
     gtk_container_add(GTK_CONTAINER(*window), *fixed);
     gtk_widget_show(*fixed);
@@ -26,8 +24,8 @@ int init(GtkWidget **window, GtkWidget **fixed, char *title,
     return NO_ERROR;
 }
 
-int noOfBots(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
-             GtkWidget **spinNumber, GtkAdjustment **number)
+int gui_noOfBots(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
+                 GtkWidget **spinNumber, GtkAdjustment **number)
 {
     if (window == NULL || fixed == NULL || label == NULL ||
         number == NULL || spinNumber == NULL)
@@ -45,8 +43,8 @@ int noOfBots(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
     return NO_ERROR;
 }
 
-int playerName(GtkWidget *window, GtkWidget *fixed,
-                GtkWidget **label, GtkWidget **name)
+int gui_playerName(GtkWidget *window, GtkWidget *fixed,
+                   GtkWidget **label, GtkWidget **name)
 {
     if (window == NULL || fixed == NULL || label == NULL || name == NULL)
         return POINTER_NULL;
@@ -63,8 +61,8 @@ int playerName(GtkWidget *window, GtkWidget *fixed,
     return NO_ERROR;
 }
 
-int gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
-              GtkWidget **radio1, GtkWidget **radio8, GtkWidget **vbox)
+int gui_gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
+                 GtkWidget **radio1, GtkWidget **radio8, GtkWidget **vbox)
 {
     if (window == NULL || fixed == NULL || label == NULL || radio1 == NULL ||
         radio8 == NULL || vbox == NULL)
@@ -84,6 +82,18 @@ int gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
     gtk_box_pack_start_defaults(GTK_BOX(*vbox), *radio8);
     gtk_fixed_put(GTK_FIXED(fixed), *vbox, 10, 60);
     gtk_widget_show(*vbox);
+
+    return NO_ERROR;
+}
+
+int gui_setBackground(GtkWidget *window, GtkWidget *fixed, char *pathPicture)
+{
+    if (window == NULL || fixed == NULL || pathPicture == NULL)
+        return POINTER_NULL;
+
+    GtkWidget *image = gtk_image_new_from_file(pathPicture);
+    gtk_fixed_put(GTK_FIXED(fixed), image, 0, 0);
+    gtk_widget_show(image);
 
     return NO_ERROR;
 }
