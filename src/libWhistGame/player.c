@@ -9,6 +9,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 struct Player *player_createPlayer(const char *name, int isHuman)
 {
@@ -146,6 +147,18 @@ int player_sortPlayerCards(struct Player *player)
     sum += noS;
     for (int i = 0; i < noH; i++)
         player->hand[i + sum] = hearts[i];
+
+    return NO_ERROR;
+}
+
+int player_checkPlayerName(const char *name)
+{
+    if (name == NULL)
+        return POINTER_NULL;
+
+    int firstLetter = (int)tolower(name[0]);
+    if (strlen(name) < 5 || firstLetter < 97 || firstLetter > 122)
+        return INCORRECT_NAME;
 
     return NO_ERROR;
 }
