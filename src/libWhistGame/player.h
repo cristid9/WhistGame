@@ -66,5 +66,14 @@ int player_addCard(struct Player *player, struct Card **card);
  */
 int player_sortPlayerCards(struct Player *player);
 
+/**
+ * @brief Function check if the player introduced a correct name.
+ *
+ * @param name Pointer to the name on which introduced him the player.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int player_checkPlayerName(const char *name);
+
 #endif
 
