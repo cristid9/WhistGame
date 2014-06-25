@@ -10,6 +10,11 @@
 #include <libWhistGame.h>
 #include <gtk/gtk.h>
 
+struct PlayerCards {
+    GtkWidget *images[MAX_CARDS];
+    GtkWidget *event_box[MAX_CARDS];
+};
+
 /**
  * @struct Input
  *
@@ -26,6 +31,8 @@ struct Input {
     GtkWidget *name;
     GtkWidget *robotsNumber;
     GtkWidget *gameType;
+    GtkWidget *mainWindow;
+    int noOfGames;
 };
 
 /**
@@ -42,8 +49,8 @@ struct Input {
  *
  *return NO_ERROR or 0 on success, other value on failure.
  */
-int init(GtkWidget **window, GtkWidget **fixed, char *title,
-         int width, int height);
+int gui_init(GtkWidget **window, GtkWidget **fixed, char *title,
+             int width, int height);
 
 /**
  * @brief Function adds a label and a spin button to be able the player to
@@ -62,8 +69,8 @@ int init(GtkWidget **window, GtkWidget **fixed, char *title,
  *
  * @return NO_ERROR or 0 on success, other value on failure.
  */
-int noOfBots(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
-             GtkWidget **spinNumber, GtkAdjustment **number);
+int gui_noOfBots(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
+                 GtkWidget **spinNumber, GtkAdjustment **number);
 
 /**
  * @brief Function adds a label and a entry to be able the player to enter his
@@ -79,8 +86,8 @@ int noOfBots(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
  *
  * @return NO_ERROR or 0 on success, other value on failure.
  */
-int playerName(GtkWidget *window, GtkWidget *fixed,
-               GtkWidget **label, GtkWidget **name);
+int gui_playerName(GtkWidget *window, GtkWidget *fixed,
+                   GtkWidget **label, GtkWidget **name);
 
 /**
  * @brief Function adds a label, a vbox and two radio buttons to be able the
@@ -100,8 +107,32 @@ int playerName(GtkWidget *window, GtkWidget *fixed,
  *
  * @return NO_ERROR or 0 on success, other value on failure.
  */
-int gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
-             GtkWidget **radio1, GtkWidget **radio8, GtkWidget **vbox);
+int gui_gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
+                 GtkWidget **radio1, GtkWidget **radio8, GtkWidget **vbox);
+
+int gui_setBackground(GtkWidget *fixed, char *pathPicture);
+
+int gui_showScore(struct Game *game);
+
+int gui_createButtonShowScore(GtkWidget *fixed, GtkWidget **showButton,
+                              struct Game *game);
+
+int gui_getPictureName(struct Card *card, char *name);
+
+int gui_destroyTrump(GtkWidget **image);
+
+int gui_showTrump(GtkWidget *fixed, struct Card *trump, GtkWidget **image);
+
+int gui_destroyPlayerCards(struct PlayerCards *playerCards);
+
+int gui_showPlayerCards(struct PlayerCards *playerCards, GtkWidget *fixed,
+                        struct Player *player);
+
+int gui_initAndShowDialogIncorrectName(GtkWidget *window);
+
+int gui_initAndShowDialogMaxGames(GtkWidget *window);
+
+int gui_closeWhistGame(GtkWidget *windowTable, struct Input *input);
 
 #endif
 
