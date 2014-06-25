@@ -57,5 +57,14 @@ int player_deletePlayer(struct Player **player);
  */
 int player_addCard(struct Player *player, struct Card **card);
 
+/**
+ * @brief Function sort the player cards.
+ *
+ * @param player Pointer to the player whom are sorted cards.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int player_sortPlayerCards(struct Player *player);
+
 #endif
 
