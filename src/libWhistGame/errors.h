@@ -29,7 +29,8 @@ enum ERROR_CODES {
     INSUFFICIENT_PLAYERS = -11,
     INSUFFICIENT_CARDS   = -12,
     GAME_NULL            = -13,
-    DUPLICATE_NAME       = -14
+    DUPLICATE_NAME       = -14,
+    INCORRECT_NAME       = -15
 };
 
 #endif
