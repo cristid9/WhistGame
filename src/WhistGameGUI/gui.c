@@ -211,6 +211,7 @@ int gui_destroyPlayerCards(struct PlayerCards *playerCards)
 
 int gui_clickCard0()
 {
+    gtk_main_quit();
     printf("%d\n", 0);
     return 0;
 }
@@ -472,9 +473,7 @@ int gui_closeWhistGame(GtkWidget *windowTable, struct Input *input)
     if (windowTable == NULL)
         return POINTER_NULL;
 
-    printf("%d\n", input->noOfGames);
     input->noOfGames--;
-    printf("%d\n", input->noOfGames);
     gtk_widget_hide_on_delete(windowTable);
 
     return NO_ERROR;

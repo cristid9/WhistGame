@@ -32,7 +32,7 @@ int StartWhistGame(const char *name, int gameType,
     GtkWidget *windowTable, *fixedTable, *showScore, *trumpImage;
     
     gui_init(&windowTable, &fixedTable, "Whist", 798, 520);
-    g_signal_connect(G_OBJECT(windowTable), "delete-event",
+    g_signal_connect(G_OBJECT(windowTable), "destroy",
                      G_CALLBACK(gui_closeWhistGame), input);
     
     gui_setBackground(fixedTable, "pictures/table.png");
@@ -49,6 +49,8 @@ int StartWhistGame(const char *name, int gameType,
     player_sortPlayerCards(game->players[0]);
     struct PlayerCards *playerCards = malloc(sizeof(struct PlayerCards));
     gui_showPlayerCards(playerCards, fixedTable, game->players[0]);
+
+    gtk_main();
 
     return EXIT_SUCCESS;
 }
@@ -72,7 +74,6 @@ int getInput(GtkWidget *button, struct Input *input)
     else
         gameType = 8;
 
-    printf("%d\n", input->noOfGames);
     if (input->noOfGames < MAX_GAMES) {
         StartWhistGame(playerName, gameType, botsNumber, input);
         return NO_ERROR;
@@ -109,7 +110,7 @@ int main(int argc, char *argv[])
     input->robotsNumber = spinNumber;
     input->gameType     = radio1;
     input->mainWindow   = window;
-    input->noOfGames    = 2;
+    input->noOfGames    = 0;
 
     button = gtk_button_new_with_label("Start");
     gtk_fixed_put(GTK_FIXED(fixed), button, 100, 160);
@@ -120,7 +121,7 @@ int main(int argc, char *argv[])
     gtk_main();
 
     free(input);
-   
+
     return EXIT_SUCCESS;
 }
 
