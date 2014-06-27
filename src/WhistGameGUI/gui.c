@@ -100,9 +100,8 @@ int gui_setBackground(GtkWidget *fixed, char *pathPicture)
     return NO_ERROR;
 }
 
-int gui_showScore(struct Game *game)
+int gui_showScore(GtkWidget *button, struct Game *game)
 {
-    printf("A\n");
     return NO_ERROR;
 }
 
@@ -117,7 +116,7 @@ int gui_createButtonShowScore(GtkWidget *fixed, GtkWidget **showScore,
     gtk_widget_show(*showScore);
     g_signal_connect(G_OBJECT(*showScore), "clicked",
                      G_CALLBACK(gui_showScore), game);
-
+    
     return NO_ERROR;
 }
 
@@ -200,63 +199,25 @@ int gui_destroyPlayerCards(struct PlayerCards *playerCards)
             gtk_widget_destroy(playerCards->images[i]);
             playerCards->images[i] = NULL;
         }
-        if (playerCards->event_box[i] != NULL) {
-            gtk_widget_destroy(playerCards->event_box[i]);
-            playerCards->event_box[i] = NULL;
-        }
     }
 
     return NO_ERROR;
 }
 
-int gui_clickCard0()
+struct PlayerCards *gui_initializePlayerCards(GtkWidget *fixed)
 {
-    gtk_main_quit();
-    printf("%d\n", 0);
-    return 0;
-}
+    if (fixed == NULL)
+        return NULL;
 
-int gui_clickCard1()
-{
-    printf("%d\n", 1);
-    return 0;
-}
+    struct PlayerCards *playerCards = malloc(sizeof(struct PlayerCards));
 
-
-int gui_clickCard2()
-{
-    printf("%d\n", 2);
-    return 0;
-}
-
-int gui_clickCard3()
-{
-    printf("%d\n", 3);
-    return 0;
-}
-
-int gui_clickCard4()
-{
-    printf("%d\n", 4);
-    return 0;
-}
-
-int gui_clickCard5()
-{
-    printf("%d\n", 5);
-    return 0;
-}
-
-int gui_clickCard6()
-{
-    printf("%d\n", 6);
-    return 0;
-}
-
-int gui_clickCard7()
-{
-    printf("%d\n", 7);
-    return 0;
+    for (int i = 0; i < MAX_CARDS; i++) {
+        playerCards->images[i] = gtk_image_new();
+        gtk_fixed_put(GTK_FIXED(fixed), playerCards->images[i],
+                      10 + i * 90, 400);
+    }
+    
+    return playerCards;
 }
 
 int gui_showPlayerCards(struct PlayerCards *playerCards, GtkWidget *fixed,
@@ -268,142 +229,17 @@ int gui_showPlayerCards(struct PlayerCards *playerCards, GtkWidget *fixed,
         return PLAYER_NULL;
     
     int noOfCards = 0;
-    if (player->hand[0] != NULL) {
-        char pictureName[10] = { '\0' };
-        gui_getPictureName(player->hand[0], pictureName);
-        char pathImage[30] = "pictures/80x110/";
-        strcat(pathImage, pictureName);
-        playerCards->images[0] = gtk_image_new_from_file(pathImage);
-        playerCards->event_box[0] = gtk_event_box_new();
-        gtk_container_add(GTK_CONTAINER(playerCards->event_box[0]), 
-                          playerCards->images[0]);
-        gtk_fixed_put(GTK_FIXED(fixed), playerCards->event_box[0],
-                     10 + noOfCards * 90, 400);
-        gtk_widget_show(playerCards->event_box[0]);
-        gtk_widget_show(playerCards->images[0]);
-        g_signal_connect(G_OBJECT(playerCards->event_box[0]),
-                        "button_press_event", G_CALLBACK(gui_clickCard0), NULL);
-        noOfCards++;
-    }
-    if (player->hand[1] != NULL) {
-        char pictureName[10] = {'\0'};
-        gui_getPictureName(player->hand[1], pictureName);
-        char pathImage[30] = "pictures/80x110/";
-        strcat(pathImage, pictureName);
-        playerCards->images[1] = gtk_image_new_from_file(pathImage);
-        playerCards->event_box[1] = gtk_event_box_new();
-        gtk_container_add(GTK_CONTAINER(playerCards->event_box[1]), 
-                          playerCards->images[1]);
-        gtk_fixed_put(GTK_FIXED(fixed), playerCards->event_box[1],
-                      10 + noOfCards * 90, 400);
-        gtk_widget_show(playerCards->event_box[1]);
-        gtk_widget_show(playerCards->images[1]);
-        g_signal_connect(G_OBJECT(playerCards->event_box[1]),
-                        "button_press_event", G_CALLBACK(gui_clickCard1), NULL);
-        noOfCards++;
-    }
-    if (player->hand[2] != NULL) {
-        char pictureName[10] = {'\0'};
-        gui_getPictureName(player->hand[2], pictureName);
-        char pathImage[30] = "pictures/80x110/";
-        strcat(pathImage, pictureName);
-        playerCards->images[2] = gtk_image_new_from_file(pathImage);
-        playerCards->event_box[2] = gtk_event_box_new();
-        gtk_container_add(GTK_CONTAINER(playerCards->event_box[2]), 
-                          playerCards->images[2]);
-        gtk_fixed_put(GTK_FIXED(fixed), playerCards->event_box[2],
-                     10 + noOfCards * 90, 400);
-        gtk_widget_show(playerCards->event_box[2]);
-        gtk_widget_show(playerCards->images[2]);
-        g_signal_connect(G_OBJECT(playerCards->event_box[2]),
-                        "button_press_event", G_CALLBACK(gui_clickCard2), NULL);
-        noOfCards++;
-    }
-    if (player->hand[3] != NULL) {
-        char pictureName[10] = {'\0'};
-        gui_getPictureName(player->hand[3], pictureName);
-        char pathImage[30] = "pictures/80x110/";
-        strcat(pathImage, pictureName);
-        playerCards->images[3] = gtk_image_new_from_file(pathImage);
-        playerCards->event_box[3] = gtk_event_box_new();
-        gtk_container_add(GTK_CONTAINER(playerCards->event_box[3]), 
-                          playerCards->images[3]);
-        gtk_fixed_put(GTK_FIXED(fixed), playerCards->event_box[3],
-                     10 + noOfCards * 90, 400);
-        gtk_widget_show(playerCards->event_box[3]);
-        gtk_widget_show(playerCards->images[3]);
-        g_signal_connect(G_OBJECT(playerCards->event_box[3]),
-                        "button_press_event", G_CALLBACK(gui_clickCard3), NULL);
-        noOfCards++;
-    }
-    if (player->hand[4] != NULL) {
-        char pictureName[10] = {'\0'};
-        gui_getPictureName(player->hand[4], pictureName);
-        char pathImage[30] = "pictures/80x110/";
-        strcat(pathImage, pictureName);
-        playerCards->images[4] = gtk_image_new_from_file(pathImage);
-        playerCards->event_box[4] = gtk_event_box_new();
-        gtk_container_add(GTK_CONTAINER(playerCards->event_box[4]), 
-                          playerCards->images[4]);
-        gtk_fixed_put(GTK_FIXED(fixed), playerCards->event_box[4],
-                     10 + noOfCards * 90, 400);
-        gtk_widget_show(playerCards->event_box[4]);
-        gtk_widget_show(playerCards->images[4]);
-        g_signal_connect(G_OBJECT(playerCards->event_box[4]),
-                        "button_press_event", G_CALLBACK(gui_clickCard4), NULL);
-        noOfCards++;
-    }
-    if (player->hand[5] != NULL) {
-        char pictureName[10] = {'\0'};
-        gui_getPictureName(player->hand[5], pictureName);
-        char pathImage[30] = "pictures/80x110/";
-        strcat(pathImage, pictureName);
-        playerCards->images[5] = gtk_image_new_from_file(pathImage);
-        playerCards->event_box[5] = gtk_event_box_new();
-        gtk_container_add(GTK_CONTAINER(playerCards->event_box[5]), 
-                          playerCards->images[5]);
-        gtk_fixed_put(GTK_FIXED(fixed), playerCards->event_box[5],
-                     10 + noOfCards * 90, 400);
-        gtk_widget_show(playerCards->event_box[5]);
-        gtk_widget_show(playerCards->images[5]);
-        g_signal_connect(G_OBJECT(playerCards->event_box[5]),
-                        "button_press_event", G_CALLBACK(gui_clickCard5), NULL);
-        noOfCards++;
-    }
-    if (player->hand[6] != NULL) {
-        char pictureName[10] = {'\0'};
-        gui_getPictureName(player->hand[6], pictureName);
-        char pathImage[30] = "pictures/80x110/";
-        strcat(pathImage, pictureName);
-        playerCards->images[6] = gtk_image_new_from_file(pathImage);
-        playerCards->event_box[6] = gtk_event_box_new();
-        gtk_container_add(GTK_CONTAINER(playerCards->event_box[6]), 
-                          playerCards->images[6]);
-        gtk_fixed_put(GTK_FIXED(fixed), playerCards->event_box[6],
-                     10 + noOfCards * 90, 400);
-        gtk_widget_show(playerCards->event_box[6]);
-        gtk_widget_show(playerCards->images[6]);
-        g_signal_connect(G_OBJECT(playerCards->event_box[6]),
-                        "button_press_event", G_CALLBACK(gui_clickCard6), NULL);
-        noOfCards++;
-    }
-    if (player->hand[7] != NULL) {
-        char pictureName[10] = {'\0'};
-        gui_getPictureName(player->hand[7], pictureName);
-        char pathImage[30] = "pictures/80x110/";
-        strcat(pathImage, pictureName);
-        playerCards->images[7] = gtk_image_new_from_file(pathImage);
-        playerCards->event_box[7] = gtk_event_box_new();
-        gtk_container_add(GTK_CONTAINER(playerCards->event_box[7]), 
-                          playerCards->images[7]);
-        gtk_fixed_put(GTK_FIXED(fixed), playerCards->event_box[7],
-                     10 + noOfCards * 90, 400);
-        gtk_widget_show(playerCards->event_box[7]);
-        gtk_widget_show(playerCards->images[7]);
-        g_signal_connect(G_OBJECT(playerCards->event_box[7]),
-                        "button_press_event", G_CALLBACK(gui_clickCard7), NULL);
-        noOfCards++;
-    }
+    for (int i = 0; i < MAX_CARDS; i++)
+        if (player->hand[i] != NULL) {
+            char pictureName[10] = { '\0' };
+            gui_getPictureName(player->hand[i], pictureName);
+            char pathImage [30] = "pictures/80x110/";
+            strcat(pathImage, pictureName);
+            gtk_image_set_from_file(GTK_IMAGE(playerCards->images[i]),
+                                    pathImage);
+            gtk_widget_show(playerCards->images[i]);
+            noOfCards++;
+        }
 
     return NO_ERROR;
 }
@@ -462,9 +298,9 @@ int gui_initAndShowDialogMaxGames(GtkWidget *window)
     gtk_box_pack_start_defaults(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox);
     gtk_widget_show_all(dialog);
 
-    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_dialog_run(GTK_DIALOG(dialog)); 
     gtk_widget_destroy(dialog);
-
+    
     return NO_ERROR;
 }
 
@@ -474,7 +310,72 @@ int gui_closeWhistGame(GtkWidget *windowTable, struct Input *input)
         return POINTER_NULL;
 
     input->noOfGames--;
-    gtk_widget_hide_on_delete(windowTable);
+    gtk_widget_destroy(windowTable);
+    gtk_main_quit();
+    //gtk_widget_hide_on_delete(windowTable);
+
+    return NO_ERROR;
+}
+
+int gui_getCardId(int x, int y)
+{
+    int cardPosition = -1;
+    if (y >= 400 && y <= 510) {
+        for (int i = 0; i < MAX_CARDS; i++)
+            if (x >= (10 + 90 * i) && x <= (90 + 90 * i))
+                cardPosition = i;
+    }
+
+    return cardPosition;
+}
+
+int gui_clickMouse(GtkWidget *window, GdkEvent *event)
+{
+    if (window == NULL || event == NULL)
+        return POINTER_NULL;
+
+    int x = (int)((GdkEventButton*)event)->x;
+    int y = (int)((GdkEventButton*)event)->y;
+
+    int cardPosition = gui_getCardId(x, y);
+
+    return NO_ERROR;
+}
+
+struct SelectedCard *gui_createSelectedCard(GtkWidget *fixed)
+{
+    struct SelectedCard *selectedCard;
+    
+    selectedCard = malloc(sizeof(struct SelectedCard));
+    selectedCard->imageSelectedCard = gtk_image_new_from_file
+                                      ("pictures/select_card.png"); 
+    selectedCard->fixed = fixed;
+
+    gtk_fixed_put(GTK_FIXED(fixed), selectedCard->imageSelectedCard, 10, 400);
+
+    return selectedCard;
+}
+
+int gui_selectedCard(GtkWidget *window, GdkEvent *event,
+                     struct SelectedCard *selectedCard)
+{
+    if (selectedCard == NULL)
+        return POINTER_NULL;
+    if (selectedCard->fixed == NULL || selectedCard->imageSelectedCard == NULL)
+        return POINTER_NULL;
+
+    int x = (int)((GdkEventButton*)event)->x;
+    int y = (int)((GdkEventButton*)event)->y;
+
+    int cardId = gui_getCardId(x, y);
+    if (cardId != -1) {
+        gtk_fixed_move(GTK_FIXED(selectedCard->fixed),
+                       selectedCard->imageSelectedCard,
+                       10 + 90 * cardId, 400);
+        gtk_widget_show(selectedCard->imageSelectedCard);
+    } else {
+        gtk_widget_hide(selectedCard->imageSelectedCard);
+    }
 
     return NO_ERROR;
 }

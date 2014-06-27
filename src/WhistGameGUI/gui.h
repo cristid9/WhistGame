@@ -8,11 +8,17 @@
 
 #include <libWhistGameAI.h>
 #include <libWhistGame.h>
+
 #include <gtk/gtk.h>
+#include <stdlib.h>
+
+struct SelectedCard {
+    GtkWidget *imageSelectedCard;
+    GtkWidget *fixed;
+};
 
 struct PlayerCards {
     GtkWidget *images[MAX_CARDS];
-    GtkWidget *event_box[MAX_CARDS];
 };
 
 /**
@@ -109,11 +115,30 @@ int gui_playerName(GtkWidget *window, GtkWidget *fixed,
  */
 int gui_gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
                  GtkWidget **radio1, GtkWidget **radio8, GtkWidget **vbox);
-
+/**
+ * @brief Function set background for a GtkFixed.
+ *
+ * @param fixed Pointer to the GtkFixed for which is set the background.
+ * @param pathPicture The path to the image which to be set such as background.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
 int gui_setBackground(GtkWidget *fixed, char *pathPicture);
 
-int gui_showScore(struct Game *game);
+/**
+ *
+ *
+ */
+int gui_showScore(GtkWidget *button, struct Game *game);
 
+/**
+ * @brief Function create the button which will show the score.
+ *
+ * @param fixed Pointer to the GtkFixed in which is added the button.
+ * @param showButton The address to which is created the button.
+ * 
+ * 
+ */ 
 int gui_createButtonShowScore(GtkWidget *fixed, GtkWidget **showButton,
                               struct Game *game);
 
@@ -125,6 +150,8 @@ int gui_showTrump(GtkWidget *fixed, struct Card *trump, GtkWidget **image);
 
 int gui_destroyPlayerCards(struct PlayerCards *playerCards);
 
+struct PlayerCards *gui_initializePlayerCards(GtkWidget *fixed);
+
 int gui_showPlayerCards(struct PlayerCards *playerCards, GtkWidget *fixed,
                         struct Player *player);
 
@@ -133,6 +160,15 @@ int gui_initAndShowDialogIncorrectName(GtkWidget *window);
 int gui_initAndShowDialogMaxGames(GtkWidget *window);
 
 int gui_closeWhistGame(GtkWidget *windowTable, struct Input *input);
+
+int gui_getCardId(int x, int y);
+
+int gui_clickMouse(GtkWidget *window, GdkEvent *event);
+
+struct SelectedCard *gui_createSelectedCard(GtkWidget *fixed);
+
+int gui_selectedCard(GtkWidget *window, GdkEvent *event,
+                     struct SelectedCard *selectedCard);
 
 #endif
 

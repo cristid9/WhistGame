@@ -16,10 +16,17 @@ int StartWhistGame(const char *name, int gameType,
         return EXIT_FAILURE;
 
     input->noOfGames++;
+
     struct Game *game = game_createGame(gameType);
     struct Player *player = player_createPlayer(name, 1);
+    GtkWidget *windowTable;
+    GtkWidget *fixedTable;
+    GtkWidget *showScore;
+    GtkWidget *trumpImage;
+    struct SelectedCard *selectedCard;
+    struct PlayerCards *playerCards;
+    
     game_addPlayer(game, &player);
-
     for (int i = 1; i <= botsNumber; i++) {
         char no = (char)(((int)'0') + i);
         char name[7] = "robot";
@@ -29,11 +36,13 @@ int StartWhistGame(const char *name, int gameType,
         game_addPlayer(game, &player);
     }
 
-    GtkWidget *windowTable, *fixedTable, *showScore, *trumpImage;
-    
     gui_init(&windowTable, &fixedTable, "Whist", 798, 520);
+    gtk_widget_add_events(windowTable, GDK_BUTTON_PRESS_MASK);
+    gtk_widget_add_events(windowTable, GDK_POINTER_MOTION_MASK);
     g_signal_connect(G_OBJECT(windowTable), "destroy",
                      G_CALLBACK(gui_closeWhistGame), input);
+    g_signal_connect(G_OBJECT(windowTable), "button-press-event",
+                     G_CALLBACK(gui_clickMouse), NULL);
     
     gui_setBackground(fixedTable, "pictures/table.png");
     gui_createButtonShowScore(fixedTable, &showScore, game);
@@ -45,12 +54,20 @@ int StartWhistGame(const char *name, int gameType,
         card = deck_createCard(i % 3, VALUES[i+4]);
         player_addCard(game->players[0], &card);
     }
-
     player_sortPlayerCards(game->players[0]);
-    struct PlayerCards *playerCards = malloc(sizeof(struct PlayerCards));
+
+    playerCards = gui_initializePlayerCards(fixedTable);
+    printf("%p\n", playerCards);
+    selectedCard = gui_createSelectedCard(fixedTable);
+    g_signal_connect(G_OBJECT(windowTable), "motion-notify-event",
+                     G_CALLBACK(gui_selectedCard), selectedCard);
     gui_showPlayerCards(playerCards, fixedTable, game->players[0]);
 
     gtk_main();
+
+    free(playerCards);
+    game_deleteGame(&game);
+    deck_deleteCard(&card);
 
     return EXIT_SUCCESS;
 }
