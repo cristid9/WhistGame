@@ -220,6 +220,18 @@ struct PlayerCards *gui_initializePlayerCards(GtkWidget *fixed)
     return playerCards;
 }
 
+int gui_hidePlayerCards(struct PlayerCards *playerCards)
+{
+    if (playerCards == NULL)
+        return POINTER_NULL;
+
+    for (int i = 0; i < MAX_CARDS; i++) {
+        gtk_widget_hide(playerCards->images[i]);
+    }
+
+    return 0;
+}
+
 int gui_showPlayerCards(struct PlayerCards *playerCards, GtkWidget *fixed,
                         struct Player *player)
 {
@@ -227,7 +239,7 @@ int gui_showPlayerCards(struct PlayerCards *playerCards, GtkWidget *fixed,
         return POINTER_NULL;
     if (player == NULL)
         return PLAYER_NULL;
-    
+
     int noOfCards = 0;
     for (int i = 0; i < MAX_CARDS; i++)
         if (player->hand[i] != NULL) {
@@ -235,9 +247,9 @@ int gui_showPlayerCards(struct PlayerCards *playerCards, GtkWidget *fixed,
             gui_getPictureName(player->hand[i], pictureName);
             char pathImage [30] = "pictures/80x110/";
             strcat(pathImage, pictureName);
-            gtk_image_set_from_file(GTK_IMAGE(playerCards->images[i]),
+            gtk_image_set_from_file(GTK_IMAGE(playerCards->images[noOfCards]),
                                     pathImage);
-            gtk_widget_show(playerCards->images[i]);
+            gtk_widget_show(playerCards->images[noOfCards]);
             noOfCards++;
         }
 
@@ -312,7 +324,6 @@ int gui_closeWhistGame(GtkWidget *windowTable, struct Input *input)
     input->noOfGames--;
     gtk_widget_destroy(windowTable);
     gtk_main_quit();
-    //gtk_widget_hide_on_delete(windowTable);
 
     return NO_ERROR;
 }
@@ -375,6 +386,51 @@ int gui_selectedCard(GtkWidget *window, GdkEvent *event,
         gtk_widget_show(selectedCard->imageSelectedCard);
     } else {
         gtk_widget_hide(selectedCard->imageSelectedCard);
+    }
+
+    return NO_ERROR;
+}
+
+struct PlayersGUI *gui_createPlayersGUI()
+{
+    struct PlayersGUI *playersGUI = malloc(sizeof(struct PlayersGUI));
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        playersGUI->image[i]     = NULL;
+        playersGUI->nameLabel[i] = NULL;
+        playersGUI->bidsLabel[i] = NULL;
+        playersGUI->tookLabel[i] = NULL;
+    }
+
+    return playersGUI;
+}
+
+int gui_showPlayers(struct Game *game, GtkWidget *fixed,
+                    struct PlayersGUI *playersGUI)
+{
+    if (game == NULL || fixed == NULL || playersGUI == NULL)
+        return POINTER_NULL;
+
+    int coordinates[6][2] = { {25 ,275}, 
+                              {25 ,145}, 
+                              {225 ,15}, 
+                              {425 ,15}, 
+                              {625 ,145}, 
+                              {625 ,275} };
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        if (game->players[i] != NULL) {
+            playersGUI->image[i] = gtk_image_new_from_file
+                                   ("pictures/player.png");
+            gtk_fixed_put(GTK_FIXED(fixed), playersGUI->image[i],
+                          coordinates[i][0], coordinates[i][1]);
+            gtk_widget_show(playersGUI->image[i]);
+
+            playersGUI->nameLabel[i] = gtk_label_new(game->players[i]->name);
+            gtk_fixed_put(GTK_FIXED(fixed), playersGUI->nameLabel[i],
+                          coordinates[i][0] + 57, coordinates[i][1] + 20);
+            gtk_widget_show(playersGUI->nameLabel[i]);
+        }
     }
 
     return NO_ERROR;

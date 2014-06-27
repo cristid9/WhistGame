@@ -25,7 +25,9 @@ int StartWhistGame(const char *name, int gameType,
     GtkWidget *trumpImage;
     struct SelectedCard *selectedCard;
     struct PlayerCards *playerCards;
-    
+    struct Card *card = deck_createCard(SPADES, 15);
+    struct PlayersGUI *playersGUI;
+
     game_addPlayer(game, &player);
     for (int i = 1; i <= botsNumber; i++) {
         char no = (char)(((int)'0') + i);
@@ -37,31 +39,31 @@ int StartWhistGame(const char *name, int gameType,
     }
 
     gui_init(&windowTable, &fixedTable, "Whist", 798, 520);
+    gui_setBackground(fixedTable, "pictures/table.png");
+    gui_createButtonShowScore(fixedTable, &showScore, game);
+    gui_showTrump(fixedTable, card, &trumpImage);
+    playerCards = gui_initializePlayerCards(fixedTable);
+    selectedCard = gui_createSelectedCard(fixedTable);
+    
     gtk_widget_add_events(windowTable, GDK_BUTTON_PRESS_MASK);
     gtk_widget_add_events(windowTable, GDK_POINTER_MOTION_MASK);
+    g_signal_connect(G_OBJECT(windowTable), "motion-notify-event",
+                     G_CALLBACK(gui_selectedCard), selectedCard);
     g_signal_connect(G_OBJECT(windowTable), "destroy",
                      G_CALLBACK(gui_closeWhistGame), input);
     g_signal_connect(G_OBJECT(windowTable), "button-press-event",
                      G_CALLBACK(gui_clickMouse), NULL);
-    
-    gui_setBackground(fixedTable, "pictures/table.png");
-    gui_createButtonShowScore(fixedTable, &showScore, game);
-    
-    struct Card *card = deck_createCard(SPADES, 15);
-    gui_showTrump(fixedTable, card, &trumpImage);
-    
+
     for (int i = 0; i < MAX_CARDS; i++) {
         card = deck_createCard(i % 3, VALUES[i+4]);
         player_addCard(game->players[0], &card);
     }
-    player_sortPlayerCards(game->players[0]);
 
-    playerCards = gui_initializePlayerCards(fixedTable);
-    printf("%p\n", playerCards);
-    selectedCard = gui_createSelectedCard(fixedTable);
-    g_signal_connect(G_OBJECT(windowTable), "motion-notify-event",
-                     G_CALLBACK(gui_selectedCard), selectedCard);
+    player_sortPlayerCards(game->players[0]);
     gui_showPlayerCards(playerCards, fixedTable, game->players[0]);
+
+    playersGUI = gui_createPlayersGUI();
+    gui_showPlayers(game, fixedTable, playersGUI);
 
     gtk_main();
 
@@ -113,7 +115,7 @@ int main(int argc, char *argv[])
     GtkWidget *spinNumber;
     GtkAdjustment *number;
     struct Input *input = malloc(sizeof(struct Input));
-
+    
     gtk_init(&argc, &argv);
 
     gui_init(&window, &fixed, "Whist Game", 230, 200);

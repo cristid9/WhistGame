@@ -12,6 +12,13 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 
+struct PlayersGUI {
+    GtkWidget *image[MAX_GAME_PLAYERS];
+    GtkWidget *nameLabel[MAX_GAME_PLAYERS];
+    GtkWidget *bidsLabel[MAX_GAME_PLAYERS];
+    GtkWidget *tookLabel[MAX_GAME_PLAYERS];
+};
+
 struct SelectedCard {
     GtkWidget *imageSelectedCard;
     GtkWidget *fixed;
@@ -152,6 +159,8 @@ int gui_destroyPlayerCards(struct PlayerCards *playerCards);
 
 struct PlayerCards *gui_initializePlayerCards(GtkWidget *fixed);
 
+int gui_hidePlayerCards(struct PlayerCards *playerCards);
+
 int gui_showPlayerCards(struct PlayerCards *playerCards, GtkWidget *fixed,
                         struct Player *player);
 
@@ -169,6 +178,11 @@ struct SelectedCard *gui_createSelectedCard(GtkWidget *fixed);
 
 int gui_selectedCard(GtkWidget *window, GdkEvent *event,
                      struct SelectedCard *selectedCard);
+
+struct PlayersGUI *gui_createPlayersGUI();
+
+int gui_showPlayers(struct Game *game, GtkWidget *fixed,
+                    struct PlayersGUI *playersGUI);
 
 #endif
 
