@@ -133,6 +133,9 @@ int player_sortPlayerCards(struct Player *player)
     sortCards(spades, noS);
     sortCards(hearts, noH);
 
+    for (int i = 0; i < MAX_CARDS; i++)
+        player->hand[i] = NULL;
+
     for (int i = 0; i < noD; i++)
         player->hand[i] = diamonds[i];
 
