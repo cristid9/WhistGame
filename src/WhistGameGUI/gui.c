@@ -353,14 +353,18 @@ int gui_clickMouse(GtkWidget *window, GdkEvent *event)
     return NO_ERROR;
 }
 
-struct SelectedCard *gui_createSelectedCard(GtkWidget *fixed)
+struct SelectedCard *gui_createSelectedCard(GtkWidget *fixed, struct Game *game,
+                                            struct Player *player, int roundId)
 {
     struct SelectedCard *selectedCard;
     
     selectedCard = malloc(sizeof(struct SelectedCard));
     selectedCard->imageSelectedCard = gtk_image_new_from_file
                                       ("pictures/select_card.png"); 
-    selectedCard->fixed = fixed;
+    selectedCard->fixed   = fixed;
+    selectedCard->game    = game;
+    selectedCard->player  = player;
+    selectedCard->roundId = roundId;
 
     gtk_fixed_put(GTK_FIXED(fixed), selectedCard->imageSelectedCard, 10, 400);
 
@@ -379,7 +383,7 @@ int gui_selectedCard(GtkWidget *window, GdkEvent *event,
     int y = (int)((GdkEventButton*)event)->y;
 
     int cardId = gui_getCardId(x, y);
-    if (cardId != -1) {
+    if (cardId != -1 && selectedCard->player->hand[cardId] != NULL) {
         gtk_fixed_move(GTK_FIXED(selectedCard->fixed),
                        selectedCard->imageSelectedCard,
                        10 + 90 * cardId, 400);

@@ -22,6 +22,9 @@ struct PlayersGUI {
 struct SelectedCard {
     GtkWidget *imageSelectedCard;
     GtkWidget *fixed;
+    struct Game *game;
+    struct Player *player;
+    int roundId;
 };
 
 struct PlayerCards {
@@ -174,7 +177,8 @@ int gui_getCardId(int x, int y);
 
 int gui_clickMouse(GtkWidget *window, GdkEvent *event);
 
-struct SelectedCard *gui_createSelectedCard(GtkWidget *fixed);
+struct SelectedCard *gui_createSelectedCard(GtkWidget *fixed, struct Game *game,
+                                            struct Player *player, int roundId);
 
 int gui_selectedCard(GtkWidget *window, GdkEvent *event,
                      struct SelectedCard *selectedCard);

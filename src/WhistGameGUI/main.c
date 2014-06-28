@@ -43,7 +43,8 @@ int StartWhistGame(const char *name, int gameType,
     gui_createButtonShowScore(fixedTable, &showScore, game);
     gui_showTrump(fixedTable, card, &trumpImage);
     playerCards = gui_initializePlayerCards(fixedTable);
-    selectedCard = gui_createSelectedCard(fixedTable);
+    selectedCard = gui_createSelectedCard(fixedTable, game,
+                                          game->players[0], 0);
     
     gtk_widget_add_events(windowTable, GDK_BUTTON_PRESS_MASK);
     gtk_widget_add_events(windowTable, GDK_POINTER_MOTION_MASK);
@@ -64,6 +65,14 @@ int StartWhistGame(const char *name, int gameType,
 
     playersGUI = gui_createPlayersGUI();
     gui_showPlayers(game, fixedTable, playersGUI);
+
+    gui_hidePlayerCards(playerCards);
+    game->players[0]->hand[0] = NULL;
+    game->players[0]->hand[1] = NULL;
+    game->players[0]->hand[2] = NULL;
+    game->players[0]->hand[3] = NULL;
+    player_sortPlayerCards(game->players[0]);
+    gui_showPlayerCards(playerCards, fixedTable, game->players[0]);
 
     gtk_main();
 
