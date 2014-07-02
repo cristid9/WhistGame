@@ -20,6 +20,8 @@
  *      The number of the player that are in game.
  * @var Game::gameType
  *      The game type (1 for 1-8-1 or 8 for 8-1-8).
+ * @var Game::currentRound
+ *      The current round of game.
  * @var Game::deck
  *      Pointer to the deck of cards of the game.
  * @var Game::players
@@ -30,6 +32,7 @@
 struct Game {
     int playersNumber;
     int gameType;
+    int currentRound;
     struct Deck *deck;
     struct Player *players[MAX_GAME_PLAYERS];
     struct Round *rounds[MAX_GAME_ROUNDS];
@@ -132,6 +135,18 @@ int game_rewardsPlayer(struct Game *game, struct Player *player,
  * @return NO_ERROR or 0 on success, other value on failure.
  */
 int game_rewardsPlayersFromGame(struct Game *game, int currentRound);
+
+/**
+ * @brief Function calculates the position a player in game. The function
+ *        disregard the players which have the NULL value.
+ *
+ * @param game Pointer to the game in which is found the player.
+ * @param player Pointer to the player for which is calculated the position.
+ *
+ * @return A positive value between 0 and MAX_GAME_PLAYERS - 1 on success, a
+ *         negative value on failure.
+ */
+int game_getPlayerPosition(struct Game *game, struct Player *player);
 
 #endif
 
