@@ -20,6 +20,7 @@ struct Game *game_createGame(int gameType)
         return NULL;
 
     game->playersNumber = 0;
+    game->currentRound  = 0;
     game->gameType      = gameType;
     game->deck          = NULL;
 
@@ -260,5 +261,23 @@ int game_rewardsPlayersFromGame(struct Game *game, int currentRound)
         }
 
     return NO_ERROR;
+}
+
+int game_getPlayerPosition(struct Game *game, struct Player *player)
+{
+    if (game == NULL)
+        return GAME_NULL;
+    if (player == NULL)
+        return PLAYER_NULL;
+
+    int position = -1;
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (game->players[i] != NULL) {
+            position++;
+            if (game->players[i] == player)
+                return position;
+        }
+
+    return NOT_FOUND;
 }
 
