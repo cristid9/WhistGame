@@ -146,6 +146,19 @@ int game_addPlayersInRound(struct Game *game, struct Round *round,
     return NO_ERROR;
 }
 
+int game_addPlayersInAllRounds(struct Game *game)
+{
+    if (game == NULL)
+        return GAME_NULL;
+
+    for (int i = 0; i < MAX_GAME_ROUNDS; i++)
+        if (game->rounds[i] != NULL)
+            game_addPlayersInRound(game, game->rounds[i],
+                                   i % MAX_GAME_PLAYERS - 1);
+
+    return NO_ERROR;
+}
+
 int game_createAndAddRounds(struct Game *game)
 {
     if (game == NULL)
