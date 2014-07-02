@@ -25,8 +25,9 @@
  *      The number of the won hands of each players.
  * @var Round::bonus
  *      This member retain for each player if was rewarded or not. If the value
- *      is 1 then mean that the player was rewarded, if the value is 0 then mean
- *      that the player didn't was rewarded.
+ *      is 1 then mean that the player was rewarded on positive, if the value
+ *      is 2 then mean that the player was rewarded on negative, if the value
+ *      is 0 then mean that the player didn't was rewarded.
  * @var Round::pointsNumber
  *      The score of the players.
  * @var Round::players
