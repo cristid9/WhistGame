@@ -272,7 +272,7 @@ void test_game_rewardsPlayer()
     game->rounds[7]->bonus[0] = 0;
     cut_assert_equal_int(2, game_rewardsPlayer(game, game->players[0], 7));
     cut_assert_equal_int(0, game->rounds[7]->pointsNumber[0]);
-    cut_assert_equal_int(1, game->rounds[7]->bonus[0]);
+    cut_assert_equal_int(2, game->rounds[7]->bonus[0]);
     game->rounds[4]->bonus[0] = 1;
     cut_assert_equal_int(NO_ERROR,
                          game_rewardsPlayer(game, game->players[0], 7));
