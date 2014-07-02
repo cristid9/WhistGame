@@ -100,6 +100,15 @@ int game_addPlayersInRound(struct Game *game, struct Round *round,
                            int firstPlayer);
 
 /**
+ * @brief Function add the players from game in all rounds from a game.
+ *
+ * @param game Pointer to the game which to be modified.
+ *
+ * @return NO_ERROR or 0 on success, other value on failure.
+ */
+int game_addPlayersInAllRounds(struct Game *game);
+
+/**
  * @brief Function creates and adds all the rounds in game.
  *
  * @param game Pointer to the game in which to be added the rounds.
