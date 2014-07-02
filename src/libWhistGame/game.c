@@ -236,7 +236,7 @@ int game_rewardsPlayer(struct Game *game, struct Player *player,
     }
     if (lostRounds == BONUS_ROUNDS_NUMBER) {
         game->rounds[currentRound]->pointsNumber[position] -= BONUS;
-        game->rounds[currentRound]->bonus[position]         = 1;
+        game->rounds[currentRound]->bonus[position]         = 2;
         return 2;
     }
 
