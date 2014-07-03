@@ -64,10 +64,10 @@ int gui_playerName(GtkWidget *window, GtkWidget *fixed,
 }
 
 int gui_gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
-                 GtkWidget **radio1, GtkWidget **radio8, GtkWidget **vbox)
+                 GtkWidget **radio1, GtkWidget **radio8)
 {
-    if (window == NULL || fixed == NULL || label == NULL || radio1 == NULL ||
-        radio8 == NULL || vbox == NULL)
+    if (window == NULL || fixed == NULL || label == NULL
+         || radio1 == NULL || radio8 == NULL)
         return POINTER_NULL;
 
     *label = gtk_label_new("Choose the game type");
@@ -76,14 +76,10 @@ int gui_gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
 
     *radio1 = gtk_radio_button_new_with_label(NULL, "11-88-11");
     *radio8 = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(*radio1), "88-11-88");
+    gtk_fixed_put(GTK_FIXED(fixed), *radio1, 10, 60);
+    gtk_fixed_put(GTK_FIXED(fixed), *radio8, 10, 85);
     gtk_widget_show(*radio1);
     gtk_widget_show(*radio8);
-
-    *vbox = gtk_vbox_new(FALSE, 5);
-    gtk_box_pack_start_defaults(GTK_BOX(*vbox), *radio1);
-    gtk_box_pack_start_defaults(GTK_BOX(*vbox), *radio8);
-    gtk_fixed_put(GTK_FIXED(fixed), *vbox, 10, 60);
-    gtk_widget_show(*vbox);
 
     return NO_ERROR;
 }
@@ -100,8 +96,143 @@ int gui_setBackground(GtkWidget *fixed, char *pathPicture)
     return NO_ERROR;
 }
 
+//Helpful function for gui_drawScore().
+int intToChar(int number, char *string)
+{
+    int i, copy, j;
+    char ch;
+
+    if ((copy = number) < 0)
+        number = -number;
+
+    i = 0;
+    do {
+        string[i++] = number % 10 + '0';
+    } while ((number /= 10) > 0);
+
+    if (copy < 0)
+        string[i++] = '-';
+    string[i] = '\0';
+
+    for (i = 0, j = strlen(string) - 1; i < j; i++, j--) {
+        ch = string[i];
+        string[i] = string[j];
+        string[j] = ch;
+    }
+
+    return NO_ERROR;
+}
+
+gboolean gui_drawScore(GtkWidget *button, GdkEventExpose *event,
+                       struct Game *game)
+{
+    GdkGC *gc;
+    GdkColor color;
+    GdkWindow *window;
+    GdkFont *font;
+
+    window = button->window;
+    font = gdk_font_load("-*-fixed-bold-r-normal--*-120-*-*-*-*-iso8859-1");
+    gc = gdk_gc_new(window);
+
+    int noOfPlayers = 0;
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (game->players[i] != NULL) {
+            gdk_draw_text(window, font, gc, 19 + 80 * noOfPlayers, 14,
+                          game->players[i]->name,
+                          strlen(game->players[i]->name));
+            noOfPlayers++;
+        }
+
+    int position;
+    for (int i = 0; i < MAX_GAME_ROUNDS; i++)
+        if (game->rounds[i] != NULL) {
+            gdk_color_parse("black", &color);
+            gdk_gc_set_rgb_fg_color(gc, &color);
+            char type[2] = { '\0' };
+            type[0] = '0' + game->rounds[i]->roundType;
+            gdk_draw_text(window, font, gc, 5, 28 + i * 16, type, strlen(type));
+
+            if (i < game->currentRound)
+                for (int j = 0; j < MAX_GAME_PLAYERS; j++) {
+                    position = game_getPlayerPosition
+                               (game, game->rounds[i]->players[j]);
+
+                    if (position < 0 )
+                        continue;
+
+                    char score[4] = { '\0' };
+                    char bids[2]  = { '\0' };
+                    intToChar(game->rounds[i]->pointsNumber[j], score);
+                    intToChar(game->rounds[i]->bids[j], bids);
+
+                    if (game->rounds[i]->bids[j] ==
+                        game->rounds[i]->handsNumber[j])
+                        gdk_color_parse("green", &color);
+                    else
+                        gdk_color_parse("red", &color);
+
+                    gdk_gc_set_rgb_fg_color(gc, &color);
+                    gdk_draw_text(window, font, gc, 3 + 80 * (position + 1),
+                                  28 + i * 16, bids, strlen(bids));
+
+                    if (game->rounds[i]->bonus[j] == 1)
+                        gdk_color_parse("green", &color);
+                    if (game->rounds[i]->bonus[j] == 2)
+                        gdk_color_parse("red", &color);
+                    if (game->rounds[i]->bonus[j] == 0)
+                        gdk_color_parse("black", &color);
+                    gdk_gc_set_rgb_fg_color(gc, &color);
+                    gdk_draw_text(window, font, gc, 37 + 80 * position,
+                                  28 + i * 16, score, strlen(score));
+                }
+
+            if (i == game->currentRound)
+                for (int j = 0; j < MAX_GAME_PLAYERS; j++) {
+                    position = game_getPlayerPosition
+                               (game, game->rounds[i]->players[j]);
+
+                    if (position < 0)
+                        continue;
+
+                    char bids[2] = { '\0' };
+                    intToChar(game->rounds[i]->bids[j], bids);
+
+                    gdk_color_parse("black", &color);
+                    gdk_gc_et_rgb_fg_color(gc, &color);
+                    gdk_draw_text(window, font, gc, 3 + 80 * (position + 1),
+                                  28 + i * 16, bids, strlen(bids));
+                }
+        }
+
+    return TRUE;
+}
+
 int gui_showScore(GtkWidget *button, struct Game *game)
 {
+    GtkWidget *window, *helpfulButton;
+    GtkWidget *fixed;
+
+    gui_init(&window, &fixed, "Score", 496, 500);
+    g_signal_connect(G_OBJECT(window), "destroy",
+                     G_CALLBACK(gtk_main_quit), NULL);
+
+    gui_setBackground(fixed, "pictures/score.png");
+
+    // I used helpfulButton to can draw the score. Other method I didn't
+    // found when I written this code.
+    helpfulButton = gtk_button_new_with_label("AAAAAAAAAAAA");
+    gtk_fixed_put(GTK_FIXED(fixed), helpfulButton, 150, 150);
+    gtk_widget_show(helpfulButton);
+    g_signal_connect(G_OBJECT(helpfulButton), "expose-event",
+                     G_CALLBACK(gui_drawScore), game);
+
+    gtk_main();
+
+    gtk_widget_destroy(helpfulButton);
+    gtk_widget_destroy(fixed);
+    gtk_widget_destroy(window);
+
     return NO_ERROR;
 }
 
@@ -168,9 +299,20 @@ int gui_destroyTrump(GtkWidget **image)
     return NO_ERROR;
 }
 
-int gui_showTrump(GtkWidget *fixed, struct Card *trump, GtkWidget **image)
+int gui_initTrump(GtkWidget *fixed, GtkWidget **image)
 {
     if (fixed == NULL || image == NULL)
+        return POINTER_NULL;
+
+    *image = gtk_image_new();
+    gtk_fixed_put(GTK_FIXED(fixed), *image, 45, 15);
+
+    return NO_ERROR;
+}
+
+int gui_showTrump(struct Card *trump, GtkWidget *image)
+{
+    if (image == NULL)
         return POINTER_NULL;
 
     char pathTrump[30] = "pictures/45x60/";
@@ -182,9 +324,8 @@ int gui_showTrump(GtkWidget *fixed, struct Card *trump, GtkWidget **image)
         strcat(pathTrump, pictureName);
     }
 
-    *image = gtk_image_new_from_file(pathTrump);
-    gtk_fixed_put(GTK_FIXED(fixed), *image, 45, 15);
-    gtk_widget_show(*image);
+    gtk_image_set_from_file(GTK_IMAGE(image), pathTrump);
+    gtk_widget_show(image);
 
     return NO_ERROR;
 }
@@ -312,7 +453,7 @@ int gui_initAndShowDialogMaxGames(GtkWidget *window)
 
     gtk_dialog_run(GTK_DIALOG(dialog)); 
     gtk_widget_destroy(dialog);
-    
+
     return NO_ERROR;
 }
 

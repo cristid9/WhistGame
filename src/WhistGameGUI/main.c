@@ -38,14 +38,31 @@ int StartWhistGame(const char *name, int gameType,
         game_addPlayer(game, &player);
     }
 
+    game_createAndAddRounds(game);
+    game_addPlayersInAllRounds(game);
+
+    for (int i = 0; i < 30; i++) {
+        for (int j = 0; j < MAX_GAME_PLAYERS; j++)
+            if (game->rounds[i]->players[j] != NULL) {
+                game->rounds[i]->bids[j] = j;
+                game->rounds[i]->handsNumber[j] = j;
+            }
+        if (i > 0)
+            round_copyScore(game->rounds[i - 1], game->rounds[i]);
+        round_determinesScore(game->rounds[i]);
+        game->currentRound = i;
+        game_rewardsPlayersFromGame(game, game->currentRound);
+    }
+
     gui_init(&windowTable, &fixedTable, "Whist", 798, 520);
     gui_setBackground(fixedTable, "pictures/table.png");
     gui_createButtonShowScore(fixedTable, &showScore, game);
-    gui_showTrump(fixedTable, card, &trumpImage);
+    gui_initTrump(fixedTable, &trumpImage);
+    gui_showTrump(card, trumpImage);
     playerCards = gui_initializePlayerCards(fixedTable);
     selectedCard = gui_createSelectedCard(fixedTable, game,
                                           game->players[0], 0);
-    
+
     gtk_widget_add_events(windowTable, GDK_BUTTON_PRESS_MASK);
     gtk_widget_add_events(windowTable, GDK_POINTER_MOTION_MASK);
     g_signal_connect(G_OBJECT(windowTable), "motion-notify-event",
@@ -61,24 +78,17 @@ int StartWhistGame(const char *name, int gameType,
     }
 
     player_sortPlayerCards(game->players[0]);
-    gui_showPlayerCards(playerCards, fixedTable, game->players[0]);
 
     playersGUI = gui_createPlayersGUI();
     gui_showPlayers(game, fixedTable, playersGUI);
 
-    gui_hidePlayerCards(playerCards);
-    game->players[0]->hand[0] = NULL;
-    game->players[0]->hand[1] = NULL;
-    game->players[0]->hand[2] = NULL;
-    game->players[0]->hand[3] = NULL;
-    player_sortPlayerCards(game->players[0]);
     gui_showPlayerCards(playerCards, fixedTable, game->players[0]);
 
     gtk_main();
 
-    free(playerCards);
-    game_deleteGame(&game);
-    deck_deleteCard(&card);
+    //free(playerCards);
+    //game_deleteGame(&game);
+    //deck_deleteCard(&card);
 
     return EXIT_SUCCESS;
 }
@@ -119,7 +129,6 @@ int main(int argc, char *argv[])
     GtkWidget *fixed;
     GtkWidget *labelName, *labelType, *labelNumber;
     GtkWidget *name;
-    GtkWidget *vbox;
     GtkWidget *radio1, *radio8;
     GtkWidget *spinNumber;
     GtkAdjustment *number;
@@ -131,7 +140,7 @@ int main(int argc, char *argv[])
     g_signal_connect(G_OBJECT(window), "destroy",
                      G_CALLBACK(gtk_main_quit), NULL);
     gui_playerName(window, fixed, &labelName, &name);
-    gui_gameType(window, fixed, &labelType, &radio1, &radio8, &vbox);
+    gui_gameType(window, fixed, &labelType, &radio1, &radio8);
     gui_noOfBots(window, fixed, &labelNumber, &spinNumber, &number);
     
     input->name         = name;

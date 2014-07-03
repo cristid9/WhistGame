@@ -10,6 +10,7 @@
 #include <libWhistGame.h>
 
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
 #include <stdlib.h>
 
 struct PlayersGUI {
@@ -118,13 +119,11 @@ int gui_playerName(GtkWidget *window, GtkWidget *fixed,
  *               button to that address.
  * @param radio8 Pointer to pointer to GtkWidget. Function will creates a radio
  *               button to that address.
- * @param vbox Pointer to pointer to GtkWidget. Function will creates a vbox to
- *             that address.
  *
  * @return NO_ERROR or 0 on success, other value on failure.
  */
 int gui_gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
-                 GtkWidget **radio1, GtkWidget **radio8, GtkWidget **vbox);
+                 GtkWidget **radio1, GtkWidget **radio8);
 /**
  * @brief Function set background for a GtkFixed.
  *
@@ -156,7 +155,9 @@ int gui_getPictureName(struct Card *card, char *name);
 
 int gui_destroyTrump(GtkWidget **image);
 
-int gui_showTrump(GtkWidget *fixed, struct Card *trump, GtkWidget **image);
+int gui_initTrump(GtkWidget *fixed, GtkWidget **image);
+
+int gui_showTrump(struct Card *trump, GtkWidget *image);
 
 int gui_destroyPlayerCards(struct PlayerCards *playerCards);
 
