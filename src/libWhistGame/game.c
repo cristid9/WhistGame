@@ -154,7 +154,7 @@ int game_addPlayersInAllRounds(struct Game *game)
     for (int i = 0; i < MAX_GAME_ROUNDS; i++)
         if (game->rounds[i] != NULL)
             game_addPlayersInRound(game, game->rounds[i],
-                                   i % MAX_GAME_PLAYERS - 1);
+                                   i % MAX_GAME_PLAYERS);
 
     return NO_ERROR;
 }
