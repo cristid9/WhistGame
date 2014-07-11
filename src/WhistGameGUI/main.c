@@ -83,13 +83,15 @@ int StartWhistGame(const char *name, int gameType,
     gui_showPlayers(game, fixedTable, playersGUI);
 
     gui_showPlayerCards(playerCards, fixedTable, game->players[0]);
+    game->currentRound = 25;
+    gui_showInformationsPlayers(playersGUI, game);
 
     gtk_main();
-
+    
     //free(playerCards);
     //game_deleteGame(&game);
     //deck_deleteCard(&card);
-
+    
     return EXIT_SUCCESS;
 }
 

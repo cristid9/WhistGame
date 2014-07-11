@@ -18,6 +18,7 @@ struct PlayersGUI {
     GtkWidget *nameLabel[MAX_GAME_PLAYERS];
     GtkWidget *bidsLabel[MAX_GAME_PLAYERS];
     GtkWidget *tookLabel[MAX_GAME_PLAYERS];
+    GtkWidget *scoreLabel[MAX_GAME_PLAYERS];
 };
 
 struct SelectedCard {
@@ -153,13 +154,13 @@ int gui_createButtonShowScore(GtkWidget *fixed, GtkWidget **showButton,
 
 int gui_getPictureName(struct Card *card, char *name);
 
-int gui_destroyTrump(GtkWidget **image);
-
 int gui_initTrump(GtkWidget *fixed, GtkWidget **image);
+
+int gui_hideTrump(GtkWidget *image);
 
 int gui_showTrump(struct Card *trump, GtkWidget *image);
 
-int gui_destroyPlayerCards(struct PlayerCards *playerCards);
+int gui_deletePlayerCards(struct PlayerCards **playerCards);
 
 struct PlayerCards *gui_initializePlayerCards(GtkWidget *fixed);
 
@@ -188,6 +189,15 @@ struct PlayersGUI *gui_createPlayersGUI();
 
 int gui_showPlayers(struct Game *game, GtkWidget *fixed,
                     struct PlayersGUI *playersGUI);
+
+int gui_showInformationsPlayers(struct PlayersGUI *playersGUI,
+                                struct Game *game);
+
+int gui_deletePlayersGUI(struct PlayersGUI **playersGUI);
+
+int gui_deleteSelectedCard(struct SelectedCard **selectedCard);
+
+int gui_deleteInput(struct Input **input);
 
 #endif
 
