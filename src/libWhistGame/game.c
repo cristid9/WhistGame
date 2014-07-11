@@ -262,7 +262,7 @@ int game_rewardsPlayersFromGame(struct Game *game, int currentRound)
         return GAME_NULL;
     if (currentRound < 0 || currentRound >= MAX_GAME_ROUNDS)
         return ILLEGAL_VALUE;
-    if (currentRound - BONUS_ROUNDS_NUMBER < 0)
+    if (currentRound - BONUS_ROUNDS_NUMBER + 1 < 0)
         return NO_ERROR;
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++)
