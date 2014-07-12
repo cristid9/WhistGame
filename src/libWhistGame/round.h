@@ -130,8 +130,8 @@ int round_distributeDeck(struct Round *round, struct Deck *deck);
  * @param round Pointer to the round in which is the player.
  * @param player Pointer to the player for which it get the id.
  *
- * @return A number between 0 and MAX_GAME_PLAYERS on success, a negative value
- *         on failure.
+ * @return A number between 0 and MAX_GAME_PLAYERS - 1 on success, a negative
+ *         value on failure.
  */
 int round_getPlayerId(struct Round *round, struct Player *player);
 
