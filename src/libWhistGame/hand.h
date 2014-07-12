@@ -79,5 +79,16 @@ int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card);
 int hand_checkCard(struct Hand *hand, struct Player *player,
                    int cardId, struct Card *trump);
 
+/**
+ * @brief Function get the id of the player.
+ *
+ * @param hand Pointer to the hand in which is the player.
+ * @param player Pointer to the player for which it get the id.
+ *
+ * @return A number between 0 and MAX_GAME_PLAYERS - 1 on success, a negative
+ *         value on failure.
+ */
+int hand_getPlayerId(struct Hand *hand, struct Player *player);
+
 #endif
 
