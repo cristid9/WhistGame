@@ -128,3 +128,17 @@ int hand_checkCard(struct Hand *hand, struct Player *player,
     return 0;
 }
 
+int hand_getPlayerId(struct Hand *hand, struct Player *player)
+{
+    if (hand == NULL)
+        return HAND_NULL;
+    if (player == NULL)
+        return PLAYER_NULL;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (hand->players[i] == player)
+            return i;
+
+    return NOT_FOUND;
+}
+
