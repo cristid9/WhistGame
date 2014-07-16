@@ -23,6 +23,8 @@ int StartWhistGame(const char *name, int gameType,
     GtkWidget *fixedTable;
     GtkWidget *showScore;
     GtkWidget *trumpImage;
+    GtkWidget *roundTypeLabel;
+    GtkWidget *noOfBidsLabel;
     struct SelectedCard *selectedCard;
     struct PlayerCards *playerCards;
     struct Card *card = deck_createCard(SPADES, 15);
@@ -37,7 +39,6 @@ int StartWhistGame(const char *name, int gameType,
         player = player_createPlayer(name, 0);
         game_addPlayer(game, &player);
     }
-
     game_createAndAddRounds(game);
     game_addPlayersInAllRounds(game);
 
@@ -83,8 +84,25 @@ int StartWhistGame(const char *name, int gameType,
     gui_showPlayers(game, fixedTable, playersGUI);
 
     gui_showPlayerCards(playerCards, fixedTable, game->players[0]);
-    game->currentRound = 25;
+    game->currentRound = 15;
     gui_showInformationsPlayers(playersGUI, game);
+
+    game->currentRound = 0;
+    game->rounds[game->currentRound]->hand = hand_createHand();
+    round_addPlayersInHand(game->rounds[game->currentRound], 0);
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        card = deck_createCard(i % 3, VALUES[i]);
+        hand_addCard(game->rounds[game->currentRound]->hand,
+                     game->rounds[game->currentRound]->hand->players[i],
+                     &card);
+    }
+    struct CardsFromTable *cardsFromTable;
+    cardsFromTable = gui_createCardsFromTable();
+    gui_initCardsFromTable(cardsFromTable, fixedTable);
+    gui_showCardsOnTable(cardsFromTable, game);
+
+    gui_initRoundTypeLabel(&roundTypeLabel, fixedTable);
+    gui_initNoOfBidsLabel(&noOfBidsLabel, fixedTable);
 
     gtk_main();
     

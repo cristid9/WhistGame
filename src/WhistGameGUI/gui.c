@@ -549,12 +549,12 @@ int gui_showPlayers(struct Game *game, GtkWidget *fixed,
     if (game == NULL || fixed == NULL || playersGUI == NULL)
         return POINTER_NULL;
 
-    int coordinates[6][2] = { {25 ,275}, 
-                              {25 ,145}, 
-                              {225 ,15}, 
-                              {425 ,15}, 
-                              {625 ,145}, 
-                              {625 ,275} };
+    int coordinates[MAX_GAME_PLAYERS][2] = { {25 ,275}, 
+                                             {25 ,145}, 
+                                             {225 ,15}, 
+                                             {425 ,15}, 
+                                             {625 ,145}, 
+                                             {625 ,275} };
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
         if (game->players[i] != NULL) {
@@ -621,16 +621,90 @@ int gui_showInformationsPlayers(struct PlayersGUI *playersGUI,
     return NO_ERROR;
 }
 
-int gui_showCardsOnTable(struct Hand *hand, GtkWidget *fixed)
+struct CardsFromTable *gui_createCardsFromTable()
 {
-    if (hand == NULL)
-        return HAND_NULL;
-    if (fixed == NULL)
+    struct CardsFromTable *cardsFromTable;
+    cardsFromTable = malloc(sizeof(struct CardsFromTable));
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        cardsFromTable->images[i] = NULL;
+    }
+
+    return cardsFromTable;
+}
+
+int gui_deleteCardsFromTable(struct CardsFromTable **cardsFromTable)
+{
+    if (cardsFromTable == NULL || *cardsFromTable == NULL)
         return POINTER_NULL;
 
+    free(*cardsFromTable);
+    *cardsFromTable = NULL;
 
+    return NO_ERROR;
+}
 
-    return 0;
+int gui_initCardsFromTable(struct CardsFromTable *cardsFromTable,
+                           GtkWidget *fixed)
+{
+    if (cardsFromTable == NULL || fixed == NULL)
+        return POINTER_NULL;
+
+    int coordinates[MAX_GAME_PLAYERS][2] = { {210, 295},
+                                             {210, 165},
+                                             {277, 140},
+                                             {477, 140},
+                                             {545, 165},
+                                             {545, 285} };
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        cardsFromTable->images[i] = gtk_image_new();
+        gtk_fixed_put(GTK_FIXED(fixed), cardsFromTable->images[i],
+                      coordinates[i][0], coordinates[i][1]);
+    }
+
+    return NO_ERROR;
+}
+
+int gui_hideCardsFromTable(struct CardsFromTable *cardsFromTable)
+{
+    if (cardsFromTable == NULL)
+        return POINTER_NULL;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+        gtk_widget_hide(cardsFromTable->images[i]);
+    }
+
+    return NO_ERROR;
+}
+
+int gui_showCardsOnTable(struct CardsFromTable *cardsFromTable,
+                         struct Game *game)
+{
+    if (game == NULL)
+        return GAME_NULL;
+    if (cardsFromTable == NULL)
+        return POINTER_NULL;
+
+    struct Hand *hand = game->rounds[game->currentRound]->hand;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (game->players[i] != NULL) {
+            int position = hand_getPlayerId(hand, game->players[i]);
+            if (position < 0)
+                return position;
+            if (hand->cards[position] != NULL) {    
+                char pictureName[10] = { '\0' };
+                gui_getPictureName(hand->cards[position], pictureName);
+                char pathImage [30] = "pictures/45x60/";
+                strcat(pathImage, pictureName);
+                gtk_image_set_from_file(GTK_IMAGE(cardsFromTable->images[i]),
+                                        pathImage);
+                gtk_widget_show(cardsFromTable->images[i]);
+            }
+        }
+
+    return NO_ERROR;
 }
 
 int gui_deletePlayersGUI(struct PlayersGUI **playersGUI)
@@ -662,6 +736,38 @@ int gui_deleteInput(struct Input **input)
 
     free(*input);
     *input = NULL;
+
+    return NO_ERROR;
+}
+
+int gui_initRoundTypeLabel(GtkWidget **roundTypeLabel, GtkWidget *fixed)
+{
+    if (*roundTypeLabel == NULL || roundTypeLabel == NULL || fixed == NULL)
+        return POINTER_NULL;
+
+    GdkColor color;
+    gdk_color_parse("black", &color);
+
+    *roundTypeLabel = gtk_label_new("1 ");
+    gtk_fixed_put(GTK_FIXED(fixed), *roundTypeLabel, 700, 12);
+    gtk_widget_modify_fg(*roundTypeLabel, GTK_STATE_NORMAL, &color);
+    gtk_widget_show(*roundTypeLabel);
+
+    return NO_ERROR;
+}
+
+int gui_initNoOfBidsLabel(GtkWidget **noOfBidsLabel, GtkWidget *fixed)
+{
+    if (*noOfBidsLabel == NULL || noOfBidsLabel == NULL || fixed == NULL)
+        return POINTER_NULL;
+
+    GdkColor color;
+    gdk_color_parse("black", &color);
+
+    *noOfBidsLabel = gtk_label_new("1 ");
+    gtk_fixed_put(GTK_FIXED(fixed), *noOfBidsLabel, 655, 29);
+    gtk_widget_modify_fg(*noOfBidsLabel, GTK_STATE_NORMAL, &color);
+    gtk_widget_show(*noOfBidsLabel);
 
     return NO_ERROR;
 }

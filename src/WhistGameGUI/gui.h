@@ -13,6 +13,10 @@
 #include <gdk/gdk.h>
 #include <stdlib.h>
 
+struct CardsFromTable {
+    GtkWidget *images[MAX_GAME_PLAYERS];
+};
+
 struct PlayersGUI {
     GtkWidget *image[MAX_GAME_PLAYERS];
     GtkWidget *nameLabel[MAX_GAME_PLAYERS];
@@ -193,11 +197,27 @@ int gui_showPlayers(struct Game *game, GtkWidget *fixed,
 int gui_showInformationsPlayers(struct PlayersGUI *playersGUI,
                                 struct Game *game);
 
+struct CardsFromTable *gui_createCardsFromTable();
+
+int gui_deleteCardsFromTable(struct CardsFromTable **cardsFromTable);
+
+int gui_initCardsFromTable(struct CardsFromTable *cardsFromTable,
+                           GtkWidget *fixed);
+
+int gui_hideCardsFromTable(struct CardsFromTable *cardsFromTable);
+
+int gui_showCardsOnTable(struct CardsFromTable *cardsFromTable,
+                         struct Game *game);
+
 int gui_deletePlayersGUI(struct PlayersGUI **playersGUI);
 
 int gui_deleteSelectedCard(struct SelectedCard **selectedCard);
 
 int gui_deleteInput(struct Input **input);
+
+int gui_initRoundTypeLabel(GtkWidget **roundTypeLabel, GtkWidget *fixed);
+
+int gui_initNoOfBidsLabel(GtkWidget **noOfBidsLabel, GtkWidget *fixed);
 
 #endif
 
