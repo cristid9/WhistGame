@@ -104,6 +104,9 @@ int StartWhistGame(const char *name, int gameType,
     gui_initRoundTypeLabel(&roundTypeLabel, fixedTable);
     gui_initNoOfBidsLabel(&noOfBidsLabel, fixedTable);
 
+    gui_setRoundType(roundTypeLabel, game->rounds[0]);
+    gui_setNoOfBids(noOfBidsLabel, game->rounds[0]);
+
     gtk_main();
     
     //free(playerCards);

@@ -748,8 +748,8 @@ int gui_initRoundTypeLabel(GtkWidget **roundTypeLabel, GtkWidget *fixed)
     GdkColor color;
     gdk_color_parse("black", &color);
 
-    *roundTypeLabel = gtk_label_new("1 ");
-    gtk_fixed_put(GTK_FIXED(fixed), *roundTypeLabel, 700, 12);
+    *roundTypeLabel = gtk_label_new("");
+    gtk_fixed_put(GTK_FIXED(fixed), *roundTypeLabel, 700, 11);
     gtk_widget_modify_fg(*roundTypeLabel, GTK_STATE_NORMAL, &color);
     gtk_widget_show(*roundTypeLabel);
 
@@ -764,10 +764,38 @@ int gui_initNoOfBidsLabel(GtkWidget **noOfBidsLabel, GtkWidget *fixed)
     GdkColor color;
     gdk_color_parse("black", &color);
 
-    *noOfBidsLabel = gtk_label_new("1 ");
+    *noOfBidsLabel = gtk_label_new("");
     gtk_fixed_put(GTK_FIXED(fixed), *noOfBidsLabel, 655, 29);
     gtk_widget_modify_fg(*noOfBidsLabel, GTK_STATE_NORMAL, &color);
     gtk_widget_show(*noOfBidsLabel);
+
+    return NO_ERROR;
+}
+
+int gui_setRoundType(GtkWidget *roundTypeLabel, struct Round *round)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+    if (roundTypeLabel == NULL)
+        return POINTER_NULL;
+
+    char type[1] = { '\0' };
+    intToChar(round->roundType, type);
+    gtk_label_set_text(GTK_LABEL(roundTypeLabel), type);
+
+    return NO_ERROR;
+}
+
+int gui_setNoOfBids(GtkWidget *noOfBidsLabel, struct Round *round)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+    if (noOfBidsLabel == NULL)
+        return POINTER_NULL;
+
+    char bids[2] = { '\0' };
+    intToChar(round_getBidsSum(round), bids);
+    gtk_label_set_text(GTK_LABEL(noOfBidsLabel), bids);
 
     return NO_ERROR;
 }

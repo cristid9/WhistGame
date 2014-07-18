@@ -219,5 +219,9 @@ int gui_initRoundTypeLabel(GtkWidget **roundTypeLabel, GtkWidget *fixed);
 
 int gui_initNoOfBidsLabel(GtkWidget **noOfBidsLabel, GtkWidget *fixed);
 
+int gui_setRoundType(GtkWidget *roundTypeLabel, struct Round *round);
+
+int gui_setNoOfBids(GtkWidget *noOfBidsLabel, struct Round *round);
+
 #endif
 
