@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 #include "gui.h"
 
@@ -25,10 +26,11 @@ int StartWhistGame(const char *name, int gameType,
     GtkWidget *trumpImage;
     GtkWidget *roundTypeLabel;
     GtkWidget *noOfBidsLabel;
-    struct SelectedCard *selectedCard;
+    struct Select *select;
     struct PlayerCards *playerCards;
     struct Card *card = deck_createCard(SPADES, 15);
     struct PlayersGUI *playersGUI;
+    struct BidGUI *bidGUI;
 
     game_addPlayer(game, &player);
     for (int i = 1; i <= botsNumber; i++) {
@@ -42,7 +44,7 @@ int StartWhistGame(const char *name, int gameType,
     game_createAndAddRounds(game);
     game_addPlayersInAllRounds(game);
 
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 20; i++) {
         for (int j = 0; j < MAX_GAME_PLAYERS; j++)
             if (game->rounds[i]->players[j] != NULL) {
                 game->rounds[i]->bids[j] = j;
@@ -61,13 +63,20 @@ int StartWhistGame(const char *name, int gameType,
     gui_initTrump(fixedTable, &trumpImage);
     gui_showTrump(card, trumpImage);
     playerCards = gui_initializePlayerCards(fixedTable);
-    selectedCard = gui_createSelectedCard(fixedTable, game,
-                                          game->players[0], 0);
+
+    bidGUI = gui_createBidGUI();
+    gui_initBidGUI(bidGUI, fixedTable);
+    gui_showBidGUI(bidGUI, game->rounds[0], game->players[0]);
+
+    select = gui_createSelect(fixedTable, game->players[0]);
+    select->bidPlayerTurn = 1;
+    select->cardPlayerTurn = 1;
+    select->round = game->rounds[0];
 
     gtk_widget_add_events(windowTable, GDK_BUTTON_PRESS_MASK);
     gtk_widget_add_events(windowTable, GDK_POINTER_MOTION_MASK);
     g_signal_connect(G_OBJECT(windowTable), "motion-notify-event",
-                     G_CALLBACK(gui_selectedCard), selectedCard);
+                     G_CALLBACK(gui_moveMouse), select);
     g_signal_connect(G_OBJECT(windowTable), "destroy",
                      G_CALLBACK(gui_closeWhistGame), input);
     g_signal_connect(G_OBJECT(windowTable), "button-press-event",
@@ -83,7 +92,7 @@ int StartWhistGame(const char *name, int gameType,
     playersGUI = gui_createPlayersGUI();
     gui_showPlayers(game, fixedTable, playersGUI);
 
-    gui_showPlayerCards(playerCards, fixedTable, game->players[0]);
+    gui_showPlayerCards(playerCards, game->players[0]);
     game->currentRound = 15;
     gui_showInformationsPlayers(playersGUI, game);
 
@@ -112,7 +121,7 @@ int StartWhistGame(const char *name, int gameType,
     //free(playerCards);
     //game_deleteGame(&game);
     //deck_deleteCard(&card);
-    
+
     return EXIT_SUCCESS;
 }
 
@@ -127,6 +136,12 @@ int getInput(GtkWidget *button, struct Input *input)
         return EXIT_FAILURE;
     }
 
+    if (input->noOfGames >= MAX_GAMES) {
+        gui_initAndShowDialogMaxGames(input->mainWindow);
+        return EXIT_FAILURE;
+    }
+
+
     int botsNumber = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON
                                                      (input->robotsNumber));
     int gameType;
@@ -135,14 +150,9 @@ int getInput(GtkWidget *button, struct Input *input)
     else
         gameType = 8;
 
-    if (input->noOfGames < MAX_GAMES) {
-        StartWhistGame(playerName, gameType, botsNumber, input);
-        return NO_ERROR;
-    }
+    StartWhistGame(playerName, gameType, botsNumber, input);
 
-    gui_initAndShowDialogMaxGames(input->mainWindow);
-
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }
 
 int main(int argc, char *argv[])
@@ -156,7 +166,7 @@ int main(int argc, char *argv[])
     GtkWidget *spinNumber;
     GtkAdjustment *number;
     struct Input *input = malloc(sizeof(struct Input));
-    
+ 
     gtk_init(&argc, &argv);
 
     gui_init(&window, &fixed, "Whist Game", 230, 200);

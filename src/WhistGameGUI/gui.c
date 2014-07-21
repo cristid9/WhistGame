@@ -365,10 +365,9 @@ int gui_hidePlayerCards(struct PlayerCards *playerCards)
     return 0;
 }
 
-int gui_showPlayerCards(struct PlayerCards *playerCards, GtkWidget *fixed,
-                        struct Player *player)
+int gui_showPlayerCards(struct PlayerCards *playerCards, struct Player *player)
 {
-    if (playerCards == NULL || fixed == NULL)
+    if (playerCards == NULL)
         return POINTER_NULL;
     if (player == NULL)
         return PLAYER_NULL;
@@ -486,44 +485,62 @@ int gui_clickMouse(GtkWidget *window, GdkEvent *event)
     return NO_ERROR;
 }
 
-struct SelectedCard *gui_createSelectedCard(GtkWidget *fixed, struct Game *game,
-                                            struct Player *player, int roundId)
+struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player)
 {
-    struct SelectedCard *selectedCard;
+    if (player == NULL || fixed == NULL)
+        return NULL;
+
+    struct Select *select;
     
-    selectedCard = malloc(sizeof(struct SelectedCard));
-    selectedCard->imageSelectedCard = gtk_image_new_from_file
-                                      ("pictures/select_card.png"); 
-    selectedCard->fixed   = fixed;
-    selectedCard->game    = game;
-    selectedCard->player  = player;
-    selectedCard->roundId = roundId;
+    select = malloc(sizeof(struct Select));
+    select->imageSelectedCard = gtk_image_new_from_file
+                                ("pictures/select_card.png");
+    select->imageSelectedBid = gtk_image_new_from_file
+                               ("pictures/select_bid.png");
+    select->fixed          = fixed;
+    select->player         = player;
+    select->round          = NULL;
+    select->bidPlayerTurn  = 0;
+    select->cardPlayerTurn = 0;
 
-    gtk_fixed_put(GTK_FIXED(fixed), selectedCard->imageSelectedCard, 10, 400);
+    gtk_fixed_put(GTK_FIXED(fixed), select->imageSelectedCard, 10, 400);
+    gtk_fixed_put(GTK_FIXED(fixed), select->imageSelectedBid, 304, 253);
 
-    return selectedCard;
+    return select;
 }
 
-int gui_selectedCard(GtkWidget *window, GdkEvent *event,
-                     struct SelectedCard *selectedCard)
+int gui_selectedCard(struct Select *select, int x, int y)
 {
-    if (selectedCard == NULL)
+    if (select == NULL)
         return POINTER_NULL;
-    if (selectedCard->fixed == NULL || selectedCard->imageSelectedCard == NULL)
+    if (select->player == NULL)
+        return PLAYER_NULL;
+    if (select->fixed == NULL || select->imageSelectedCard == NULL)
+        return POINTER_NULL;
+
+    int cardId = gui_getCardId(x, y);
+    if (cardId != -1 && select->player->hand[cardId] != NULL &&
+        select->cardPlayerTurn == 1) {
+        gtk_fixed_move(GTK_FIXED(select->fixed), select->imageSelectedCard,
+                       10 + 90 * cardId, 400);
+        gtk_widget_show(select->imageSelectedCard);
+    } else {
+        gtk_widget_hide(select->imageSelectedCard);
+    }
+
+    return NO_ERROR;
+}
+
+int gui_moveMouse(GtkWidget *window, GdkEvent *event, struct Select *select)
+{
+    if (select == NULL)
         return POINTER_NULL;
 
     int x = (int)((GdkEventButton*)event)->x;
     int y = (int)((GdkEventButton*)event)->y;
 
-    int cardId = gui_getCardId(x, y);
-    if (cardId != -1 && selectedCard->player->hand[cardId] != NULL) {
-        gtk_fixed_move(GTK_FIXED(selectedCard->fixed),
-                       selectedCard->imageSelectedCard,
-                       10 + 90 * cardId, 400);
-        gtk_widget_show(selectedCard->imageSelectedCard);
-    } else {
-        gtk_widget_hide(selectedCard->imageSelectedCard);
-    }
+    gui_selectedCard(select, x, y);
+    gui_selectedBid(select, x, y);
 
     return NO_ERROR;
 }
@@ -655,7 +672,7 @@ int gui_initCardsFromTable(struct CardsFromTable *cardsFromTable,
                                              {277, 140},
                                              {477, 140},
                                              {545, 165},
-                                             {545, 285} };
+                                             {545, 295} };
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
         cardsFromTable->images[i] = gtk_image_new();
@@ -718,13 +735,13 @@ int gui_deletePlayersGUI(struct PlayersGUI **playersGUI)
     return NO_ERROR;
 }
 
-int gui_deleteSelectedCard(struct SelectedCard **selectedCard)
+int gui_deleteSelectedCard(struct Select **select)
 {
-    if (selectedCard == NULL || *selectedCard == NULL)
+    if (select == NULL || *select == NULL)
         return POINTER_NULL;
 
-    free(*selectedCard);
-    *selectedCard = NULL;
+    free(*select);
+    *select = NULL;
 
     return NO_ERROR;
 }
@@ -796,6 +813,108 @@ int gui_setNoOfBids(GtkWidget *noOfBidsLabel, struct Round *round)
     char bids[2] = { '\0' };
     intToChar(round_getBidsSum(round), bids);
     gtk_label_set_text(GTK_LABEL(noOfBidsLabel), bids);
+
+    return NO_ERROR;
+}
+
+struct BidGUI *gui_createBidGUI()
+{
+    struct BidGUI *bidGUI = malloc(sizeof(struct BidGUI));
+
+    bidGUI->image = NULL;
+
+    for (int i = 0; i < MAX_CARDS + 1; i++)
+        bidGUI->label[i] = NULL;
+
+    return bidGUI;
+}
+
+int gui_deleteBidGUI(struct BidGUI **bidGUI)
+{
+    if (bidGUI == NULL || *bidGUI == NULL)
+        return POINTER_NULL;
+
+    free(*bidGUI);
+    *bidGUI = NULL;
+
+    return NO_ERROR;
+}
+
+int gui_initBidGUI(struct BidGUI *bidGUI, GtkWidget *fixed)
+{
+    if (bidGUI == NULL || fixed == NULL)
+        return POINTER_NULL;
+
+    bidGUI->image = gtk_image_new_from_file("pictures/bid.png");
+    gtk_fixed_put(GTK_FIXED(fixed), bidGUI->image, 250, 235);
+
+    for (int i = 0; i < MAX_CARDS + 1; i++) {
+        char bid[1] = { '\0' };
+        intToChar(i, bid);
+        bidGUI->label[i] = gtk_label_new(bid);
+        gtk_fixed_put(GTK_FIXED(fixed), bidGUI->label[i], 310 + i * 20, 255);
+    }
+
+    return NO_ERROR;
+}
+
+int gui_showBidGUI(struct BidGUI *bidGUI, struct Round *round,
+                   struct Player *player)
+{
+    if (round == NULL)
+        return ROUND_NULL;
+    if (player == NULL)
+        return PLAYER_NULL;
+    if (bidGUI == NULL)
+        return POINTER_NULL;
+
+    gtk_widget_show(bidGUI->image);
+
+    GdkColor color;
+    for (int i = 0; i < MAX_CARDS + 1; i++) {
+        int check = round_checkBid(round, player, i);
+        if (check == 0)
+            gdk_color_parse("black", &color);
+        else
+            gdk_color_parse("gray", &color);
+
+        gtk_widget_modify_fg(bidGUI->label[i], GTK_STATE_NORMAL, &color);
+        gtk_widget_show(bidGUI->label[i]);
+    }
+
+    return NO_ERROR;
+}
+
+int gui_getBidValue(int x, int y)
+{
+    int position = -1;
+    
+    if (y >= 255 && y <= 275)
+        for (int i = 0; i < MAX_CARDS + 1; i++)
+            if (x >= (310 + i * 20) && x < (330 + i * 20))
+                position = i;
+
+    return position;
+}
+
+int gui_selectedBid(struct Select *select, int x, int y)
+{
+    if (select == NULL)
+        return POINTER_NULL;
+    if (select->round == NULL)
+        return ROUND_NULL;
+    if (select->fixed == NULL || select->imageSelectedBid == NULL)
+        return POINTER_NULL;
+
+    int bidValue = gui_getBidValue(x, y);
+    int check = round_checkBid(select->round, select->player, bidValue);
+    if (select->bidPlayerTurn == 1 && bidValue >= 0 && check == 0) {
+        gtk_fixed_move(GTK_FIXED(select->fixed), select->imageSelectedBid,
+                       304 + bidValue * 20, 254);
+        gtk_widget_show(select->imageSelectedBid);
+    } else {
+        gtk_widget_hide(select->imageSelectedBid);
+    }
 
     return NO_ERROR;
 }

@@ -1,6 +1,7 @@
 /**
  * @file gui.h
- * @brief In this file are declared the functions used at GUI.
+ * @brief In this file are declared the functions and the structures used at 
+ *        GUI.
  */
 
 #ifndef GUI_H
@@ -12,6 +13,11 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <stdlib.h>
+
+struct BidGUI {
+    GtkWidget *image;
+    GtkWidget *label[MAX_CARDS + 1];
+};
 
 struct CardsFromTable {
     GtkWidget *images[MAX_GAME_PLAYERS];
@@ -25,12 +31,14 @@ struct PlayersGUI {
     GtkWidget *scoreLabel[MAX_GAME_PLAYERS];
 };
 
-struct SelectedCard {
-    GtkWidget *imageSelectedCard;
+struct Select {
     GtkWidget *fixed;
-    struct Game *game;
+    GtkWidget *imageSelectedCard;
+    GtkWidget *imageSelectedBid;
     struct Player *player;
-    int roundId;
+    struct Round *round;
+    int bidPlayerTurn;
+    int cardPlayerTurn;
 };
 
 struct PlayerCards {
@@ -48,6 +56,10 @@ struct PlayerCards {
  *      Pointer to the spin button. Is used to keep the bots number.
  * @var Input::gameType
  *      Pointer to the radio button. Is used to keep the game type.
+ * @var Input::mainWindow
+ *      Pointer to the window. Is used to show the dialogs with errors.
+ * @var Input::noOfGames
+ *      Is used to keep the number of open games.
  */
 struct Input {
     GtkWidget *name;
@@ -58,7 +70,7 @@ struct Input {
 };
 
 /**
- * @brief Function initializes the window in which start the game.
+ * @brief Function initializes the window and add fixed in window.
  *
  * @param window Pointer to pointer to GtkWidget. Function will initializes
  *               this pointer with GtkWindow.
@@ -170,8 +182,7 @@ struct PlayerCards *gui_initializePlayerCards(GtkWidget *fixed);
 
 int gui_hidePlayerCards(struct PlayerCards *playerCards);
 
-int gui_showPlayerCards(struct PlayerCards *playerCards, GtkWidget *fixed,
-                        struct Player *player);
+int gui_showPlayerCards(struct PlayerCards *playerCards, struct Player *player);
 
 int gui_initAndShowDialogIncorrectName(GtkWidget *window);
 
@@ -183,11 +194,11 @@ int gui_getCardId(int x, int y);
 
 int gui_clickMouse(GtkWidget *window, GdkEvent *event);
 
-struct SelectedCard *gui_createSelectedCard(GtkWidget *fixed, struct Game *game,
-                                            struct Player *player, int roundId);
+struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player);
 
-int gui_selectedCard(GtkWidget *window, GdkEvent *event,
-                     struct SelectedCard *selectedCard);
+int gui_selectedCard(struct Select *select, int x, int y);
+
+int gui_moveMouse(GtkWidget *window, GdkEvent *event, struct Select *select);
 
 struct PlayersGUI *gui_createPlayersGUI();
 
@@ -211,7 +222,7 @@ int gui_showCardsOnTable(struct CardsFromTable *cardsFromTable,
 
 int gui_deletePlayersGUI(struct PlayersGUI **playersGUI);
 
-int gui_deleteSelectedCard(struct SelectedCard **selectedCard);
+int gui_deleteSelect(struct Select **select);
 
 int gui_deleteInput(struct Input **input);
 
@@ -222,6 +233,19 @@ int gui_initNoOfBidsLabel(GtkWidget **noOfBidsLabel, GtkWidget *fixed);
 int gui_setRoundType(GtkWidget *roundTypeLabel, struct Round *round);
 
 int gui_setNoOfBids(GtkWidget *noOfBidsLabel, struct Round *round);
+
+struct BidGUI *gui_createBidGUI();
+
+int gui_deleteBidGUI(struct BidGUI **bidGUI);
+
+int gui_initBidGUI(struct BidGUI *bidGUI, GtkWidget *fixed);
+
+int gui_showBidGUI(struct BidGUI *bidGUI, struct Round *round,
+                   struct Player *player);
+
+int gui_getBidValue(int x, int y);
+
+int gui_selectedBid(struct Select *select, int x, int y);
 
 #endif
 
