@@ -30,7 +30,8 @@ enum ERROR_CODES {
     INSUFFICIENT_CARDS   = -12,
     GAME_NULL            = -13,
     DUPLICATE_NAME       = -14,
-    INCORRECT_NAME       = -15
+    INCORRECT_NAME       = -15,
+    ILLEGAL_BID          = -16
 };
 
 #endif
