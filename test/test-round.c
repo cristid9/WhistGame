@@ -285,7 +285,8 @@ void test_round_checkBid()
 
     int i = MAX_GAME_PLAYERS - 1;
     cut_assert_equal_int(NO_ERROR, round_checkBid(round, players[i], 1));
-    cut_assert_equal_int(1, round_checkBid(round, players[i], MAX_CARDS - i));
+    cut_assert_equal_int(ILLEGAL_BID,
+                         round_checkBid(round, players[i], MAX_CARDS - i));
 
     round_deleteRound(&round);
     for (int i = 0; i < MAX_GAME_PLAYERS; i++)
