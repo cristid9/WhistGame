@@ -229,7 +229,7 @@ int round_checkBid(struct Round *round, struct Player *player, int bid)
     if (player == NULL)
         return PLAYER_NULL;
     if (bid < MIN_CARDS - 1 || bid > round->roundType)
-        return ILLEGAL_VALUE;
+        return ILLEGAL_BID;
 
     int position = round_getPlayerId(round, player);
     if (position < 0)
