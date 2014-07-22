@@ -26,11 +26,20 @@ int StartWhistGame(const char *name, int gameType,
     GtkWidget *trumpImage;
     GtkWidget *roundTypeLabel;
     GtkWidget *noOfBidsLabel;
+    GtkWidget *buttonStart;
     struct Select *select;
     struct PlayerCards *playerCards;
     struct Card *card = deck_createCard(SPADES, 15);
     struct PlayersGUI *playersGUI;
     struct BidGUI *bidGUI;
+    struct PlayerTurn playerTurn;
+    struct Click *click;
+
+    gui_initPlayerTurn(&playerTurn);
+    playerTurn.cardPlayerTurn = 1;
+    playerTurn.bidPlayerTurn  = 1;
+
+    click = gui_createClick(game, player, &playerTurn);
 
     game_addPlayer(game, &player);
     for (int i = 1; i <= botsNumber; i++) {
@@ -68,9 +77,7 @@ int StartWhistGame(const char *name, int gameType,
     gui_initBidGUI(bidGUI, fixedTable);
     gui_showBidGUI(bidGUI, game->rounds[0], game->players[0]);
 
-    select = gui_createSelect(fixedTable, game->players[0]);
-    select->bidPlayerTurn = 1;
-    select->cardPlayerTurn = 1;
+    select = gui_createSelect(fixedTable, game->players[0], &playerTurn);
     select->round = game->rounds[0];
 
     gtk_widget_add_events(windowTable, GDK_BUTTON_PRESS_MASK);
@@ -80,7 +87,7 @@ int StartWhistGame(const char *name, int gameType,
     g_signal_connect(G_OBJECT(windowTable), "destroy",
                      G_CALLBACK(gui_closeWhistGame), input);
     g_signal_connect(G_OBJECT(windowTable), "button-press-event",
-                     G_CALLBACK(gui_clickMouse), NULL);
+                     G_CALLBACK(gui_clickMouse), click);
 
     for (int i = 0; i < MAX_CARDS; i++) {
         card = deck_createCard(i % 3, VALUES[i+4]);
@@ -115,6 +122,8 @@ int StartWhistGame(const char *name, int gameType,
 
     gui_setRoundType(roundTypeLabel, game->rounds[0]);
     gui_setNoOfBids(noOfBidsLabel, game->rounds[0]);
+
+    gui_createButtonStart(&buttonStart, fixedTable);
 
     gtk_main();
     
