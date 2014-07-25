@@ -282,5 +282,9 @@ int gui_hideBidGUI(struct BidGUI *bidGUI);
 
 int gui_createButtonStart(GtkWidget **button, GtkWidget *fixed);
 
+struct GameGUI *gui_createGameGUI();
+
+int gui_deleteGameGUI(struct GameGUI **gameGUI);
+
 #endif
 
