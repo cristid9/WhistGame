@@ -844,25 +844,19 @@ int gui_setRoundType(GtkWidget *roundTypeLabel, struct Round *round)
     char type[1] = { '\0' };
     intToChar(round->roundType, type);
     gtk_label_set_text(GTK_LABEL(roundTypeLabel), type);
-    type[0] = 'a';
 
     return NO_ERROR;
 }
 
 int gui_setNoOfBids(GtkWidget *noOfBidsLabel, struct Round *round)
 {
-    if (round == NULL) {
-        printf("A\n");
+    if (round == NULL)
         return ROUND_NULL;
-    }
-    if (noOfBidsLabel == NULL) {
-        printf("B %p\n", noOfBidsLabel);
+    if (noOfBidsLabel == NULL)
         return POINTER_NULL;
-    }
 
     char bids[2] = { '\0' };
     intToChar(round_getBidsSum(round), bids);
-    printf("%s %d\n", bids, round_getBidsSum(round));
     gtk_label_set_text(GTK_LABEL(noOfBidsLabel), bids);
 
     return NO_ERROR;
