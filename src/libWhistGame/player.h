@@ -58,13 +58,17 @@ int player_deletePlayer(struct Player **player);
 int player_addCard(struct Player *player, struct Card **card);
 
 /**
- * @brief Function sort the player cards.
+ * @brief Function compare two cards. This function will be used of qsort().
  *
- * @param player Pointer to the player whom are sorted cards.
+ * @param a Pointer to void. This pointer will be convert to struct Card and
+ *          will be compared with the second card.
+ * @param b Pointer to void. This pointer will be convert to struct Card and
+ *          will be compared with the first card.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return A positive value if the first card is greater, otherwise a negative
+ *         value.
  */
-int player_sortPlayerCards(struct Player *player);
+int player_compareCards(const void *a, const void *b);
 
 /**
  * @brief Function check if the player introduced a correct name.
@@ -74,6 +78,20 @@ int player_sortPlayerCards(struct Player *player);
  * @return NO_ERROR or 0 on success, other value on failure.
  */
 int player_checkPlayerName(const char *name);
+
+/**
+ * @brief Function get the position of the number-th card which is not null
+ *        from cards a player.
+ *
+ * @param player Pointer to the player for which is obtained the position of
+ *               the number-th card.
+ * @param number Indicates the number of NULL cards on which the function not
+ *               consider.
+ *
+ * @return A value between 0 and MAX_CARDS - 1 on success, a negative value on
+ *         failure.
+ */
+int player_getIdNumberthCardWhichIsNotNull(struct Player *player, int number);
 
 #endif
 
