@@ -455,7 +455,6 @@ int gui_closeWhistGame(GtkWidget *windowTable, struct Input *input)
 
     input->noOfGames--;
     gtk_widget_destroy(windowTable);
-    gtk_main_quit();
 
     return NO_ERROR;
 }
@@ -476,18 +475,20 @@ int gui_clickMouseOnCard(struct Click *click, int x, int y)
 {
     if (click == NULL)
         return POINTER_NULL;
-    if (click->playerTurn->cardPlayerTurn == 0)
+    if (click->cardPlayerTurn == 0)
         return ILLEGAL_VALUE;
 
-    int cardPosition = gui_getCardId(x, y);
+    int cardId = gui_getCardId(x, y);
+    int position = player_getIdNumberthCardWhichIsNotNull(click->player,
+                                                          cardId + 1);
     int roundId = click->game->currentRound;
     int check = hand_checkCard(click->game->rounds[roundId]->hand,
-                               click->player, cardPosition,
+                               click->player, position,
                                click->game->rounds[roundId]->trump);
     if (check == 1) {
-        click->playerTurn->cardPlayerTurn = 0;
+        click->cardPlayerTurn = 0;
         hand_addCard(click->game->rounds[roundId]->hand, click->player,
-                     &(click->player->hand[cardPosition]));
+                     &(click->player->hand[position]));
     }
 
     return NO_ERROR;
@@ -497,7 +498,7 @@ int gui_clickMouseOnBid(struct Click *click, int x, int y)
 {
     if (click == NULL)
         return POINTER_NULL;
-    if (click->playerTurn->bidPlayerTurn == 0)
+    if (click->bidPlayerTurn == 0)
         return ILLEGAL_VALUE;
 
     int bidValue = gui_getBidValue(x, y);
@@ -506,7 +507,7 @@ int gui_clickMouseOnBid(struct Click *click, int x, int y)
                                bidValue);
 
     if (check == 0) {
-        click->playerTurn->bidPlayerTurn = 0;
+        click->bidPlayerTurn = 0;
         round_placeBid(click->game->rounds[roundId], click->player, bidValue);
     }
 
@@ -527,8 +528,7 @@ int gui_clickMouse(GtkWidget *window, GdkEvent *event, struct Click *click)
     return NO_ERROR;
 }
 
-struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player,
-                                struct PlayerTurn *playerTurn)
+struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player)
 {
     if (player == NULL || fixed == NULL)
         return NULL;
@@ -540,10 +540,11 @@ struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player,
                                 ("pictures/select_card.png");
     select->imageSelectedBid = gtk_image_new_from_file
                                ("pictures/select_bid.png");
-    select->fixed      = fixed;
-    select->player     = player;
-    select->round      = NULL;
-    select->playerTurn = playerTurn;
+    select->fixed          = fixed;
+    select->player         = player;
+    select->round          = NULL;
+    select->cardPlayerTurn = 0;
+    select->bidPlayerTurn  = 0;
 
     gtk_fixed_put(GTK_FIXED(fixed), select->imageSelectedCard, 10, 400);
     gtk_fixed_put(GTK_FIXED(fixed), select->imageSelectedBid, 304, 253);
@@ -561,8 +562,10 @@ int gui_selectedCard(struct Select *select, int x, int y)
         return POINTER_NULL;
 
     int cardId = gui_getCardId(x, y);
-    if (cardId != -1 && select->player->hand[cardId] != NULL &&
-        select->playerTurn->cardPlayerTurn == 1) {
+    int position = player_getIdNumberthCardWhichIsNotNull(select->player,
+                                                          cardId + 1);
+    if (position >= 0 && select->player->hand[position] != NULL &&
+        select->cardPlayerTurn == 1) {
         gtk_fixed_move(GTK_FIXED(select->fixed), select->imageSelectedCard,
                        10 + 90 * cardId, 400);
         gtk_widget_show(select->imageSelectedCard);
@@ -777,7 +780,7 @@ int gui_deletePlayersGUI(struct PlayersGUI **playersGUI)
     return NO_ERROR;
 }
 
-int gui_deleteSelectedCard(struct Select **select)
+int gui_deleteSelect(struct Select **select)
 {
     if (select == NULL || *select == NULL)
         return POINTER_NULL;
@@ -801,7 +804,7 @@ int gui_deleteInput(struct Input **input)
 
 int gui_initRoundTypeLabel(GtkWidget **roundTypeLabel, GtkWidget *fixed)
 {
-    if (*roundTypeLabel == NULL || roundTypeLabel == NULL || fixed == NULL)
+    if (roundTypeLabel == NULL || fixed == NULL)
         return POINTER_NULL;
 
     GdkColor color;
@@ -817,7 +820,7 @@ int gui_initRoundTypeLabel(GtkWidget **roundTypeLabel, GtkWidget *fixed)
 
 int gui_initNoOfBidsLabel(GtkWidget **noOfBidsLabel, GtkWidget *fixed)
 {
-    if (*noOfBidsLabel == NULL || noOfBidsLabel == NULL || fixed == NULL)
+    if (noOfBidsLabel == NULL || fixed == NULL)
         return POINTER_NULL;
 
     GdkColor color;
@@ -841,19 +844,25 @@ int gui_setRoundType(GtkWidget *roundTypeLabel, struct Round *round)
     char type[1] = { '\0' };
     intToChar(round->roundType, type);
     gtk_label_set_text(GTK_LABEL(roundTypeLabel), type);
+    type[0] = 'a';
 
     return NO_ERROR;
 }
 
 int gui_setNoOfBids(GtkWidget *noOfBidsLabel, struct Round *round)
 {
-    if (round == NULL)
+    if (round == NULL) {
+        printf("A\n");
         return ROUND_NULL;
-    if (noOfBidsLabel == NULL)
+    }
+    if (noOfBidsLabel == NULL) {
+        printf("B %p\n", noOfBidsLabel);
         return POINTER_NULL;
+    }
 
     char bids[2] = { '\0' };
     intToChar(round_getBidsSum(round), bids);
+    printf("%s %d\n", bids, round_getBidsSum(round));
     gtk_label_set_text(GTK_LABEL(noOfBidsLabel), bids);
 
     return NO_ERROR;
@@ -950,7 +959,7 @@ int gui_selectedBid(struct Select *select, int x, int y)
 
     int bidValue = gui_getBidValue(x, y);
     int check = round_checkBid(select->round, select->player, bidValue);
-    if (select->playerTurn->bidPlayerTurn == 1 &&
+    if (select->bidPlayerTurn == 1 &&
         bidValue >= 0 && check == 0) {
         gtk_fixed_move(GTK_FIXED(select->fixed), select->imageSelectedBid,
                        304 + bidValue * 20, 254);
@@ -962,17 +971,17 @@ int gui_selectedBid(struct Select *select, int x, int y)
     return NO_ERROR;
 }
 
-struct Click *gui_createClick(struct Game *game, struct Player *player,
-                              struct PlayerTurn *playerTurn)
+struct Click *gui_createClick(struct Game *game, struct Player *player)
 {
     if (game == NULL || player == NULL)
         return NULL;
 
     struct Click *click = malloc(sizeof(struct Click));
 
-    click->game       = game;
-    click->player     = player;
-    click->playerTurn = playerTurn;
+    click->game           = game;
+    click->player         = player;
+    click->cardPlayerTurn = 0;
+    click->bidPlayerTurn  = 0;
 
     return click;
 }
@@ -990,17 +999,6 @@ int gui_deleteClick(struct Click **click)
     return NO_ERROR;
 }
 
-int gui_initPlayerTurn(struct PlayerTurn *playerTurn)
-{
-    if (playerTurn == NULL)
-        return POINTER_NULL;
-
-    playerTurn->bidPlayerTurn  = 0;
-    playerTurn->cardPlayerTurn = 0;
-
-    return NO_ERROR;
-}
-
 int gui_hideBidGUI(struct BidGUI *bidGUI)
 {
     if (bidGUI == NULL)
@@ -1014,6 +1012,14 @@ int gui_hideBidGUI(struct BidGUI *bidGUI)
     return NO_ERROR;
 }
 
+int gui_clickStart(GtkWidget *button)
+{
+    gtk_widget_hide(button);
+    gtk_main_quit();
+
+    return NO_ERROR;
+}
+
 int gui_createButtonStart(GtkWidget **button, GtkWidget *fixed)
 {
     if (button == NULL)
@@ -1022,6 +1028,47 @@ int gui_createButtonStart(GtkWidget **button, GtkWidget *fixed)
     *button = gtk_button_new_with_label("Start");
     gtk_fixed_put(GTK_FIXED(fixed), *button, 381, 247);
     gtk_widget_show(*button);
+    g_signal_connect(G_OBJECT(*button), "clicked",
+                     G_CALLBACK(gui_clickStart), NULL);
+
+    return NO_ERROR;
+}
+
+struct GameGUI *gui_createGameGUI()
+{
+    struct GameGUI *gameGUI = malloc(sizeof(struct GameGUI));
+
+    gameGUI->game            = NULL; 
+    gameGUI->select          = NULL;
+    gameGUI->click           = NULL;
+    gameGUI->playerCards     = NULL;
+    gameGUI->playersGUI      = NULL;
+    gameGUI->bidGUI          = NULL;
+    gameGUI->windowTable     = NULL;
+    gameGUI->fixedTable      = NULL;
+    gameGUI->buttonShowScore = NULL;
+    gameGUI->imageTrump      = NULL;
+    gameGUI->labelRoundType  = NULL;
+    gameGUI->labelNoOfBids   = NULL;
+    gameGUI->buttonStart     = NULL;
+
+    return gameGUI;
+}
+
+int gui_deleteGameGUI(struct GameGUI **gameGUI)
+{
+    if (gameGUI == NULL || *gameGUI == NULL)
+        return POINTER_NULL;
+
+    game_deleteGame(&((*gameGUI)->game));
+    gui_deleteClick(&((*gameGUI)->click));
+    gui_deleteSelect(&((*gameGUI)->select));
+    gui_deletePlayerCards(&((*gameGUI)->playerCards));
+    gui_deletePlayersGUI(&((*gameGUI)->playersGUI));
+    gui_deleteBidGUI(&((*gameGUI)->bidGUI));
+
+    free(*gameGUI);
+    *gameGUI = NULL;
 
     return NO_ERROR;
 }
