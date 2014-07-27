@@ -20,7 +20,7 @@ struct Game *game_createGame(int gameType)
         return NULL;
 
     game->playersNumber = 0;
-    game->currentRound  = 0;
+    game->currentRound  = -1;
     game->gameType      = gameType;
     game->deck          = NULL;
 
