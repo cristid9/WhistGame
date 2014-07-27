@@ -448,12 +448,12 @@ int gui_initAndShowDialogMaxGames(GtkWidget *window)
     return NO_ERROR;
 }
 
-int gui_closeWhistGame(GtkWidget *windowTable, struct Input *input)
+int gui_closeWhistGame(GtkWidget *windowTable, int *noOfGames)
 {
     if (windowTable == NULL)
         return POINTER_NULL;
 
-    input->noOfGames--;
+    --*noOfGames;
     gtk_widget_destroy(windowTable);
 
     return NO_ERROR;
@@ -476,6 +476,11 @@ int gui_clickMouseOnCard(struct Click *click, int x, int y)
     if (click == NULL)
         return POINTER_NULL;
     if (click->cardPlayerTurn == 0)
+        return ILLEGAL_VALUE;
+    if (click->game == NULL)
+        return GAME_NULL;
+    if (click->game->currentRound < 0 ||
+        click->game->currentRound >= MAX_GAME_ROUNDS)
         return ILLEGAL_VALUE;
 
     int cardId = gui_getCardId(x, y);
@@ -500,6 +505,11 @@ int gui_clickMouseOnBid(struct Click *click, int x, int y)
         return POINTER_NULL;
     if (click->bidPlayerTurn == 0)
         return ILLEGAL_VALUE;
+    if (click->game == NULL)
+        return GAME_NULL;
+    if (click->game->currentRound < 0 ||
+        click->game->currentRound >= MAX_GAME_ROUNDS)
+        return ILLEGAL_VALUE;
 
     int bidValue = gui_getBidValue(x, y);
     int roundId = click->game->currentRound;
@@ -509,6 +519,7 @@ int gui_clickMouseOnBid(struct Click *click, int x, int y)
     if (check == 0) {
         click->bidPlayerTurn = 0;
         round_placeBid(click->game->rounds[roundId], click->player, bidValue);
+        sem_post(&(click->semafor));
     }
 
     return NO_ERROR;
@@ -656,6 +667,8 @@ int gui_showInformationsPlayers(struct PlayersGUI *playersGUI,
 {
     if (game == NULL)
         return GAME_NULL;
+    if (game->currentRound < 0 || game->currentRound >= MAX_GAME_ROUNDS)
+        return ILLEGAL_VALUE;
     if (game->rounds[game->currentRound] == NULL)
         return ROUND_NULL;
     if (playersGUI == NULL)
@@ -747,6 +760,8 @@ int gui_showCardsOnTable(struct CardsFromTable *cardsFromTable,
         return GAME_NULL;
     if (cardsFromTable == NULL)
         return POINTER_NULL;
+    if (game->currentRound < 0 || game->currentRound >= MAX_CARDS)
+        return ILLEGAL_VALUE;
 
     struct Hand *hand = game->rounds[game->currentRound]->hand;
 
@@ -953,6 +968,7 @@ int gui_selectedBid(struct Select *select, int x, int y)
 
     int bidValue = gui_getBidValue(x, y);
     int check = round_checkBid(select->round, select->player, bidValue);
+    
     if (select->bidPlayerTurn == 1 &&
         bidValue >= 0 && check == 0) {
         gtk_fixed_move(GTK_FIXED(select->fixed), select->imageSelectedBid,
@@ -1038,6 +1054,7 @@ struct GameGUI *gui_createGameGUI()
     gameGUI->playerCards     = NULL;
     gameGUI->playersGUI      = NULL;
     gameGUI->bidGUI          = NULL;
+    gameGUI->cardsFromTable  = NULL;
     gameGUI->windowTable     = NULL;
     gameGUI->fixedTable      = NULL;
     gameGUI->buttonShowScore = NULL;
@@ -1060,6 +1077,7 @@ int gui_deleteGameGUI(struct GameGUI **gameGUI)
     gui_deletePlayerCards(&((*gameGUI)->playerCards));
     gui_deletePlayersGUI(&((*gameGUI)->playersGUI));
     gui_deleteBidGUI(&((*gameGUI)->bidGUI));
+    gui_deleteCardsFromTable(&((*gameGUI)->cardsFromTable));
 
     free(*gameGUI);
     *gameGUI = NULL;

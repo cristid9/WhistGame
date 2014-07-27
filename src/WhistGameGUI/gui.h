@@ -13,6 +13,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <stdlib.h>
+#include <semaphore.h>
 
 struct BidGUI {
     GtkWidget *image;
@@ -36,6 +37,7 @@ struct Click {
     struct Player *player;
     int cardPlayerTurn;
     int bidPlayerTurn;
+    sem_t semafor;
 };
 
 struct Select {
@@ -58,6 +60,7 @@ struct GameGUI {
     struct Click *click;
     struct PlayerCards *playerCards;
     struct PlayersGUI *playersGUI;
+    struct CardsFromTable *cardsFromTable;
     struct BidGUI *bidGUI;
     GtkWidget *windowTable;
     GtkWidget *fixedTable;
@@ -211,7 +214,7 @@ int gui_initAndShowDialogIncorrectName(GtkWidget *window);
 
 int gui_initAndShowDialogMaxGames(GtkWidget *window);
 
-int gui_closeWhistGame(GtkWidget *windowTable, struct Input *input);
+int gui_closeWhistGame(GtkWidget *windowTable, int *noOfGames);
 
 int gui_getCardId(int x, int y);
 
