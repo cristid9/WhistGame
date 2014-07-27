@@ -273,9 +273,9 @@ void test_round_checkBid()
 
     cut_assert_equal_int(ROUND_NULL, round_checkBid(NULL, players[0], 1));
     cut_assert_equal_int(PLAYER_NULL, round_checkBid(round, NULL, 1));
-    cut_assert_equal_int(ILLEGAL_VALUE,
+    cut_assert_equal_int(ILLEGAL_BID,
                          round_checkBid(round, players[0], MIN_CARDS - 2));
-    cut_assert_equal_int(ILLEGAL_VALUE,
+    cut_assert_equal_int(ILLEGAL_BID,
                          round_checkBid(round, players[0], MAX_CARDS + 1));
 
     for (int i = 0; i < MAX_GAME_PLAYERS - 1; i++) {
@@ -308,9 +308,9 @@ void test_round_placeBid()
 
     cut_assert_equal_int(ROUND_NULL, round_placeBid(NULL, players[0], 1));
     cut_assert_equal_int(PLAYER_NULL, round_placeBid(round, NULL, 1));
-    cut_assert_equal_int(ILLEGAL_VALUE,
+    cut_assert_equal_int(ILLEGAL_BID,
                          round_placeBid(round, players[0], MIN_CARDS - 2));
-    cut_assert_equal_int(ILLEGAL_VALUE,
+    cut_assert_equal_int(ILLEGAL_BID,
                          round_placeBid(round, players[0], MAX_CARDS + 1));
 
     for (int i = 0; i < MAX_GAME_PLAYERS - 1; i++) {

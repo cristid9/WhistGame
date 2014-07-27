@@ -18,7 +18,7 @@ void test_game_createGame()
         cut_assert_equal_pointer(NULL, game->rounds[i]);
 
     cut_assert_equal_int(0, game->playersNumber);
-    cut_assert_equal_int(0, game->currentRound);
+    cut_assert_equal_int(-1, game->currentRound);
     cut_assert_equal_int(1, game->gameType);
     cut_assert_equal_pointer(NULL, game->deck);
 
