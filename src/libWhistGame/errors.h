@@ -31,7 +31,9 @@ enum ERROR_CODES {
     GAME_NULL            = -13,
     DUPLICATE_NAME       = -14,
     INCORRECT_NAME       = -15,
-    ILLEGAL_BID          = -16
+    ILLEGAL_BID          = -16,
+    GAME_OVER            = -17,
+    ROUND_OVER           = -18
 };
 
 #endif
