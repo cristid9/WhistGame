@@ -93,5 +93,14 @@ int player_checkPlayerName(const char *name);
  */
 int player_getIdNumberthCardWhichIsNotNull(struct Player *player, int number);
 
+/* @brief Function get the number of cards from player's hand.
+ *
+ * @param player Pointer to the player for which are counted the cards.
+ *
+ * @return A value between 0 and MAX_CARDS - 1 on success.
+ *         PLAYER_NULL on failure.
+ */
+int player_getCardsNumber(struct Player *player);
+
 #endif
 
