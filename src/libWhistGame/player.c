@@ -116,3 +116,16 @@ int player_getIdNumberthCardWhichIsNotNull(struct Player *player, int number)
     return ILLEGAL_VALUE;
 }
 
+int player_getCardsNumber(struct Player *player)
+{
+    if (player == NULL)
+        return PLAYER_NULL;
+
+    int cardsNumber = 0;
+    for (int i = 0; i < MAX_CARDS; i++)
+        if (player->hand[i] != NULL)
+            cardsNumber++;
+
+    return cardsNumber;
+}
+
