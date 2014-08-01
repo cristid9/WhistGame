@@ -32,20 +32,12 @@ struct PlayersGUI {
     GtkWidget *scoreLabel[MAX_GAME_PLAYERS];
 };
 
-struct Click {
-    struct Game *game;
-    struct Player *player;
-    int cardPlayerTurn;
-    int bidPlayerTurn;
-    sem_t semafor;
-};
-
 struct Select {
     GtkWidget *fixed;
     GtkWidget *imageSelectedCard;
     GtkWidget *imageSelectedBid;
     struct Player *player;
-    struct Round *round;
+    struct Game *game;
     int cardPlayerTurn;
     int bidPlayerTurn;
 };
@@ -57,7 +49,6 @@ struct PlayerCards {
 struct GameGUI {
     struct Game *game;
     struct Select *select;
-    struct Click *click;
     struct PlayerCards *playerCards;
     struct PlayersGUI *playersGUI;
     struct CardsFromTable *cardsFromTable;
@@ -69,6 +60,8 @@ struct GameGUI {
     GtkWidget *labelRoundType;
     GtkWidget *labelNoOfBids;
     GtkWidget *buttonStart;
+    int bidPlayerId;
+    int cardPlayerId;
 };
 
 /**
@@ -218,9 +211,10 @@ int gui_closeWhistGame(GtkWidget *windowTable, int *noOfGames);
 
 int gui_getCardId(int x, int y);
 
-int gui_clickMouse(GtkWidget *window, GdkEvent *event, struct Click *click);
+int gui_clickMouse(GtkWidget *window, GdkEvent *event, struct GameGUI *gameGUI);
 
-struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player);
+struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player,
+                                struct Game *game);
 
 int gui_selectedCard(struct Select *select, int x, int y);
 
@@ -273,21 +267,35 @@ int gui_getBidValue(int x, int y);
 
 int gui_selectedBid(struct Select *select, int x, int y);
 
-int gui_clickMouseOnCard(struct Click *click, int x, int y);
+int gui_clickMouseOnCard(struct GameGUI *gameGUI, int x, int y);
 
-int gui_clickMouseOnBid(struct Click *click, int x, int y);
-
-struct Click *gui_createClick(struct Game *game, struct Player *player);
-
-int gui_deleteClick(struct Click **click);
+int gui_clickMouseOnBid(struct GameGUI *gameGUI, int x, int y);
 
 int gui_hideBidGUI(struct BidGUI *bidGUI);
 
-int gui_createButtonStart(GtkWidget **button, GtkWidget *fixed);
+int gui_clickStart(GtkWidget *button, struct GameGUI *gameGUI);
+
+int gui_createButtonStart(struct GameGUI *gameGUI);
 
 struct GameGUI *gui_createGameGUI();
 
 int gui_deleteGameGUI(struct GameGUI **gameGUI);
+
+int gui_startRound(struct GameGUI *gameGUI);
+
+int gui_startHand(struct GameGUI *gameGUI, int winnerPlayerId);
+
+gboolean gui_endHand(gpointer data);
+
+gboolean gui_botChooseBid(gpointer data);
+
+gboolean gui_chooseBidForBots(struct GameGUI *gameGUI, int leftLimit,
+                              int rightLimit);
+
+gboolean gui_botChooseCard(gpointer data);
+
+gboolean gui_chooseCardForBots(struct GameGUI *gameGUI, int leftLimit,
+                               int rightLimit);
 
 #endif
 

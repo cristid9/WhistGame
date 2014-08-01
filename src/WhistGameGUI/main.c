@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
-#include <unistd.h>
 
 #include "gui.h"
 
@@ -10,64 +8,6 @@
  *        same time.
  */
 #define MAX_GAMES 3
-
-pthread_t thr;
-
-void *PlayWhistGame(void *game_gui)
-{
-    struct GameGUI *gameGUI = (struct GameGUI*)game_gui;
-
-    game_addPlayersInAllRounds(gameGUI->game);
-    gameGUI->select->player = gameGUI->game->players[0];
-    gameGUI->click->game = gameGUI->game;
-    gameGUI->click->player = gameGUI->game->players[0];
-
-  //  for (int i = 0; i < 12 + gameGUI->game->playersNumber * 3; i++) {
-    for (int i = 0; i < 1; i++) {
-        gameGUI->game->currentRound = i;
-
-        gameGUI->select->round = gameGUI->game->rounds[i];
-
-        gameGUI->game->deck = deck_createDeck(gameGUI->game->playersNumber);
-        deck_shuffleDeck(gameGUI->game->deck);
-        round_distributeDeck(gameGUI->game->rounds[i], gameGUI->game->deck);
-
-        gui_showPlayerCards(gameGUI->playerCards, gameGUI->game->players[0]);
-        
-        for (int j = 0; j < gameGUI->game->playersNumber; j++) {
-            if (gameGUI->game->rounds[i]->players[j] != NULL) {
-                if (gameGUI->game->rounds[i]->players[j]->isHuman == 1) {
-                    gameGUI->select->bidPlayerTurn = 1;
-                    gameGUI->click->bidPlayerTurn  = 1;
-
-                    gui_showBidGUI(gameGUI->bidGUI, gameGUI->game->rounds[i],
-                                   gameGUI->game->players[0]);
-
-                    while (gameGUI->click->bidPlayerTurn == 1) {
-                        sem_wait(&(gameGUI->click->semafor));
-                    }
-                    
-                    gameGUI->select->bidPlayerTurn = 0;
-
-                    gui_hideBidGUI(gameGUI->bidGUI);
-                    gui_showInformationsPlayers(gameGUI->playersGUI,
-                                                gameGUI->game);
-                } else {
-                    int bid = robot_getBid(gameGUI->game->players[j],
-                                           gameGUI->game->rounds[i]);
-                    round_placeBid(gameGUI->game->rounds[i],
-                                   gameGUI->game->players[j], bid);
-                    gui_showInformationsPlayers(gameGUI->playersGUI,
-                                                gameGUI->game);
-                }
-            }
-        }
-
-        deck_deleteDeck(&(gameGUI->game->deck));
-    }
-
-    return NULL;
-}
 
 int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
 {
@@ -80,7 +20,7 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
 
     player = player_createPlayer(name, 1);
     game_addPlayer(gameGUI->game, &player);
-    
+
     for (int i = 1; i <= noOfBots; i++) {
         char no = (char)(((int)'0') + i);
         char botName[7] = "robot";
@@ -91,6 +31,7 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
     }
 
     game_createAndAddRounds(gameGUI->game);
+    game_addPlayersInAllRounds(gameGUI->game);
 
     gui_init(&(gameGUI->windowTable), &(gameGUI->fixedTable),
              "Whist", 798, 520);
@@ -112,13 +53,12 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
     gameGUI->playersGUI = gui_createPlayersGUI();
     gui_showPlayers(gameGUI->game, gameGUI->fixedTable, gameGUI->playersGUI);
 
+    gameGUI->cardsFromTable = gui_createCardsFromTable();
     gui_initCardsFromTable(gameGUI->cardsFromTable, gameGUI->fixedTable);
 
     gameGUI->select = gui_createSelect(gameGUI->fixedTable,
-                                       gameGUI->game->players[0]);
-
-    gameGUI->click = gui_createClick(gameGUI->game, gameGUI->game->players[0]);
-    sem_init(&(gameGUI->click->semafor), 0, 0);
+                                       gameGUI->game->players[0],
+                                       gameGUI->game);
 
     gtk_widget_add_events(gameGUI->windowTable, GDK_BUTTON_PRESS_MASK);
     gtk_widget_add_events(gameGUI->windowTable, GDK_POINTER_MOTION_MASK);
@@ -127,14 +67,13 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
     g_signal_connect(G_OBJECT(gameGUI->windowTable), "destroy",
                      G_CALLBACK(gui_closeWhistGame), noOfGames);
     g_signal_connect(G_OBJECT(gameGUI->windowTable), "button-press-event",
-                     G_CALLBACK(gui_clickMouse), gameGUI->click);
+                     G_CALLBACK(gui_clickMouse), gameGUI);
     
-    gui_createButtonStart(&(gameGUI->buttonStart), gameGUI->fixedTable); 
- 
+    gui_createButtonStart(gameGUI); 
+
     gtk_main();
 
-    //PlayWhistGame(gameGUI);
-    pthread_create(&thr, NULL, PlayWhistGame, gameGUI);
+    gui_startRound(gameGUI);
 
     return EXIT_SUCCESS;
 }
@@ -205,8 +144,6 @@ int main(int argc, char *argv[])
     gtk_main();
 
     free(input);
-
-    pthread_join(thr, NULL);
 
     return EXIT_SUCCESS;
 }

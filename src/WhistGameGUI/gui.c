@@ -161,7 +161,7 @@ gboolean gui_drawScore(GtkWidget *button, GdkEventExpose *event,
                     if (position < 0 )
                         continue;
 
-                    char score[4] = { '\0' };
+                    char score[5] = { '\0' };
                     char bids[2]  = { '\0' };
                     intToChar(game->rounds[i]->pointsNumber[j], score);
                     intToChar(game->rounds[i]->bids[j], bids);
@@ -455,6 +455,7 @@ int gui_closeWhistGame(GtkWidget *windowTable, int *noOfGames)
 
     --*noOfGames;
     gtk_widget_destroy(windowTable);
+//    gtk_main_quit();
 
     return NO_ERROR;
 }
@@ -471,75 +472,103 @@ int gui_getCardId(int x, int y)
     return cardPosition;
 }
 
-int gui_clickMouseOnCard(struct Click *click, int x, int y)
+int gui_clickMouseOnCard(struct GameGUI *gameGUI, int x, int y)
 {
-    if (click == NULL)
+    if (gameGUI->select == NULL)
         return POINTER_NULL;
-    if (click->cardPlayerTurn == 0)
+    if (gameGUI->select->cardPlayerTurn == 0)
         return ILLEGAL_VALUE;
-    if (click->game == NULL)
+    if (gameGUI->select->game == NULL)
         return GAME_NULL;
-    if (click->game->currentRound < 0 ||
-        click->game->currentRound >= MAX_GAME_ROUNDS)
+    if (gameGUI->select->game->currentRound < 0 ||
+        gameGUI->select->game->currentRound >= MAX_GAME_ROUNDS)
         return ILLEGAL_VALUE;
 
     int cardId = gui_getCardId(x, y);
-    int position = player_getIdNumberthCardWhichIsNotNull(click->player,
-                                                          cardId + 1);
-    int roundId = click->game->currentRound;
-    int check = hand_checkCard(click->game->rounds[roundId]->hand,
-                               click->player, position,
-                               click->game->rounds[roundId]->trump);
+    struct Game *game = gameGUI->game;
+    struct Round *round = game->rounds[game->currentRound];
+    struct Player *player = game->players[0];
+    int position = player_getIdNumberthCardWhichIsNotNull(player, cardId + 1);
+    int roundId = gameGUI->select->game->currentRound;
+    int check = hand_checkCard(round->hand, player, position, round->trump);
+    guint seconds = 1;
+
     if (check == 1) {
-        click->cardPlayerTurn = 0;
-        hand_addCard(click->game->rounds[roundId]->hand, click->player,
-                     &(click->player->hand[position]));
+        gameGUI->select->cardPlayerTurn = 0;
+        (gameGUI->cardPlayerId)++;
+        hand_addCard(round->hand, player, &(player->hand[position]));
+        gui_showCardsOnTable(gameGUI->cardsFromTable, game);
+        gui_hidePlayerCards(gameGUI->playerCards);
+        gui_showPlayerCards(gameGUI->playerCards, player);
+        gtk_widget_hide(gameGUI->select->imageSelectedCard);
+
+        if (gameGUI->cardPlayerId == game->playersNumber)
+            g_timeout_add_seconds(seconds, gui_endHand, gameGUI);
+        else
+            gui_chooseCardForBots(gameGUI, gameGUI->cardPlayerId,
+                                  MAX_GAME_PLAYERS);
     }
 
     return NO_ERROR;
 }
 
-int gui_clickMouseOnBid(struct Click *click, int x, int y)
+int gui_clickMouseOnBid(struct GameGUI *gameGUI, int x, int y)
 {
-    if (click == NULL)
+    if (gameGUI->select == NULL)
         return POINTER_NULL;
-    if (click->bidPlayerTurn == 0)
+    if (gameGUI->select->bidPlayerTurn == 0)
         return ILLEGAL_VALUE;
-    if (click->game == NULL)
+    if (gameGUI->select->game == NULL)
         return GAME_NULL;
-    if (click->game->currentRound < 0 ||
-        click->game->currentRound >= MAX_GAME_ROUNDS)
+    if (gameGUI->select->game->currentRound < 0 ||
+        gameGUI->select->game->currentRound >= MAX_GAME_ROUNDS)
         return ILLEGAL_VALUE;
 
     int bidValue = gui_getBidValue(x, y);
-    int roundId = click->game->currentRound;
-    int check = round_checkBid(click->game->rounds[roundId], click->player,
-                               bidValue);
+    int roundId = gameGUI->select->game->currentRound;
+    int check = round_checkBid(gameGUI->select->game->rounds[roundId],
+                               gameGUI->select->player, bidValue);
 
     if (check == 0) {
-        click->bidPlayerTurn = 0;
-        round_placeBid(click->game->rounds[roundId], click->player, bidValue);
-        sem_post(&(click->semafor));
+        gameGUI->select->bidPlayerTurn = 0;
+        (gameGUI->bidPlayerId)++;
+        round_placeBid(gameGUI->select->game->rounds[roundId],
+                       gameGUI->select->player, bidValue);
+        
+        gui_hideBidGUI(gameGUI->bidGUI);
+        gtk_widget_hide(gameGUI->select->imageSelectedBid);
+        
+        gui_showInformationsPlayers(gameGUI->playersGUI, gameGUI->game);
+        
+        gui_setNoOfBids(gameGUI->labelNoOfBids,
+                        gameGUI->game->rounds[roundId]);
+        
+        if (gameGUI->bidPlayerId == gameGUI->game->playersNumber)
+            gui_startHand(gameGUI, 0);
+        else
+            gui_chooseBidForBots(gameGUI, gameGUI->bidPlayerId,
+                                 MAX_GAME_PLAYERS);
     }
 
     return NO_ERROR;
 }
 
-int gui_clickMouse(GtkWidget *window, GdkEvent *event, struct Click *click)
+int gui_clickMouse(GtkWidget *window, GdkEvent *event, struct GameGUI *gameGUI)
 {
-    if (window == NULL || event == NULL)
+    if (window == NULL || event == NULL || gameGUI == NULL)
         return POINTER_NULL;
 
     int x = (int)((GdkEventButton*)event)->x;
     int y = (int)((GdkEventButton*)event)->y;
 
-    gui_clickMouseOnCard(click, x, y);
-    gui_clickMouseOnBid(click, x, y);
+    gui_clickMouseOnCard(gameGUI, x, y);
+    gui_clickMouseOnBid(gameGUI, x, y);
 
     return NO_ERROR;
 }
 
-struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player)
+struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player,
+                                struct Game *game)
 {
     if (player == NULL || fixed == NULL)
         return NULL;
@@ -553,7 +582,7 @@ struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player)
                                ("pictures/select_bid.png");
     select->fixed          = fixed;
     select->player         = player;
-    select->round          = NULL;
+    select->game           = game;
     select->cardPlayerTurn = 0;
     select->bidPlayerTurn  = 0;
 
@@ -856,7 +885,7 @@ int gui_setRoundType(GtkWidget *roundTypeLabel, struct Round *round)
     if (roundTypeLabel == NULL)
         return POINTER_NULL;
 
-    char type[1] = { '\0' };
+    char type[2] = { '\0' };
     intToChar(round->roundType, type);
     gtk_label_set_text(GTK_LABEL(roundTypeLabel), type);
 
@@ -870,7 +899,7 @@ int gui_setNoOfBids(GtkWidget *noOfBidsLabel, struct Round *round)
     if (noOfBidsLabel == NULL)
         return POINTER_NULL;
 
-    char bids[2] = { '\0' };
+    char bids[3] = { '\0' };
     intToChar(round_getBidsSum(round), bids);
     gtk_label_set_text(GTK_LABEL(noOfBidsLabel), bids);
 
@@ -961,13 +990,20 @@ int gui_selectedBid(struct Select *select, int x, int y)
 {
     if (select == NULL)
         return POINTER_NULL;
-    if (select->round == NULL)
+    if (select->game == NULL)
+        return ROUND_NULL;
+    if (select->game->currentRound < 0 ||
+        select->game->currentRound >= MAX_GAME_ROUNDS)
+        return ILLEGAL_VALUE;
+    if (select->game->rounds[select->game->currentRound] == NULL)
         return ROUND_NULL;
     if (select->fixed == NULL || select->imageSelectedBid == NULL)
         return POINTER_NULL;
 
     int bidValue = gui_getBidValue(x, y);
-    int check = round_checkBid(select->round, select->player, bidValue);
+    int roundId = select->game->currentRound;
+    int check = round_checkBid(select->game->rounds[roundId],
+                               select->player, bidValue);
     
     if (select->bidPlayerTurn == 1 &&
         bidValue >= 0 && check == 0) {
@@ -977,34 +1013,6 @@ int gui_selectedBid(struct Select *select, int x, int y)
     } else {
         gtk_widget_hide(select->imageSelectedBid);
     }
-
-    return NO_ERROR;
-}
-
-struct Click *gui_createClick(struct Game *game, struct Player *player)
-{
-    if (game == NULL || player == NULL)
-        return NULL;
-
-    struct Click *click = malloc(sizeof(struct Click));
-
-    click->game           = game;
-    click->player         = player;
-    click->cardPlayerTurn = 0;
-    click->bidPlayerTurn  = 0;
-
-    return click;
-}
-
-int gui_deleteClick(struct Click **click)
-{
-    if (click == NULL)
-        return POINTER_NULL;
-    if (*click == NULL)
-        return POINTER_NULL;
-
-    free(*click);
-    *click = NULL;
 
     return NO_ERROR;
 }
@@ -1022,24 +1030,30 @@ int gui_hideBidGUI(struct BidGUI *bidGUI)
     return NO_ERROR;
 }
 
-int gui_clickStart(GtkWidget *button)
+int gui_clickStart(GtkWidget *button, struct GameGUI *gameGUI)
 {
+    if (gameGUI == NULL)
+        return POINTER_NULL;
+    if (gameGUI->game == NULL)
+        return GAME_NULL;
+
     gtk_widget_hide(button);
     gtk_main_quit();
 
     return NO_ERROR;
 }
 
-int gui_createButtonStart(GtkWidget **button, GtkWidget *fixed)
+int gui_createButtonStart(struct GameGUI *gameGUI)
 {
-    if (button == NULL)
+    if (gameGUI == NULL || gameGUI->fixedTable == NULL || gameGUI->buttonStart)
         return POINTER_NULL;
 
-    *button = gtk_button_new_with_label("Start");
-    gtk_fixed_put(GTK_FIXED(fixed), *button, 381, 247);
-    gtk_widget_show(*button);
-    g_signal_connect(G_OBJECT(*button), "clicked",
-                     G_CALLBACK(gui_clickStart), NULL);
+    gameGUI->buttonStart = gtk_button_new_with_label("Start");
+    gtk_fixed_put(GTK_FIXED(gameGUI->fixedTable), gameGUI->buttonStart,
+                            381, 247);
+    gtk_widget_show(gameGUI->buttonStart);
+    g_signal_connect(G_OBJECT(gameGUI->buttonStart), "clicked",
+                     G_CALLBACK(gui_clickStart), gameGUI);
 
     return NO_ERROR;
 }
@@ -1050,7 +1064,6 @@ struct GameGUI *gui_createGameGUI()
 
     gameGUI->game            = NULL; 
     gameGUI->select          = NULL;
-    gameGUI->click           = NULL;
     gameGUI->playerCards     = NULL;
     gameGUI->playersGUI      = NULL;
     gameGUI->bidGUI          = NULL;
@@ -1062,6 +1075,8 @@ struct GameGUI *gui_createGameGUI()
     gameGUI->labelRoundType  = NULL;
     gameGUI->labelNoOfBids   = NULL;
     gameGUI->buttonStart     = NULL;
+    gameGUI->bidPlayerId     = 0;
+    gameGUI->cardPlayerId    = 0;
 
     return gameGUI;
 }
@@ -1072,7 +1087,6 @@ int gui_deleteGameGUI(struct GameGUI **gameGUI)
         return POINTER_NULL;
 
     game_deleteGame(&((*gameGUI)->game));
-    gui_deleteClick(&((*gameGUI)->click));
     gui_deleteSelect(&((*gameGUI)->select));
     gui_deletePlayerCards(&((*gameGUI)->playerCards));
     gui_deletePlayersGUI(&((*gameGUI)->playersGUI));
@@ -1083,5 +1097,213 @@ int gui_deleteGameGUI(struct GameGUI **gameGUI)
     *gameGUI = NULL;
 
     return NO_ERROR;
+}
+
+int gui_startRound(struct GameGUI *gameGUI)
+{
+    if (gameGUI == NULL)
+        return POINTER_NULL;
+    if (gameGUI->game == NULL)
+        return GAME_NULL;
+
+    int roundId = ++(gameGUI->game->currentRound);
+    int playersNumber = gameGUI->game->playersNumber;
+    struct Game *game = gameGUI->game;
+
+    if (roundId < 12 + playersNumber * 3) {
+        if (roundId > 0)
+            round_copyScore(game->rounds[roundId - 1], game->rounds[roundId]);
+        
+        gameGUI->bidPlayerId = 0;        
+
+        deck_deleteDeck(&(game->deck));
+        game->deck = deck_createDeck(playersNumber);
+        deck_shuffleDeck(game->deck);
+        round_distributeDeck(game->rounds[roundId], game->deck);
+
+        gui_showTrump(game->rounds[roundId]->trump, gameGUI->imageTrump);
+        
+        gui_setRoundType(gameGUI->labelRoundType, game->rounds[roundId]);
+
+        qsort(game->players[0]->hand, game->rounds[roundId]->roundType,
+              sizeof(struct Card*), player_compareCards);
+        gui_showPlayerCards(gameGUI->playerCards, game->players[0]);
+
+        if (game->rounds[roundId]->players[0] == game->players[0]) {
+            gameGUI->select->bidPlayerTurn = 1;
+            gui_showBidGUI(gameGUI->bidGUI, game->rounds[roundId],
+                           game->players[0]);
+        } else {
+            int limit = round_getPlayerId(game->rounds[roundId],
+                                          game->players[0]);
+            gui_chooseBidForBots(gameGUI, 0, limit);
+        }
+    } else {
+        return GAME_OVER;
+    }
+
+    return NO_ERROR;
+}
+
+int gui_startHand(struct GameGUI *gameGUI, int winnerPlayerId)
+{
+    if (gameGUI == NULL)
+        return POINTER_NULL;
+    if (gameGUI->game == NULL)
+        return GAME_NULL;
+   // if (gameGUI->cardPlayerId != gameGUI->game->playersNumber)
+     //   return ILLEGAL_VALUE;
+    if (winnerPlayerId < 0 || winnerPlayerId > MAX_GAME_PLAYERS)
+        return ILLEGAL_VALUE;
+    if (player_getCardsNumber(gameGUI->game->players[0]) == 0)
+        return ROUND_OVER;
+
+    struct Game *game = gameGUI->game;
+    int roundId = gameGUI->game->currentRound;
+
+    hand_deleteHand(&(game->rounds[roundId]->hand));
+    game->rounds[roundId]->hand = hand_createHand();
+    round_addPlayersInHand(game->rounds[roundId], winnerPlayerId);
+
+    gameGUI->cardPlayerId = 0;
+    if (game->rounds[roundId]->hand->players[0] == game->players[0])
+        gameGUI->select->cardPlayerTurn = 1;
+    else {
+        int limit = hand_getPlayerId(game->rounds[roundId]->hand,
+                                     game->players[0]);
+        gui_chooseCardForBots(gameGUI, 0, limit);
+    }
+
+    return NO_ERROR;
+}
+
+gboolean gui_endHand(gpointer data)
+{
+    struct GameGUI *gameGUI = (struct GameGUI*)data;
+    if (gameGUI == NULL)
+        return FALSE;
+
+    struct Player *player;
+    struct Game *game = gameGUI->game;
+    struct Round *round = game->rounds[game->currentRound];
+
+    player = round_getPlayerWhichWonHand(round);
+    int playerId = round_getPlayerId(round, player);
+    round->handsNumber[playerId] += 1;
+
+    gui_hideCardsFromTable(gameGUI->cardsFromTable);
+    gui_showInformationsPlayers(gameGUI->playersGUI, game);
+
+    if (gui_startHand(gameGUI, playerId) == ROUND_OVER) {
+        round_determinesScore(round);
+        game_rewardsPlayersFromGame(game, game->currentRound);
+        gui_startRound(gameGUI);
+    }
+
+    return FALSE;
+}
+
+gboolean gui_botChooseBid(gpointer data)
+{
+    struct GameGUI *gameGUI = (struct GameGUI*)data;
+    if (gameGUI == NULL)
+        return FALSE;
+
+    struct Round *round;
+    struct Player *player;
+
+    round = gameGUI->game->rounds[gameGUI->game->currentRound];
+    player = round->players[gameGUI->bidPlayerId];
+
+    int bid = robot_getBid(player, round);
+    (gameGUI->bidPlayerId)++;
+    round_placeBid(round, player, bid);
+    gui_showInformationsPlayers(gameGUI->playersGUI, gameGUI->game);
+    gui_setNoOfBids(gameGUI->labelNoOfBids, round);
+
+    if (gameGUI->bidPlayerId == gameGUI->game->playersNumber)
+        gui_startHand(gameGUI, 0);
+
+    return FALSE;
+}
+
+int gui_chooseBidForBots(struct GameGUI *gameGUI, int leftLimit,
+                         int rightLimit)
+{
+    if (gameGUI == NULL)
+        return FALSE;
+    if (gameGUI->game == NULL)
+        return FALSE;
+    if (gameGUI->game->currentRound < 0 ||
+        gameGUI->game->currentRound >= MAX_GAME_ROUNDS)
+        return FALSE;
+    if (gameGUI->game->rounds[gameGUI->game->currentRound] == NULL)
+        return FALSE;
+    if (leftLimit < 0 || leftLimit > MAX_GAME_PLAYERS ||
+        rightLimit < 0 || rightLimit > MAX_GAME_PLAYERS)
+        return FALSE;
+
+    struct Round *round = gameGUI->game->rounds[gameGUI->game->currentRound];
+    guint seconds = 0;
+    for (int i = leftLimit; i < rightLimit; i++)
+        if (round->players[i] != NULL)
+            if (round->players[i]->isHuman == 0) {
+                seconds++;
+                g_timeout_add_seconds(seconds, gui_botChooseBid, gameGUI);
+            }
+
+    return FALSE;
+}
+
+gboolean gui_botChooseCard(gpointer data)
+{
+    struct GameGUI *gameGUI = (struct GameGUI*)data;
+    if (gameGUI == NULL)
+        return FALSE;
+
+    struct Round *round;
+    struct Player *player;
+    guint seconds = 1;
+
+    round = gameGUI->game->rounds[gameGUI->game->currentRound];
+    player = round->players[gameGUI->cardPlayerId];
+
+    int cardId = robot_getCardId(player, round);
+    (gameGUI->cardPlayerId)++;
+    hand_addCard(round->hand, player, &(player->hand[cardId]));
+    gui_showCardsOnTable(gameGUI->cardsFromTable, gameGUI->game);
+
+    if (gameGUI->cardPlayerId == gameGUI->game->playersNumber)
+        g_timeout_add_seconds(seconds, gui_endHand, gameGUI);
+
+    return FALSE;
+}
+
+gboolean gui_chooseCardForBots(struct GameGUI *gameGUI, int leftLimit,
+                               int rightLimit)
+{
+    if (gameGUI == NULL)
+        return FALSE;
+    if (gameGUI->game == NULL)
+        return FALSE;
+    if (gameGUI->game->currentRound < 0 ||
+        gameGUI->game->currentRound >= MAX_GAME_ROUNDS)
+        return FALSE;
+    if (gameGUI->game->rounds[gameGUI->game->currentRound] == NULL)
+        return FALSE;
+    if (leftLimit < 0 || leftLimit > MAX_GAME_PLAYERS ||
+        rightLimit < 0 || rightLimit > MAX_GAME_PLAYERS)
+        return FALSE;
+
+    struct Round *round = gameGUI->game->rounds[gameGUI->game->currentRound];
+    guint seconds = 0;
+    for (int i = leftLimit; i < rightLimit; i++)
+        if (round->players[i] != NULL)
+            if (round->players[i]->isHuman == 0) {
+                seconds++;
+                g_timeout_add_seconds(seconds, gui_botChooseCard, gameGUI);
+            }
+
+    return FALSE;
 }
 
