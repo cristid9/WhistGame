@@ -789,7 +789,7 @@ int gui_showCardsOnTable(struct CardsFromTable *cardsFromTable,
         return GAME_NULL;
     if (cardsFromTable == NULL)
         return POINTER_NULL;
-    if (game->currentRound < 0 || game->currentRound >= MAX_CARDS)
+    if (game->currentRound < 0 || game->currentRound >= MAX_GAME_ROUNDS)
         return ILLEGAL_VALUE;
 
     struct Hand *hand = game->rounds[game->currentRound]->hand;
@@ -1224,10 +1224,19 @@ gboolean gui_botChooseBid(gpointer data)
     if (gameGUI->bidPlayerId == gameGUI->game->playersNumber)
         gui_startHand(gameGUI, 0);
 
+    int bidPlayerId = gameGUI->bidPlayerId;
+    int roundId     = gameGUI->game->currentRound;
+    if (gameGUI->game->players[0] ==
+        gameGUI->game->rounds[roundId]->players[bidPlayerId]) {
+        gameGUI->select->bidPlayerTurn = 1;
+        gui_showBidGUI(gameGUI->bidGUI, gameGUI->game->rounds[roundId],
+                       gameGUI->game->players[0]);
+    }
+
     return FALSE;
 }
 
-int gui_chooseBidForBots(struct GameGUI *gameGUI, int leftLimit,
+gboolean gui_chooseBidForBots(struct GameGUI *gameGUI, int leftLimit,
                          int rightLimit)
 {
     if (gameGUI == NULL)
@@ -1266,7 +1275,7 @@ gboolean gui_botChooseCard(gpointer data)
     guint seconds = 1;
 
     round = gameGUI->game->rounds[gameGUI->game->currentRound];
-    player = round->players[gameGUI->cardPlayerId];
+    player = round->hand->players[gameGUI->cardPlayerId];
 
     int cardId = robot_getCardId(player, round);
     (gameGUI->cardPlayerId)++;
@@ -1275,6 +1284,13 @@ gboolean gui_botChooseCard(gpointer data)
 
     if (gameGUI->cardPlayerId == gameGUI->game->playersNumber)
         g_timeout_add_seconds(seconds, gui_endHand, gameGUI);
+
+    int cardPlayerId = gameGUI->cardPlayerId;
+    int roundId      = gameGUI->game->currentRound;
+    if (gameGUI->game->players[0] ==
+        gameGUI->game->rounds[roundId]->hand->players[cardPlayerId]) {
+        gameGUI->select->cardPlayerTurn = 1;
+    }
 
     return FALSE;
 }
@@ -1298,8 +1314,8 @@ gboolean gui_chooseCardForBots(struct GameGUI *gameGUI, int leftLimit,
     struct Round *round = gameGUI->game->rounds[gameGUI->game->currentRound];
     guint seconds = 0;
     for (int i = leftLimit; i < rightLimit; i++)
-        if (round->players[i] != NULL)
-            if (round->players[i]->isHuman == 0) {
+        if (round->hand->players[i] != NULL)
+            if (round->hand->players[i]->isHuman == 0) {
                 seconds++;
                 g_timeout_add_seconds(seconds, gui_botChooseCard, gameGUI);
             }
