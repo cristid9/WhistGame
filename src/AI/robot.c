@@ -7,6 +7,7 @@
 #include "robot.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 int robot_getBid(struct Player *player, struct Round *round)
 {
@@ -74,7 +75,14 @@ int robot_getCardId(struct Player *player, struct Round *round)
     if (playerId < 0)
         return playerId;
 
+    static int a = 0;
+    a++;
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        printf("%s ", round->hand->players[i]->name);
+    printf("\n");
     if (round->hand->players[0] == player) {
+   // if (a == 6) {
+        printf("test");
         if (round->bids[playerId] > round->handsNumber[playerId]) {
             int max = 0;
             int position = 0;
