@@ -38,7 +38,7 @@ struct Hand *hand_createHand();
  *
  * @param hand Pointer to pointer to the hand which to be released.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int hand_deleteHand(struct Hand **hand);
 
@@ -48,7 +48,7 @@ int hand_deleteHand(struct Hand **hand);
  * @param hand Pointer to the hand in which is added the player.
  * @param player Pointer to the player which to be added.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int hand_addPlayer(struct Hand *hand, struct Player *player);
 
@@ -59,7 +59,7 @@ int hand_addPlayer(struct Hand *hand, struct Player *player);
  * @param player Pointer to the player which places the card.
  * @param card Pointer to pointer to the card which is added.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card);
 

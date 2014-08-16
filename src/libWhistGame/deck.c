@@ -51,7 +51,7 @@ int deck_deleteCard(struct Card **card)
     free(*card);
     *card = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 struct Deck *deck_createDeck(int playersNumber)
@@ -89,7 +89,7 @@ int deck_deleteDeck(struct Deck **deck)
     free(*deck);
     *deck = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int deck_getDeckSize(struct Deck *deck)
@@ -124,7 +124,7 @@ int deck_shuffleDeck(struct Deck *deck)
         deck->cards[b] = card;
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int deck_compareCards(struct Card *card1, struct Card *card2, enum Suit trump)

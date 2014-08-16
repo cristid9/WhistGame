@@ -41,7 +41,7 @@ int hand_deleteHand(struct Hand **hand)
     free(*hand);
     *hand = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int hand_addPlayer(struct Hand *hand, struct Player *player)
@@ -54,14 +54,14 @@ int hand_addPlayer(struct Hand *hand, struct Player *player)
     int position = -1;
     for (int i = MAX_GAME_PLAYERS - 1; i >= 0; i--) {
         if (player == hand->players[i])
-            return DUPLICATE;
+            return DUPLICATE_POINTER;
         if (hand->players[i] == NULL)
             position = i;
     }
 
     if (position != -1) {
         hand->players[position] = player;
-        return NO_ERROR;
+        return FUNCTION_NO_ERROR;
     }
 
     return FULL;
@@ -82,7 +82,7 @@ int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card)
         if (hand->players[i] == player) {
             hand->cards[i] = *card;
             *card = NULL;
-            return NO_ERROR;
+            return FUNCTION_NO_ERROR;
         }
 
     return NOT_FOUND;

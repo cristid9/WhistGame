@@ -43,7 +43,7 @@ struct Player *player_createPlayer(const char *name, int isHuman);
  *
  * @param player Pointer to pointer to the player which to be released.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int player_deletePlayer(struct Player **player);
 
@@ -53,7 +53,7 @@ int player_deletePlayer(struct Player **player);
  * @param player Pointer to the player which receives the card.
  * @param card Pointer to pointer to the card which is added.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int player_addCard(struct Player *player, struct Card **card);
 
@@ -75,7 +75,7 @@ int player_compareCards(const void *a, const void *b);
  *
  * @param name Pointer to the name on which introduced him the player.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int player_checkPlayerName(const char *name);
 

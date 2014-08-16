@@ -60,7 +60,7 @@ struct Round *round_createRound(int roundType);
  *
  * @param round Pointer to pointer to the round which to be released.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int round_deleteRound(struct Round **round);
 
@@ -70,7 +70,7 @@ int round_deleteRound(struct Round **round);
  * @param round Pointer to the round in which is added the player.
  * @param player Pointer to the player which to be added.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int round_addPlayer(struct Round *round, struct Player *player);
 
@@ -80,7 +80,7 @@ int round_addPlayer(struct Round *round, struct Player *player);
  * @param round Pointer to the round in which is added the hand.
  * @param hand Pointer to pointer to the hand which to be added.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int round_addHand(struct Round *round, struct Hand **hand);
 
@@ -90,7 +90,7 @@ int round_addHand(struct Round *round, struct Hand **hand);
  * @param round Pointer to the round in which is added the trump.
  * @param trump Pointer to pointer to the card which to be added as trump.
  *
- * @return NO_ERROR or 0 on succes, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on succes, other value on failure.
  */
 int round_addTrump(struct Round *round, struct Card **trump);
 
@@ -100,7 +100,7 @@ int round_addTrump(struct Round *round, struct Card **trump);
  * @param round Pointer to the round from which are added the players.
  * @param firstPlayer The player id from round which is the first added in hand.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int round_addPlayersInHand(struct Round *round, int firstPlayer);
 
@@ -110,7 +110,7 @@ int round_addPlayersInHand(struct Round *round, int firstPlayer);
  * @param round Pointer to the round in which are the players.
  * @param deck Pointer to the deck from which are distributed the cards.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int round_distributeCard(struct Round *round, struct Deck *deck);
 
@@ -120,7 +120,7 @@ int round_distributeCard(struct Round *round, struct Deck *deck);
  * @param round Pointer to the round in which are the players.
  * @param deck Pointer to the deck which is distributed.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int round_distributeDeck(struct Round *round, struct Deck *deck);
 
@@ -152,7 +152,7 @@ int round_getBidsSum(struct Round *round);
  * @param player Pointer to the player who bids.
  * @param bid The bid which is bid.
  *
- * @return NO_ERROR or 0 if the player introduced a correct bid.
+ * @return FUNCTION_NO_ERROR or 0 if the player introduced a correct bid.
  *         A negative value on failure.
  */
 int round_checkBid(struct Round *round, struct Player *player, int bid);
@@ -164,7 +164,7 @@ int round_checkBid(struct Round *round, struct Player *player, int bid);
  * @param player Pointer to the player who places the bid.
  * @param bid The value of the bid.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int round_placeBid(struct Round *round, struct Player *player, int bid);
 
@@ -184,7 +184,7 @@ struct Player *round_getPlayerWhichWonHand(struct Round *round);
  *
  * @param round Pointer to the round for which is determined the score.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int round_determinesScore(struct Round *round);
 
@@ -194,7 +194,7 @@ int round_determinesScore(struct Round *round);
  * @param round1 Pointer to the round from which is copied the score.
  * @param round2 Pointer to the round in which is added the score from round1.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int round_copyScore(struct Round *round1, struct Round *round2);
 
@@ -205,7 +205,7 @@ int round_copyScore(struct Round *round1, struct Round *round2);
  * @param round Pointer to the round for which the function checks if will be
  *              replayed or not.
  *
- * @return NO_ERROR or 0 if the function doen't will be replayed.
+ * @return FUNCTION_NO_ERROR or 0 if the function doen't will be replayed.
  *         1 if the function will be replayed.
  *         A negative value on failure.
  */
@@ -217,7 +217,7 @@ int round_repeatRound(struct Round *round);
  *
  * @param round Pointer to the round which to be reinitialized.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int round_reinitializeRound(struct Round *round);
 

@@ -51,7 +51,7 @@ struct Card *deck_createCard(enum Suit suit, int value);
  *
  * @param card Pointer to pointer to the card which to be released.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int deck_deleteCard(struct Card **card);
 
@@ -69,7 +69,7 @@ struct Deck *deck_createDeck(int playersNumber);
  *
  * @param deck Pointer to pointer to the deck whick to be released.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int deck_deleteDeck(struct Deck **deck);
 
@@ -88,7 +88,7 @@ int deck_getDeckSize(struct Deck *deck);
  *
  * @param deck Pointer to the deck which to be shuffled.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int deck_shuffleDeck(struct Deck *deck);
 

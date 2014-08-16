@@ -47,7 +47,7 @@ int player_deletePlayer(struct Player **player)
     free(*player);
     *player = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int player_addCard(struct Player *player, struct Card **card)
@@ -62,7 +62,7 @@ int player_addCard(struct Player *player, struct Card **card)
     int position = -1;
     for (int i = 0; i < MAX_CARDS; i++) {
         if (player->hand[i] == *card)
-            return DUPLICATE;
+            return DUPLICATE_POINTER;
         if (position == -1 && player->hand[i] == NULL)
             position = i;
     }
@@ -70,7 +70,7 @@ int player_addCard(struct Player *player, struct Card **card)
     if (position != -1) {
         player->hand[position] = *card;
         *card = NULL;
-        return NO_ERROR;
+        return FUNCTION_NO_ERROR;
     }
 
     return FULL;
@@ -95,7 +95,7 @@ int player_checkPlayerName(const char *name)
     if (strlen(name) < 5 || firstLetter < 97 || firstLetter > 122)
         return INCORRECT_NAME;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int player_getIdNumberthCardWhichIsNotNull(struct Player *player, int number)

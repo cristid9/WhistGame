@@ -52,7 +52,7 @@ struct Game *game_createGame(int gameType);
  *
  * @param game Pointer to pointer to the game which to be released.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int game_deleteGame(struct Game **game);
 
@@ -62,7 +62,7 @@ int game_deleteGame(struct Game **game);
  * @param game Pointer to the game in which will be added the deck.
  * @param deck Pointer to pointer to the deck which to be added.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int game_addDeck(struct Game *game, struct Deck **deck);
 
@@ -72,7 +72,7 @@ int game_addDeck(struct Game *game, struct Deck **deck);
  * @param game Pointer to the game in which to be added the player.
  * @param player Pointer to pointer to the player which to be added.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int game_addPlayer(struct Game *game, struct Player **player);
 
@@ -82,7 +82,7 @@ int game_addPlayer(struct Game *game, struct Player **player);
  * @param game Pointer to the game in which to be added the round.
  * @param player Pointer to pointer to the round which to be added.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int game_addRound(struct Game *game, struct Round **round);
 
@@ -94,7 +94,7 @@ int game_addRound(struct Game *game, struct Round **round);
  * @param round Pointer to the round in which to be added the players.
  * @param firstPlayer The player id from game which is the first added in round.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int game_addPlayersInRound(struct Game *game, struct Round *round,
                            int firstPlayer);
@@ -104,7 +104,7 @@ int game_addPlayersInRound(struct Game *game, struct Round *round,
  *
  * @param game Pointer to the game which to be modified.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int game_addPlayersInAllRounds(struct Game *game);
 
@@ -113,7 +113,7 @@ int game_addPlayersInAllRounds(struct Game *game);
  *
  * @param game Pointer to the game in which to be added the rounds.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int game_createAndAddRounds(struct Game *game);
 
@@ -125,7 +125,7 @@ int game_createAndAddRounds(struct Game *game);
  * @param player Pointer to the player which must checked.
  * @param currentRound The id of the current round.
  *
- * @return NO_ERROR or 0 if the player wasn't rewarded.
+ * @return FUNCTION_NO_ERROR or 0 if the player wasn't rewarded.
  *         1 if the player was rewarded on positive.
  *         2 if the player was rewarded on negative.
  *         A negative value on failure.
@@ -141,7 +141,7 @@ int game_rewardsPlayer(struct Game *game, struct Player *player,
  * @param game Pointer to the game in which are the players and the rounds.
  * @param currentRound The id of the current round.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int game_rewardsPlayersFromGame(struct Game *game, int currentRound);
 
