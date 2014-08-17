@@ -7,7 +7,9 @@
 
 #include <string.h>
 
-int gui_init(GtkWidget **window, GtkWidget **fixed, char *title, 
+#define square(a) (a) * (a)
+
+int gui_init(GtkWidget **window, GtkWidget **fixed, char *title,
              int width, int height)
 {
     if (window == NULL || fixed == NULL || title == NULL)
@@ -23,7 +25,7 @@ int gui_init(GtkWidget **window, GtkWidget **fixed, char *title,
     gtk_widget_show(*fixed);
     gtk_widget_show(*window);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_noOfBots(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
@@ -42,7 +44,7 @@ int gui_noOfBots(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
     gtk_fixed_put(GTK_FIXED(fixed), *spinNumber, 10, 130);
     gtk_widget_show(*spinNumber);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_playerName(GtkWidget *window, GtkWidget *fixed,
@@ -60,7 +62,7 @@ int gui_playerName(GtkWidget *window, GtkWidget *fixed,
     gtk_fixed_put(GTK_FIXED(fixed), *name, 50, 10);
     gtk_widget_show(*name);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
@@ -81,7 +83,7 @@ int gui_gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
     gtk_widget_show(*radio1);
     gtk_widget_show(*radio8);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_setBackground(GtkWidget *fixed, char *pathPicture)
@@ -93,7 +95,7 @@ int gui_setBackground(GtkWidget *fixed, char *pathPicture)
     gtk_fixed_put(GTK_FIXED(fixed), image, 0, 0);
     gtk_widget_show(image);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 //Helpful function for gui_drawScore().
@@ -120,7 +122,7 @@ int intToChar(int number, char *string)
         string[j] = ch;
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 gboolean gui_drawScore(GtkWidget *button, GdkEventExpose *event,
@@ -229,7 +231,7 @@ int gui_showScore(GtkWidget *button, struct Game *game)
 
     gtk_main();
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_createButtonShowScore(GtkWidget *fixed, GtkWidget **showScore,
@@ -243,8 +245,8 @@ int gui_createButtonShowScore(GtkWidget *fixed, GtkWidget **showScore,
     gtk_widget_show(*showScore);
     g_signal_connect(G_OBJECT(*showScore), "clicked",
                      G_CALLBACK(gui_showScore), game);
-    
-    return NO_ERROR;
+
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_getPictureName(struct Card *card, char *name)
@@ -271,7 +273,7 @@ int gui_getPictureName(struct Card *card, char *name)
         case SuitEnd:
             break;
         }
-    char value[3] = {'\0'};
+    char value[4] = {'\0'};
     if (card->value > 9) {
         value[0] = (char)(((int)'0') + card->value / 10);
         value[1] = (char)(((int)'0') + card->value % 10);
@@ -281,8 +283,8 @@ int gui_getPictureName(struct Card *card, char *name)
     strcpy(name, value);
     strcat(name, suit);
     strcat(name, ".jpg");
-    
-    return NO_ERROR;
+
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_initTrump(GtkWidget *fixed, GtkWidget **image)
@@ -293,7 +295,7 @@ int gui_initTrump(GtkWidget *fixed, GtkWidget **image)
     *image = gtk_image_new();
     gtk_fixed_put(GTK_FIXED(fixed), *image, 45, 15);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_hideTrump(GtkWidget *image)
@@ -315,7 +317,7 @@ int gui_showTrump(struct Card *trump, GtkWidget *image)
     if (trump == NULL)
         strcat(pathTrump, "45x60.jpg");
     else {
-        char pictureName[7];
+        char pictureName[8] = {0};
         gui_getPictureName(trump, pictureName);
         strcat(pathTrump, pictureName);
     }
@@ -323,7 +325,7 @@ int gui_showTrump(struct Card *trump, GtkWidget *image)
     gtk_image_set_from_file(GTK_IMAGE(image), pathTrump);
     gtk_widget_show(image);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_deletePlayerCards(struct PlayerCards **playerCards)
@@ -334,7 +336,7 @@ int gui_deletePlayerCards(struct PlayerCards **playerCards)
     free(*playerCards);
     *playerCards = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 struct PlayerCards *gui_initializePlayerCards(GtkWidget *fixed)
@@ -349,7 +351,7 @@ struct PlayerCards *gui_initializePlayerCards(GtkWidget *fixed)
         gtk_fixed_put(GTK_FIXED(fixed), playerCards->images[i],
                       10 + i * 90, 400);
     }
-    
+
     return playerCards;
 }
 
@@ -385,7 +387,7 @@ int gui_showPlayerCards(struct PlayerCards *playerCards, struct Player *player)
             noOfCards++;
         }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_initAndShowDialogIncorrectName(GtkWidget *window)
@@ -415,7 +417,7 @@ int gui_initAndShowDialogIncorrectName(GtkWidget *window)
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_initAndShowDialogMaxGames(GtkWidget *window)
@@ -442,10 +444,10 @@ int gui_initAndShowDialogMaxGames(GtkWidget *window)
     gtk_box_pack_start_defaults(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox);
     gtk_widget_show_all(dialog);
 
-    gtk_dialog_run(GTK_DIALOG(dialog)); 
+    gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_closeWhistGame(GtkWidget *windowTable, int *noOfGames)
@@ -457,7 +459,7 @@ int gui_closeWhistGame(GtkWidget *windowTable, int *noOfGames)
     gtk_widget_destroy(windowTable);
 //    gtk_main_quit();
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_getCardId(int x, int y)
@@ -489,7 +491,6 @@ int gui_clickMouseOnCard(struct GameGUI *gameGUI, int x, int y)
     struct Round *round = game->rounds[game->currentRound];
     struct Player *player = game->players[0];
     int position = player_getIdNumberthCardWhichIsNotNull(player, cardId + 1);
-    int roundId = gameGUI->select->game->currentRound;
     int check = hand_checkCard(round->hand, player, position, round->trump);
     guint seconds = 1;
 
@@ -509,7 +510,7 @@ int gui_clickMouseOnCard(struct GameGUI *gameGUI, int x, int y)
                                   MAX_GAME_PLAYERS);
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_clickMouseOnBid(struct GameGUI *gameGUI, int x, int y)
@@ -534,15 +535,15 @@ int gui_clickMouseOnBid(struct GameGUI *gameGUI, int x, int y)
         (gameGUI->bidPlayerId)++;
         round_placeBid(gameGUI->select->game->rounds[roundId],
                        gameGUI->select->player, bidValue);
-        
+
         gui_hideBidGUI(gameGUI->bidGUI);
         gtk_widget_hide(gameGUI->select->imageSelectedBid);
-        
+
         gui_showInformationsPlayers(gameGUI->playersGUI, gameGUI->game);
-        
+
         gui_setNoOfBids(gameGUI->labelNoOfBids,
                         gameGUI->game->rounds[roundId]);
-        
+
         if (gameGUI->bidPlayerId == gameGUI->game->playersNumber)
             gui_startHand(gameGUI, 0);
         else
@@ -550,7 +551,7 @@ int gui_clickMouseOnBid(struct GameGUI *gameGUI, int x, int y)
                                  MAX_GAME_PLAYERS);
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_clickMouse(GtkWidget *window, GdkEvent *event, struct GameGUI *gameGUI)
@@ -564,7 +565,7 @@ int gui_clickMouse(GtkWidget *window, GdkEvent *event, struct GameGUI *gameGUI)
     gui_clickMouseOnCard(gameGUI, x, y);
     gui_clickMouseOnBid(gameGUI, x, y);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player,
@@ -574,7 +575,7 @@ struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player,
         return NULL;
 
     struct Select *select;
-    
+
     select = malloc(sizeof(struct Select));
     select->imageSelectedCard = gtk_image_new_from_file
                                 ("pictures/select_card.png");
@@ -613,7 +614,7 @@ int gui_selectedCard(struct Select *select, int x, int y)
         gtk_widget_hide(select->imageSelectedCard);
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_moveMouse(GtkWidget *window, GdkEvent *event, struct Select *select)
@@ -627,7 +628,7 @@ int gui_moveMouse(GtkWidget *window, GdkEvent *event, struct Select *select)
     gui_selectedCard(select, x, y);
     gui_selectedBid(select, x, y);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 struct PlayersGUI *gui_createPlayersGUI()
@@ -651,11 +652,11 @@ int gui_showPlayers(struct Game *game, GtkWidget *fixed,
     if (game == NULL || fixed == NULL || playersGUI == NULL)
         return POINTER_NULL;
 
-    int coordinates[MAX_GAME_PLAYERS][2] = { {25 ,275}, 
-                                             {25 ,145}, 
-                                             {225 ,15}, 
-                                             {425 ,15}, 
-                                             {625 ,145}, 
+    int coordinates[MAX_GAME_PLAYERS][2] = { {25 ,275},
+                                             {25 ,145},
+                                             {225 ,15},
+                                             {425 ,15},
+                                             {625 ,145},
                                              {625 ,275} };
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
@@ -680,7 +681,7 @@ int gui_showPlayers(struct Game *game, GtkWidget *fixed,
             gtk_fixed_put(GTK_FIXED(fixed), playersGUI->tookLabel[i],
                           coordinates[i][0] + 48, coordinates[i][1] + 81);
             gtk_widget_show(playersGUI->tookLabel[i]);
-            
+
             playersGUI->scoreLabel[i] = gtk_label_new("0");
             gtk_fixed_put(GTK_FIXED(fixed), playersGUI->scoreLabel[i],
                           coordinates[i][0] + 53, coordinates[i][1] + 28);
@@ -688,7 +689,7 @@ int gui_showPlayers(struct Game *game, GtkWidget *fixed,
         }
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_showInformationsPlayers(struct PlayersGUI *playersGUI,
@@ -722,7 +723,7 @@ int gui_showInformationsPlayers(struct PlayersGUI *playersGUI,
             gtk_label_set_text(GTK_LABEL(playersGUI->scoreLabel[i]), text);
         }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 struct CardsFromTable *gui_createCardsFromTable()
@@ -745,7 +746,7 @@ int gui_deleteCardsFromTable(struct CardsFromTable **cardsFromTable)
     free(*cardsFromTable);
     *cardsFromTable = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_initCardsFromTable(struct CardsFromTable *cardsFromTable,
@@ -767,7 +768,7 @@ int gui_initCardsFromTable(struct CardsFromTable *cardsFromTable,
                       coordinates[i][0], coordinates[i][1]);
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_hideCardsFromTable(struct CardsFromTable *cardsFromTable)
@@ -779,7 +780,7 @@ int gui_hideCardsFromTable(struct CardsFromTable *cardsFromTable)
         gtk_widget_hide(cardsFromTable->images[i]);
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_showCardsOnTable(struct CardsFromTable *cardsFromTable,
@@ -799,7 +800,7 @@ int gui_showCardsOnTable(struct CardsFromTable *cardsFromTable,
             int position = hand_getPlayerId(hand, game->players[i]);
             if (position < 0)
                 return position;
-            if (hand->cards[position] != NULL) {    
+            if (hand->cards[position] != NULL) {
                 char pictureName[10] = { '\0' };
                 gui_getPictureName(hand->cards[position], pictureName);
                 char pathImage [30] = "pictures/45x60/";
@@ -810,7 +811,7 @@ int gui_showCardsOnTable(struct CardsFromTable *cardsFromTable,
             }
         }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_deletePlayersGUI(struct PlayersGUI **playersGUI)
@@ -821,7 +822,7 @@ int gui_deletePlayersGUI(struct PlayersGUI **playersGUI)
     free(*playersGUI);
     *playersGUI = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_deleteSelect(struct Select **select)
@@ -832,7 +833,7 @@ int gui_deleteSelect(struct Select **select)
     free(*select);
     *select = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_deleteInput(struct Input **input)
@@ -843,7 +844,7 @@ int gui_deleteInput(struct Input **input)
     free(*input);
     *input = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_initRoundTypeLabel(GtkWidget **roundTypeLabel, GtkWidget *fixed)
@@ -859,7 +860,7 @@ int gui_initRoundTypeLabel(GtkWidget **roundTypeLabel, GtkWidget *fixed)
     gtk_widget_modify_fg(*roundTypeLabel, GTK_STATE_NORMAL, &color);
     gtk_widget_show(*roundTypeLabel);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_initNoOfBidsLabel(GtkWidget **noOfBidsLabel, GtkWidget *fixed)
@@ -875,7 +876,7 @@ int gui_initNoOfBidsLabel(GtkWidget **noOfBidsLabel, GtkWidget *fixed)
     gtk_widget_modify_fg(*noOfBidsLabel, GTK_STATE_NORMAL, &color);
     gtk_widget_show(*noOfBidsLabel);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_setRoundType(GtkWidget *roundTypeLabel, struct Round *round)
@@ -889,7 +890,7 @@ int gui_setRoundType(GtkWidget *roundTypeLabel, struct Round *round)
     intToChar(round->roundType, type);
     gtk_label_set_text(GTK_LABEL(roundTypeLabel), type);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_setNoOfBids(GtkWidget *noOfBidsLabel, struct Round *round)
@@ -903,7 +904,7 @@ int gui_setNoOfBids(GtkWidget *noOfBidsLabel, struct Round *round)
     intToChar(round_getBidsSum(round), bids);
     gtk_label_set_text(GTK_LABEL(noOfBidsLabel), bids);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 struct BidGUI *gui_createBidGUI()
@@ -926,7 +927,7 @@ int gui_deleteBidGUI(struct BidGUI **bidGUI)
     free(*bidGUI);
     *bidGUI = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_initBidGUI(struct BidGUI *bidGUI, GtkWidget *fixed)
@@ -938,13 +939,13 @@ int gui_initBidGUI(struct BidGUI *bidGUI, GtkWidget *fixed)
     gtk_fixed_put(GTK_FIXED(fixed), bidGUI->image, 250, 235);
 
     for (int i = 0; i < MAX_CARDS + 1; i++) {
-        char bid[1] = { '\0' };
+        char bid[2] = { '\0' };
         intToChar(i, bid);
         bidGUI->label[i] = gtk_label_new(bid);
         gtk_fixed_put(GTK_FIXED(fixed), bidGUI->label[i], 310 + i * 20, 255);
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_showBidGUI(struct BidGUI *bidGUI, struct Round *round,
@@ -971,17 +972,23 @@ int gui_showBidGUI(struct BidGUI *bidGUI, struct Round *round,
         gtk_widget_show(bidGUI->label[i]);
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_getBidValue(int x, int y)
 {
     int position = -1;
-    
+    int radiusCircle = 10;
+    int centerOfTheCircleX = 314;
+    int centerOfTheCircleY = 265;
+
     if (y >= 255 && y <= 275)
-        for (int i = 0; i < MAX_CARDS + 1; i++)
-            if (x >= (310 + i * 20) && x < (330 + i * 20))
+        for (int i = 0; i < MAX_CARDS + 1; i++) {
+            if ((square(x - centerOfTheCircleX) + square(y - centerOfTheCircleY))
+                <= square(radiusCircle))
                 position = i;
+            centerOfTheCircleX += 20;
+        }
 
     return position;
 }
@@ -1004,7 +1011,7 @@ int gui_selectedBid(struct Select *select, int x, int y)
     int roundId = select->game->currentRound;
     int check = round_checkBid(select->game->rounds[roundId],
                                select->player, bidValue);
-    
+
     if (select->bidPlayerTurn == 1 &&
         bidValue >= 0 && check == 0) {
         gtk_fixed_move(GTK_FIXED(select->fixed), select->imageSelectedBid,
@@ -1014,7 +1021,7 @@ int gui_selectedBid(struct Select *select, int x, int y)
         gtk_widget_hide(select->imageSelectedBid);
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_hideBidGUI(struct BidGUI *bidGUI)
@@ -1027,7 +1034,7 @@ int gui_hideBidGUI(struct BidGUI *bidGUI)
     for (int i = 0; i < MAX_CARDS + 1; i++)
         gtk_widget_hide(bidGUI->label[i]);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_clickStart(GtkWidget *button, struct GameGUI *gameGUI)
@@ -1040,7 +1047,7 @@ int gui_clickStart(GtkWidget *button, struct GameGUI *gameGUI)
     gtk_widget_hide(button);
     gtk_main_quit();
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_createButtonStart(struct GameGUI *gameGUI)
@@ -1055,14 +1062,14 @@ int gui_createButtonStart(struct GameGUI *gameGUI)
     g_signal_connect(G_OBJECT(gameGUI->buttonStart), "clicked",
                      G_CALLBACK(gui_clickStart), gameGUI);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 struct GameGUI *gui_createGameGUI()
 {
     struct GameGUI *gameGUI = malloc(sizeof(struct GameGUI));
 
-    gameGUI->game            = NULL; 
+    gameGUI->game            = NULL;
     gameGUI->select          = NULL;
     gameGUI->playerCards     = NULL;
     gameGUI->playersGUI      = NULL;
@@ -1096,7 +1103,7 @@ int gui_deleteGameGUI(struct GameGUI **gameGUI)
     free(*gameGUI);
     *gameGUI = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_startRound(struct GameGUI *gameGUI)
@@ -1113,8 +1120,10 @@ int gui_startRound(struct GameGUI *gameGUI)
     if (roundId < 12 + playersNumber * 3) {
         if (roundId > 0)
             round_copyScore(game->rounds[roundId - 1], game->rounds[roundId]);
-        
-        gameGUI->bidPlayerId = 0;        
+
+        gui_showInformationsPlayers(gameGUI->playersGUI, gameGUI->game);
+
+        gameGUI->bidPlayerId = 0;
 
         deck_deleteDeck(&(game->deck));
         game->deck = deck_createDeck(playersNumber);
@@ -1122,7 +1131,7 @@ int gui_startRound(struct GameGUI *gameGUI)
         round_distributeDeck(game->rounds[roundId], game->deck);
 
         gui_showTrump(game->rounds[roundId]->trump, gameGUI->imageTrump);
-        
+
         gui_setRoundType(gameGUI->labelRoundType, game->rounds[roundId]);
 
         qsort(game->players[0]->hand, game->rounds[roundId]->roundType,
@@ -1142,7 +1151,7 @@ int gui_startRound(struct GameGUI *gameGUI)
         return GAME_OVER;
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 int gui_startHand(struct GameGUI *gameGUI, int winnerPlayerId)
@@ -1151,8 +1160,6 @@ int gui_startHand(struct GameGUI *gameGUI, int winnerPlayerId)
         return POINTER_NULL;
     if (gameGUI->game == NULL)
         return GAME_NULL;
-   // if (gameGUI->cardPlayerId != gameGUI->game->playersNumber)
-     //   return ILLEGAL_VALUE;
     if (winnerPlayerId < 0 || winnerPlayerId > MAX_GAME_PLAYERS)
         return ILLEGAL_VALUE;
     if (player_getCardsNumber(gameGUI->game->players[0]) == 0)
@@ -1174,7 +1181,7 @@ int gui_startHand(struct GameGUI *gameGUI, int winnerPlayerId)
         gui_chooseCardForBots(gameGUI, 0, limit);
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 gboolean gui_endHand(gpointer data)
@@ -1278,9 +1285,9 @@ gboolean gui_botChooseCard(gpointer data)
     player = round->hand->players[gameGUI->cardPlayerId];
 
     int cardId = robot_getCardId(player, round);
-    (gameGUI->cardPlayerId)++;
     hand_addCard(round->hand, player, &(player->hand[cardId]));
     gui_showCardsOnTable(gameGUI->cardsFromTable, gameGUI->game);
+    (gameGUI->cardPlayerId)++;
 
     if (gameGUI->cardPlayerId == gameGUI->game->playersNumber)
         g_timeout_add_seconds(seconds, gui_endHand, gameGUI);

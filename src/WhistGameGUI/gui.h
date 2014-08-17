@@ -95,12 +95,12 @@ struct Input {
  *               this pointer with GtkWindow.
  * @param fixed Pointer to pointer to GtkWidget. Function will initializes
  *              this pointer with GtkFixed.
- * @param title Pointer to the string which will be set as the name of the
+ * @param title Pointer to the string which will be setting as the name of the
  *              window.
  * @param width The width of the window.
  * @param height The height of the window.
  *
- *return NO_ERROR or 0 on success, other value on failure.
+ *return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int gui_init(GtkWidget **window, GtkWidget **fixed, char *title,
              int width, int height);
@@ -120,7 +120,7 @@ int gui_init(GtkWidget **window, GtkWidget **fixed, char *title,
  *               GtkAdjustment to that address. Function has need this
  *               parameter to create a spin button.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int gui_noOfBots(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
                  GtkWidget **spinNumber, GtkAdjustment **number);
@@ -137,7 +137,7 @@ int gui_noOfBots(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
  * @param name Pointer to pointer to GtkEntry. Function will creates a entry
  *             to that address.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int gui_playerName(GtkWidget *window, GtkWidget *fixed,
                    GtkWidget **label, GtkWidget **name);
@@ -156,7 +156,7 @@ int gui_playerName(GtkWidget *window, GtkWidget *fixed,
  * @param radio8 Pointer to pointer to GtkWidget. Function will creates a radio
  *               button to that address.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int gui_gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
                  GtkWidget **radio1, GtkWidget **radio8);
@@ -166,13 +166,17 @@ int gui_gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
  * @param fixed Pointer to the GtkFixed for which is set the background.
  * @param pathPicture The path to the image which to be set such as background.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int gui_setBackground(GtkWidget *fixed, char *pathPicture);
 
 /**
+ * @brief Function displays the score when is clicked the ShowScore button.
  *
+ * @param button Pointer to the ShowScore button.
+ * @param game Pointer to the game from which is displayed the score.
  *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int gui_showScore(GtkWidget *button, struct Game *game);
 
@@ -181,36 +185,139 @@ int gui_showScore(GtkWidget *button, struct Game *game);
  *
  * @param fixed Pointer to the GtkFixed in which is added the button.
  * @param showButton The address to which is created the button.
- * 
- * 
+ * @param game Pointer to the game from which will be displaying the score. 
+ *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */ 
 int gui_createButtonShowScore(GtkWidget *fixed, GtkWidget **showButton,
                               struct Game *game);
 
+/**
+ * @brief Function get the name of a card.
+ *
+ * @param card Pointer to the card for which is got the name.
+ * @param name Pointer to first position whence to be saved the card's name.
+ *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
+ */
 int gui_getPictureName(struct Card *card, char *name);
 
+/**
+ * @brief Function initializes the trump on table.
+ *
+ * @param fixed Pointer to the fixed where will be displaying the trump.
+ * @param image Pointer to pointer to image which will be displaying as trump.
+ *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
+ */
 int gui_initTrump(GtkWidget *fixed, GtkWidget **image);
 
+/**
+ * @brief Function hides the trump.
+ *
+ * @param image Pointer to the image which will be hiding.
+ *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
+ */
 int gui_hideTrump(GtkWidget *image);
 
+/**
+ * @brief Function displays the trump.
+ *
+ * @param trump Pointer to the card which is trump.
+ * @param image Pointer to the image which will be displaying as trump.
+ *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
+ */
 int gui_showTrump(struct Card *trump, GtkWidget *image);
 
+/**
+ * @brief Function frees a pointer to PlayerCards and makes him NULL.
+ *
+ * @param playerCards Pointer to pointer to the PlayerCards which will be
+ *                    removing.
+ *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
+ */
 int gui_deletePlayerCards(struct PlayerCards **playerCards);
 
+/**
+ * @brief Function creates and initializes a PlayerCards structure.
+ *
+ * @param fixed Pointer to the fixed in which will be displaying player cards.
+ *
+ * @return Pointer to the PlayerCards structure on success, NULL on failure.
+ */
 struct PlayerCards *gui_initializePlayerCards(GtkWidget *fixed);
 
+/**
+ * @brief Function hides the player cards.
+ *
+ * @param playerCards Pointer to the PlayerCards structure which be hiding.
+ *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
+ */
 int gui_hidePlayerCards(struct PlayerCards *playerCards);
 
+/**
+ * @brief Function displays the player cards.
+ *
+ * @param playerCards Pointer to the PlayerCards structure which be displaying.
+ * @param player Pointer to the player for which are displayed the cards.
+ *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
+ */
 int gui_showPlayerCards(struct PlayerCards *playerCards, struct Player *player);
 
+/**
+ * @brief Function initializes and displays a dialog if the user introduced a
+ *        wrong name.
+ *
+ * @param window Pointer to the window which will be the parent of the dialog.
+ *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
+ */
 int gui_initAndShowDialogIncorrectName(GtkWidget *window);
 
+/**
+ * @brief Function initializes and displays a dialog if the user opened too
+ *        many games.
+ *
+ * @param window Pointer to the window which will be the parent of the dialog.
+ *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
+ */
 int gui_initAndShowDialogMaxGames(GtkWidget *window);
 
+/**
+ * @brief Function releases the memory when is closed the table of game.
+ *
+ * @param windowTable Pointer to the window of game.
+ * @param
+ *
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
+ */
 int gui_closeWhistGame(GtkWidget *windowTable, int *noOfGames);
 
+/**
+ * @brief Function gets the card id.
+ *
+ * @param x The value of the coordinate X of mouse.
+ * @param y The value of the coordinate Y of mouse.
+ *
+ * @return A value between 0 and MAX_CARDS - 1 or -1 if to the coordinates
+ *         received as parameters not exist a card.
+ */
 int gui_getCardId(int x, int y);
 
+/**
+ * @brief Function is called when the mouse is clicked.
+ *
+ * @param window Pointer to the window in which was clicked the mouse.
+ * @param event Pointer to the event of the window. This parameter is used to
+ *              get the coordinates of mouse.
+ * @param gameGUI Pointer to the GameGUI.
+ */
 int gui_clickMouse(GtkWidget *window, GdkEvent *event, struct GameGUI *gameGUI);
 
 struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player,

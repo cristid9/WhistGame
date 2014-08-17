@@ -68,8 +68,8 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
                      G_CALLBACK(gui_closeWhistGame), noOfGames);
     g_signal_connect(G_OBJECT(gameGUI->windowTable), "button-press-event",
                      G_CALLBACK(gui_clickMouse), gameGUI);
-    
-    gui_createButtonStart(gameGUI); 
+
+    gui_createButtonStart(gameGUI);
 
     gtk_main();
 
@@ -84,7 +84,7 @@ int CheckInput(GtkWidget *button, struct Input *input)
         return POINTER_NULL;
 
     const char *playerName = gtk_entry_get_text(GTK_ENTRY(input->name));
-    if (player_checkPlayerName(playerName) != NO_ERROR) {
+    if (player_checkPlayerName(playerName) != FUNCTION_NO_ERROR) {
         gui_initAndShowDialogIncorrectName(input->mainWindow);
         return EXIT_FAILURE;
     }
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
     gui_playerName(window, fixed, &labelName, &name);
     gui_gameType(window, fixed, &labelType, &radio1, &radio8);
     gui_noOfBots(window, fixed, &labelNumber, &spinNumber, &number);
-    
+
     input->name         = name;
     input->robotsNumber = spinNumber;
     input->gameType     = radio1;
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 
     button = gtk_button_new_with_label("Start");
     gtk_fixed_put(GTK_FIXED(fixed), button, 100, 160);
-    g_signal_connect(G_OBJECT(button), "clicked", 
+    g_signal_connect(G_OBJECT(button), "clicked",
                      G_CALLBACK(CheckInput), input);
     gtk_widget_show(button);
 
