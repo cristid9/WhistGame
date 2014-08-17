@@ -146,10 +146,10 @@ int robot_getCardId(struct Player *player, struct Round *round)
     }
 
     if (round->bids[playerId] > round->handsNumber[playerId]) {
-        if (numberOfFirstCard > 0) {
+        if (posMaxValueFirstCard >= 0 && numberOfFirstCard > 0) {
             return posMaxValueFirstCard;
         } else {
-            if (numberOfTrumps > 0) {
+            if (posMaxValueTrump >= 0 && numberOfTrumps) {
                 return posMaxValueTrump;
             } else {
                 int min = 15;
@@ -164,10 +164,10 @@ int robot_getCardId(struct Player *player, struct Round *round)
             }
         }
     } else {
-        if (numberOfFirstCard > 0) {
+        if (posMinValueFirstCard >= 0 && numberOfFirstCard) {
             return posMinValueFirstCard;
         } else {
-            if (numberOfTrumps > 0) {
+            if (posMinValueTrump >= 0 && numberOfTrumps) {
                 return posMinValueTrump;
             } else {
                 int max = 0;
