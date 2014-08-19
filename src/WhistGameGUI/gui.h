@@ -13,7 +13,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <stdlib.h>
-#include <semaphore.h>
 
 struct BidGUI {
     GtkWidget *image;
