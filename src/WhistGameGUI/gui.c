@@ -20,6 +20,11 @@ int gui_init(GtkWidget **window, GtkWidget **fixed, char *title,
     gtk_widget_set_size_request(*window, width, height);
     gtk_window_set_position(GTK_WINDOW(*window), GTK_WIN_POS_CENTER);
     gtk_window_set_title(GTK_WINDOW(*window), title);
+
+    GError *error;
+    gtk_window_set_icon_from_file(GTK_WINDOW(*window),
+                                  "pictures/logo_game.png", &error);
+
     *fixed = gtk_fixed_new();
     gtk_container_add(GTK_CONTAINER(*window), *fixed);
     gtk_widget_show(*fixed);
@@ -133,8 +138,13 @@ gboolean gui_drawScore(GtkWidget *button, GdkEventExpose *event,
     GdkWindow *window;
     GdkFont *font;
 
-    window = button->window;
+#ifdef WIN32
+    font = gdk_font_load("-*-fixed-bold-r-normal--10-120-*-*-*-*-iso8859-1");
+#else
     font = gdk_font_load("-*-fixed-bold-r-normal--*-120-*-*-*-*-iso8859-1");
+#endif
+
+    window = button->window;
     gc = gdk_gc_new(window);
 
     int noOfPlayers = 0;
@@ -502,6 +512,7 @@ int gui_clickMouseOnCard(struct GameGUI *gameGUI, int x, int y)
         gui_hidePlayerCards(gameGUI->playerCards);
         gui_showPlayerCards(gameGUI->playerCards, player);
         gtk_widget_hide(gameGUI->select->imageSelectedCard);
+        gui_showPlayerTurn(gameGUI, gameGUI->cardPlayerId);
 
         if (gameGUI->cardPlayerId == game->playersNumber)
             g_timeout_add_seconds(seconds, gui_endHand, gameGUI);
@@ -540,9 +551,10 @@ int gui_clickMouseOnBid(struct GameGUI *gameGUI, int x, int y)
         gtk_widget_hide(gameGUI->select->imageSelectedBid);
 
         gui_showInformationsPlayers(gameGUI->playersGUI, gameGUI->game);
-
         gui_setNoOfBids(gameGUI->labelNoOfBids,
                         gameGUI->game->rounds[roundId]);
+
+        gui_showPlayerTurn(gameGUI, gameGUI->bidPlayerId);
 
         if (gameGUI->bidPlayerId == gameGUI->game->playersNumber)
             gui_startHand(gameGUI, 0);
@@ -593,7 +605,7 @@ struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player,
     return select;
 }
 
-int gui_selectedCard(struct Select *select, int x, int y)
+int gui_selectedCard(struct Select *select)
 {
     if (select == NULL)
         return POINTER_NULL;
@@ -602,7 +614,7 @@ int gui_selectedCard(struct Select *select, int x, int y)
     if (select->fixed == NULL || select->imageSelectedCard == NULL)
         return POINTER_NULL;
 
-    int cardId = gui_getCardId(x, y);
+    int cardId = gui_getCardId(select->x, select->y);
     int position = player_getIdNumberthCardWhichIsNotNull(select->player,
                                                           cardId + 1);
     if (position >= 0 && select->player->hand[position] != NULL &&
@@ -622,11 +634,11 @@ int gui_moveMouse(GtkWidget *window, GdkEvent *event, struct Select *select)
     if (select == NULL)
         return POINTER_NULL;
 
-    int x = (int)((GdkEventButton*)event)->x;
-    int y = (int)((GdkEventButton*)event)->y;
+    select->x = (int)((GdkEventButton*)event)->x;
+    select->y = (int)((GdkEventButton*)event)->y;
 
-    gui_selectedCard(select, x, y);
-    gui_selectedBid(select, x, y);
+    gui_selectedCard(select);
+    gui_selectedBid(select);
 
     return FUNCTION_NO_ERROR;
 }
@@ -984,8 +996,8 @@ int gui_getBidValue(int x, int y)
 
     if (y >= 255 && y <= 275)
         for (int i = 0; i < MAX_CARDS + 1; i++) {
-            if ((square(x - centerOfTheCircleX) + square(y - centerOfTheCircleY))
-                <= square(radiusCircle))
+            if (square(radiusCircle) >=
+                square(x - centerOfTheCircleX) + square(y - centerOfTheCircleY))
                 position = i;
             centerOfTheCircleX += 20;
         }
@@ -993,7 +1005,7 @@ int gui_getBidValue(int x, int y)
     return position;
 }
 
-int gui_selectedBid(struct Select *select, int x, int y)
+int gui_selectedBid(struct Select *select)
 {
     if (select == NULL)
         return POINTER_NULL;
@@ -1007,7 +1019,7 @@ int gui_selectedBid(struct Select *select, int x, int y)
     if (select->fixed == NULL || select->imageSelectedBid == NULL)
         return POINTER_NULL;
 
-    int bidValue = gui_getBidValue(x, y);
+    int bidValue = gui_getBidValue(select->x, select->y);
     int roundId = select->game->currentRound;
     int check = round_checkBid(select->game->rounds[roundId],
                                select->player, bidValue);
@@ -1082,6 +1094,7 @@ struct GameGUI *gui_createGameGUI()
     gameGUI->labelRoundType  = NULL;
     gameGUI->labelNoOfBids   = NULL;
     gameGUI->buttonStart     = NULL;
+    gameGUI->imagePlayerTurn = NULL;
     gameGUI->bidPlayerId     = 0;
     gameGUI->cardPlayerId    = 0;
 
@@ -1123,8 +1136,6 @@ int gui_startRound(struct GameGUI *gameGUI)
 
         gui_showInformationsPlayers(gameGUI->playersGUI, gameGUI->game);
 
-        gameGUI->bidPlayerId = 0;
-
         deck_deleteDeck(&(game->deck));
         game->deck = deck_createDeck(playersNumber);
         deck_shuffleDeck(game->deck);
@@ -1133,15 +1144,20 @@ int gui_startRound(struct GameGUI *gameGUI)
         gui_showTrump(game->rounds[roundId]->trump, gameGUI->imageTrump);
 
         gui_setRoundType(gameGUI->labelRoundType, game->rounds[roundId]);
+        gui_setNoOfBids(gameGUI->labelNoOfBids, game->rounds[roundId]);
 
         qsort(game->players[0]->hand, game->rounds[roundId]->roundType,
               sizeof(struct Card*), player_compareCards);
         gui_showPlayerCards(gameGUI->playerCards, game->players[0]);
 
+        gameGUI->bidPlayerId = 0;
+        gui_showPlayerTurn(gameGUI, gameGUI->bidPlayerId);
+
         if (game->rounds[roundId]->players[0] == game->players[0]) {
             gameGUI->select->bidPlayerTurn = 1;
             gui_showBidGUI(gameGUI->bidGUI, game->rounds[roundId],
                            game->players[0]);
+            gui_selectedBid(gameGUI->select);
         } else {
             int limit = round_getPlayerId(game->rounds[roundId],
                                           game->players[0]);
@@ -1173,9 +1189,12 @@ int gui_startHand(struct GameGUI *gameGUI, int winnerPlayerId)
     round_addPlayersInHand(game->rounds[roundId], winnerPlayerId);
 
     gameGUI->cardPlayerId = 0;
-    if (game->rounds[roundId]->hand->players[0] == game->players[0])
+    gui_showPlayerTurn(gameGUI, gameGUI->cardPlayerId);
+
+    if (game->rounds[roundId]->hand->players[0] == game->players[0]) {
         gameGUI->select->cardPlayerTurn = 1;
-    else {
+        gui_selectedCard(gameGUI->select);
+    } else {
         int limit = hand_getPlayerId(game->rounds[roundId]->hand,
                                      game->players[0]);
         gui_chooseCardForBots(gameGUI, 0, limit);
@@ -1223,21 +1242,25 @@ gboolean gui_botChooseBid(gpointer data)
     player = round->players[gameGUI->bidPlayerId];
 
     int bid = robot_getBid(player, round);
-    (gameGUI->bidPlayerId)++;
     round_placeBid(round, player, bid);
     gui_showInformationsPlayers(gameGUI->playersGUI, gameGUI->game);
     gui_setNoOfBids(gameGUI->labelNoOfBids, round);
 
+    (gameGUI->bidPlayerId)++;
+    gui_showPlayerTurn(gameGUI, gameGUI->bidPlayerId);
+
     if (gameGUI->bidPlayerId == gameGUI->game->playersNumber)
         gui_startHand(gameGUI, 0);
-
-    int bidPlayerId = gameGUI->bidPlayerId;
-    int roundId     = gameGUI->game->currentRound;
-    if (gameGUI->game->players[0] ==
-        gameGUI->game->rounds[roundId]->players[bidPlayerId]) {
-        gameGUI->select->bidPlayerTurn = 1;
-        gui_showBidGUI(gameGUI->bidGUI, gameGUI->game->rounds[roundId],
-                       gameGUI->game->players[0]);
+    else {
+        int bidPlayerId = gameGUI->bidPlayerId;
+        int roundId     = gameGUI->game->currentRound;
+        if (gameGUI->game->players[0] ==
+            gameGUI->game->rounds[roundId]->players[bidPlayerId]) {
+            gameGUI->select->bidPlayerTurn = 1;
+            gui_showBidGUI(gameGUI->bidGUI, gameGUI->game->rounds[roundId],
+                           gameGUI->game->players[0]);
+            gui_selectedBid(gameGUI->select);
+        }
     }
 
     return FALSE;
@@ -1287,7 +1310,9 @@ gboolean gui_botChooseCard(gpointer data)
     int cardId = robot_getCardId(player, round);
     hand_addCard(round->hand, player, &(player->hand[cardId]));
     gui_showCardsOnTable(gameGUI->cardsFromTable, gameGUI->game);
+
     (gameGUI->cardPlayerId)++;
+    gui_showPlayerTurn(gameGUI, gameGUI->cardPlayerId);
 
     if (gameGUI->cardPlayerId == gameGUI->game->playersNumber)
         g_timeout_add_seconds(seconds, gui_endHand, gameGUI);
@@ -1297,6 +1322,7 @@ gboolean gui_botChooseCard(gpointer data)
     if (gameGUI->game->players[0] ==
         gameGUI->game->rounds[roundId]->hand->players[cardPlayerId]) {
         gameGUI->select->cardPlayerTurn = 1;
+        gui_selectedCard(gameGUI->select);
     }
 
     return FALSE;
@@ -1328,5 +1354,44 @@ gboolean gui_chooseCardForBots(struct GameGUI *gameGUI, int leftLimit,
             }
 
     return FALSE;
+}
+
+int gui_showPlayerTurn(struct GameGUI *gameGUI, int playerId)
+{
+    if (gameGUI == NULL)
+        return POINTER_NULL;
+    if (playerId >= gameGUI->game->playersNumber || playerId < 0) {
+        gtk_widget_hide(gameGUI->imagePlayerTurn);
+        return ILLEGAL_VALUE;
+    }
+
+    int coordinates[MAX_GAME_PLAYERS][2] = { {25 ,275},
+                                             {25 ,145},
+                                             {225 ,15},
+                                             {425 ,15},
+                                             {625 ,145},
+                                             {625 ,275} };
+
+    struct Game *game = gameGUI->game;
+    struct Round *round = game->rounds[game->currentRound];
+    struct Player *player;
+
+    if (round->hand != NULL)
+        player = round->hand->players[playerId];
+    else
+        player = round->players[playerId];
+
+    int playerIdInGame = game_getPlayerPosition(game, player);
+
+    if (playerIdInGame < 0)
+        return playerIdInGame;
+
+    gtk_widget_hide(gameGUI->imagePlayerTurn);
+    gtk_fixed_move(GTK_FIXED(gameGUI->fixedTable), gameGUI->imagePlayerTurn,
+                   coordinates[playerIdInGame][0],
+                   coordinates[playerIdInGame][1]);
+    gtk_widget_show(gameGUI->imagePlayerTurn);
+
+    return FUNCTION_NO_ERROR;
 }
 

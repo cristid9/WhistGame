@@ -71,6 +71,10 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
 
     gui_createButtonStart(gameGUI);
 
+    gameGUI->imagePlayerTurn = gtk_image_new_from_file("pictures/playerTurn.png");
+    gtk_fixed_put(GTK_FIXED(gameGUI->fixedTable),
+                  gameGUI->imagePlayerTurn, 0, 0);
+
     gtk_main();
 
     gui_startRound(gameGUI);
@@ -108,6 +112,13 @@ int CheckInput(GtkWidget *button, struct Input *input)
     return EXIT_SUCCESS;
 }
 
+gboolean closeSplashScreen(gpointer data)
+{
+    gtk_widget_destroy((GtkWidget*)data);
+    gtk_main_quit();
+    return FALSE;
+}
+
 int main(int argc, char *argv[])
 {
     GtkWidget *window;
@@ -121,6 +132,17 @@ int main(int argc, char *argv[])
     struct Input *input = malloc(sizeof(struct Input));
 
     gtk_init(&argc, &argv);
+
+    GtkWidget *splash;
+    GtkWidget *splashFixed;
+    guint time = 5;
+
+    gui_init(&splash, &splashFixed, "Whist Splash", 450, 318);
+    gtk_window_set_decorated(GTK_WINDOW(splash), FALSE);
+    gui_setBackground(splashFixed, "pictures/splash_screen.jpg");
+    g_timeout_add_seconds(time, closeSplashScreen, splash);
+
+    gtk_main();
 
     gui_init(&window, &fixed, "Whist Game", 230, 200);
     g_signal_connect(G_OBJECT(window), "destroy",

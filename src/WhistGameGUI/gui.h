@@ -40,6 +40,8 @@ struct Select {
     struct Game *game;
     int cardPlayerTurn;
     int bidPlayerTurn;
+    int x;
+    int y;
 };
 
 struct PlayerCards {
@@ -60,6 +62,7 @@ struct GameGUI {
     GtkWidget *labelRoundType;
     GtkWidget *labelNoOfBids;
     GtkWidget *buttonStart;
+    GtkWidget *imagePlayerTurn;
     int bidPlayerId;
     int cardPlayerId;
 };
@@ -323,7 +326,7 @@ int gui_clickMouse(GtkWidget *window, GdkEvent *event, struct GameGUI *gameGUI);
 struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player,
                                 struct Game *game);
 
-int gui_selectedCard(struct Select *select, int x, int y);
+int gui_selectedCard(struct Select *select);
 
 int gui_moveMouse(GtkWidget *window, GdkEvent *event, struct Select *select);
 
@@ -372,7 +375,7 @@ int gui_showBidGUI(struct BidGUI *bidGUI, struct Round *round,
 
 int gui_getBidValue(int x, int y);
 
-int gui_selectedBid(struct Select *select, int x, int y);
+int gui_selectedBid(struct Select *select);
 
 int gui_clickMouseOnCard(struct GameGUI *gameGUI, int x, int y);
 
@@ -403,6 +406,8 @@ gboolean gui_botChooseCard(gpointer data);
 
 gboolean gui_chooseCardForBots(struct GameGUI *gameGUI, int leftLimit,
                                int rightLimit);
+
+int gui_showPlayerTurn(struct GameGUI *gameGUI, int playerId);
 
 #endif
 
