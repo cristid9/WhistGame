@@ -1,7 +1,7 @@
 AM_CPPFLAGS = -I$(top_srcdir)/src/libWhistGame
 AM_CPPFLAGS += -I$(top_srcdir)/src/AI
 LDFLAGS = `pkg-config --libs gtk+-2.0`
-CFLAGS += -std=c99 -g -Wall -pthread `pkg-config --cflags gtk+-2.0`
+CFLAGS += -std=c99 -g -Wall `pkg-config --cflags gtk+-2.0`
 
 lib_LTLIBRARIES = libWhistGame.la libWhistGameAI.la
 bin_PROGRAMS = Whist
