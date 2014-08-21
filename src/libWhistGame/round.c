@@ -351,6 +351,9 @@ int round_reinitializeRound(struct Round *round)
         round->handsNumber[i] = 0;
     }
 
+    deck_deleteCard(&(round->trump));
+    hand_deleteHand(&(round->hand));
+
     return FUNCTION_NO_ERROR;
 }
 
