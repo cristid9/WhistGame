@@ -205,8 +205,8 @@ int round_copyScore(struct Round *round1, struct Round *round2);
  * @param round Pointer to the round for which the function checks if will be
  *              replayed or not.
  *
- * @return FUNCTION_NO_ERROR or 0 if the function doen't will be replayed.
- *         1 if the function will be replayed.
+ * @return FUNCTION_NO_ERROR or 0 if the round does must to be replayed.
+ *         1 if the round must to be replayed.
  *         A negative value on failure.
  */
 int round_repeatRound(struct Round *round);
