@@ -14,6 +14,10 @@
 #include <gdk/gdk.h>
 #include <stdlib.h>
 
+#define LIMIT_TIME 15
+#define LENGTH_TIME_LINE 50
+#define WIDTH_IMAGE_TIME_LINE 2
+
 struct BidGUI {
     GtkWidget *image;
     GtkWidget *label[MAX_CARDS + 1];
@@ -47,6 +51,14 @@ struct PlayerCards {
     GtkWidget *images[MAX_CARDS];
 };
 
+struct LimitTimeGUI {
+    GtkWidget *fixed;
+    GtkWidget *images[LENGTH_TIME_LINE];
+    int x;
+    int y;
+    int lastImage;
+};
+
 struct GameGUI {
     struct Game *game;
     struct Select *select;
@@ -54,6 +66,7 @@ struct GameGUI {
     struct PlayersGUI *playersGUI;
     struct CardsFromTable *cardsFromTable;
     struct BidGUI *bidGUI;
+    struct LimitTimeGUI *limitTimeGUI;
     GtkWidget *windowTable;
     GtkWidget *fixedTable;
     GtkWidget *buttonShowScore;
@@ -407,6 +420,22 @@ gboolean gui_chooseCardForBots(struct GameGUI *gameGUI, int leftLimit,
                                int rightLimit);
 
 int gui_showPlayerTurn(struct GameGUI *gameGUI, int playerId);
+
+struct LimitTimeGUI *gui_createLimitTimeGUI(GtkWidget *fixed, int x, int y);
+
+int gui_deleteLimitTimeGUI(struct LimitTimeGUI **limitTimeGUI);
+
+int gui_showLimitTimeGUI(struct LimitTimeGUI *limitTimeGUI);
+
+int gui_hideLimitTimeGUI(struct LimitTimeGUI *limitTimeGUI);
+
+int gui_initLimitTimeGUI(struct LimitTimeGUI *limitTimeGUI, char *pathImage);
+
+int gui_hideLastImageFromLimitTimeGUI(struct LimitTimeGUI *limitTimeGUI);
+
+int gui_startTime(struct GameGUI *gameGUI);
+
+gboolean gui_timer(gpointer data);
 
 #endif
 

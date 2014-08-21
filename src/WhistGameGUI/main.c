@@ -75,6 +75,10 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
     gtk_fixed_put(GTK_FIXED(gameGUI->fixedTable),
                   gameGUI->imagePlayerTurn, 0, 0);
 
+    gameGUI->limitTimeGUI = gui_createLimitTimeGUI(gameGUI->fixedTable,
+                                                   310, 526);
+    gui_initLimitTimeGUI(gameGUI->limitTimeGUI, "pictures/limit_time.png");
+
     gtk_main();
 
     gui_startRound(gameGUI);
