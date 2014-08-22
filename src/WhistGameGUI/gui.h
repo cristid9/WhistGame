@@ -75,6 +75,7 @@ struct GameGUI {
     GtkWidget *labelNoOfBids;
     GtkWidget *buttonStart;
     GtkWidget *imagePlayerTurn;
+    int *noOfGames;
     int bidPlayerId;
     int cardPlayerId;
 };
@@ -312,7 +313,7 @@ int gui_initAndShowDialogMaxGames(GtkWidget *window);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int gui_closeWhistGame(GtkWidget *windowTable, int *noOfGames);
+int gui_closeWhistGame(GtkWidget *windowTable, struct GameGUI **gameGUI);
 
 /**
  * @brief Function gets the card id.
@@ -333,7 +334,8 @@ int gui_getCardId(int x, int y);
  *              get the coordinates of mouse.
  * @param gameGUI Pointer to the GameGUI.
  */
-int gui_clickMouse(GtkWidget *window, GdkEvent *event, struct GameGUI *gameGUI);
+int gui_clickMouse(GtkWidget *window, GdkEvent *event,
+                   struct GameGUI **gameGUI);
 
 struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player,
                                 struct Game *game);
@@ -389,34 +391,34 @@ int gui_getBidValue(int x, int y);
 
 int gui_selectedBid(struct Select *select);
 
-int gui_clickMouseOnCard(struct GameGUI *gameGUI, int x, int y);
+int gui_clickMouseOnCard(struct GameGUI **gameGUI, int x, int y);
 
-int gui_clickMouseOnBid(struct GameGUI *gameGUI, int x, int y);
+int gui_clickMouseOnBid(struct GameGUI **gameGUI, int x, int y);
 
 int gui_hideBidGUI(struct BidGUI *bidGUI);
 
-int gui_clickStart(GtkWidget *button, struct GameGUI *gameGUI);
+int gui_clickStart(GtkWidget *button, struct GameGUI **gameGUI);
 
-int gui_createButtonStart(struct GameGUI *gameGUI);
+int gui_createButtonStart(struct GameGUI **gameGUI);
 
 struct GameGUI *gui_createGameGUI();
 
 int gui_deleteGameGUI(struct GameGUI **gameGUI);
 
-int gui_startRound(struct GameGUI *gameGUI);
+int gui_startRound(struct GameGUI **gameGUI);
 
-int gui_startHand(struct GameGUI *gameGUI, int winnerPlayerId);
+int gui_startHand(struct GameGUI **gameGUI, int winnerPlayerId);
 
 gboolean gui_endHand(gpointer data);
 
 gboolean gui_botChooseBid(gpointer data);
 
-gboolean gui_chooseBidForBots(struct GameGUI *gameGUI, int leftLimit,
+gboolean gui_chooseBidForBots(struct GameGUI **gameGUI, int leftLimit,
                               int rightLimit);
 
 gboolean gui_botChooseCard(gpointer data);
 
-gboolean gui_chooseCardForBots(struct GameGUI *gameGUI, int leftLimit,
+gboolean gui_chooseCardForBots(struct GameGUI **gameGUI, int leftLimit,
                                int rightLimit);
 
 int gui_showPlayerTurn(struct GameGUI *gameGUI, int playerId);
@@ -433,7 +435,7 @@ int gui_initLimitTimeGUI(struct LimitTimeGUI *limitTimeGUI, char *pathImage);
 
 int gui_hideLastImageFromLimitTimeGUI(struct LimitTimeGUI *limitTimeGUI);
 
-int gui_startTime(struct GameGUI *gameGUI);
+int gui_startTime(struct GameGUI **gameGUI);
 
 gboolean gui_timer(gpointer data);
 

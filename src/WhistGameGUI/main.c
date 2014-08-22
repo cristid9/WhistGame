@@ -17,6 +17,7 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
     struct Player *player;
 
     gameGUI->game = game_createGame(gameType);
+    gameGUI->noOfGames = noOfGames;
 
     player = player_createPlayer(name, 1);
     game_addPlayer(gameGUI->game, &player);
@@ -65,11 +66,11 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
     g_signal_connect(G_OBJECT(gameGUI->windowTable), "motion-notify-event",
                      G_CALLBACK(gui_moveMouse), gameGUI->select);
     g_signal_connect(G_OBJECT(gameGUI->windowTable), "destroy",
-                     G_CALLBACK(gui_closeWhistGame), noOfGames);
+                     G_CALLBACK(gui_closeWhistGame), &gameGUI);
     g_signal_connect(G_OBJECT(gameGUI->windowTable), "button-press-event",
-                     G_CALLBACK(gui_clickMouse), gameGUI);
+                     G_CALLBACK(gui_clickMouse), &gameGUI);
 
-    gui_createButtonStart(gameGUI);
+    gui_createButtonStart(&gameGUI);
 
     gameGUI->imagePlayerTurn = gtk_image_new_from_file("pictures/playerTurn.png");
     gtk_fixed_put(GTK_FIXED(gameGUI->fixedTable),
@@ -79,10 +80,11 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
                                                    310, 526);
     gui_initLimitTimeGUI(gameGUI->limitTimeGUI, "pictures/limit_time.png");
 
+    printf("%p %p\n", gameGUI, &gameGUI);
+
     gtk_main();
 
-    gui_startRound(gameGUI);
-
+    printf("%p\n", gameGUI);
     return EXIT_SUCCESS;
 }
 
