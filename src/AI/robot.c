@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int robot_getBid(struct Player *player, struct Round *round)
+int robot_getBid(const struct Player* player, const struct Round* round)
 {
     if (player == NULL)
         return PLAYER_NULL;
@@ -62,7 +62,7 @@ int robot_getBid(struct Player *player, struct Round *round)
         return bids - 1;
 }
 
-int robot_getCardId(struct Player *player, struct Round *round)
+int robot_getCardId(const struct Player* player, const struct Round* round)
 {
     if (player == NULL)
         return PLAYER_NULL;
