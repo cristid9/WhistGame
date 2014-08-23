@@ -9,6 +9,28 @@
 
 #define square(a) (a) * (a)
 
+struct GameGUI* gui_changeGameGUI(const struct GameGUI* gameGUI,
+                                  const int onlyReturn)
+{
+    static struct GameGUI* gameGUIStore = NULL;
+    if (onlyReturn == 0)
+    {
+        gameGUIStore = (struct GameGUI*)gameGUI;
+    }
+    return gameGUIStore;
+};
+
+void gui_setGameGUI(const struct GameGUI* gameGUI)
+{
+    gui_changeGameGUI(gameGUI, 0);
+}
+
+struct GameGUI* gui_getGameGUI()
+{
+    struct GameGUI* gameGUI = gui_changeGameGUI(NULL, 1);
+    return gameGUI;
+}
+
 int gui_init(GtkWidget **window, GtkWidget **fixed, char *title,
              int width, int height)
 {
@@ -133,6 +155,11 @@ int intToChar(int number, char *string)
 gboolean gui_drawScore(GtkWidget *button, GdkEventExpose *event,
                        struct Game *game)
 {
+    if (game == NULL)
+        return FALSE;
+    if (button == NULL)
+        return FALSE;
+
     GdkGC *gc;
     GdkColor color;
     GdkWindow *window;
@@ -460,15 +487,15 @@ int gui_initAndShowDialogMaxGames(GtkWidget *window)
     return FUNCTION_NO_ERROR;
 }
 
-int gui_closeWhistGame(GtkWidget *windowTable, struct GameGUI **gameGUI)
+int gui_closeWhistGame(GtkWidget *windowTable, gpointer unused)
 {
+    struct GameGUI* gameGUI = gui_getGameGUI();
     if (windowTable == NULL)
         return POINTER_NULL;
 
-//    --*((*gameGUI)->noOfGames);
-    printf("%pCCC\n", *gameGUI);
-    gui_deleteGameGUI(gameGUI);
-    printf("%pCCC\n", *gameGUI);
+    *(gameGUI->noOfGames) -= 1;
+    gui_deleteGameGUI(&gameGUI);
+    gui_setGameGUI(NULL);
     gtk_widget_destroy(windowTable);
     gtk_main_quit();
 
@@ -487,24 +514,22 @@ int gui_getCardId(int x, int y)
     return cardPosition;
 }
 
-int gui_clickMouseOnCard(struct GameGUI **gameGUI, int x, int y)
+int gui_clickMouseOnCard(struct GameGUI *gameGUI, int x, int y)
 {
     if (gameGUI == NULL)
         return POINTER_NULL;
-    if (*gameGUI == NULL)
+    if (gameGUI->select == NULL)
         return POINTER_NULL;
-    if ((*gameGUI)->select == NULL)
-        return POINTER_NULL;
-    if ((*gameGUI)->select->cardPlayerTurn == 0)
+    if (gameGUI->select->cardPlayerTurn == 0)
         return ILLEGAL_VALUE;
-    if ((*gameGUI)->select->game == NULL)
+    if (gameGUI->select->game == NULL)
         return GAME_NULL;
-    if ((*gameGUI)->select->game->currentRound < 0 ||
-        (*gameGUI)->select->game->currentRound >= MAX_GAME_ROUNDS)
+    if (gameGUI->select->game->currentRound < 0 ||
+        gameGUI->select->game->currentRound >= MAX_GAME_ROUNDS)
         return ILLEGAL_VALUE;
 
     int cardId = gui_getCardId(x, y);
-    struct Game *game = (*gameGUI)->game;
+    struct Game *game = gameGUI->game;
     struct Round *round = game->rounds[game->currentRound];
     struct Player *player = game->players[0];
     int position = player_getIdNumberthCardWhichIsNotNull(player, cardId + 1);
@@ -512,80 +537,76 @@ int gui_clickMouseOnCard(struct GameGUI **gameGUI, int x, int y)
     guint seconds = 1;
 
     if (check == 1) {
-        (*gameGUI)->select->cardPlayerTurn = 0;
-        gui_hideLimitTimeGUI((*gameGUI)->limitTimeGUI);
-        ((*gameGUI)->cardPlayerId)++;
+        gameGUI->select->cardPlayerTurn = 0;
+        gui_hideLimitTimeGUI(gameGUI->limitTimeGUI);
+        (gameGUI->cardPlayerId)++;
 
         hand_addCard(round->hand, player, &(player->hand[position]));
-        gui_showCardsOnTable((*gameGUI)->cardsFromTable, game);
-        gui_hidePlayerCards((*gameGUI)->playerCards);
-        gui_showPlayerCards((*gameGUI)->playerCards, player);
-        gtk_widget_hide((*gameGUI)->select->imageSelectedCard);
-        gui_showPlayerTurn(*gameGUI, (*gameGUI)->cardPlayerId);
+        gui_showCardsOnTable(gameGUI->cardsFromTable, game);
+        gui_hidePlayerCards(gameGUI->playerCards);
+        gui_showPlayerCards(gameGUI->playerCards, player);
+        gtk_widget_hide(gameGUI->select->imageSelectedCard);
+        gui_showPlayerTurn(gameGUI, gameGUI->cardPlayerId);
 
-        if ((*gameGUI)->cardPlayerId == game->playersNumber)
-            g_timeout_add_seconds(seconds, gui_endHand, gameGUI);
+        if (gameGUI->cardPlayerId == game->playersNumber)
+            g_timeout_add_seconds(seconds, gui_endHand, NULL);
         else
-            gui_chooseCardForBots(gameGUI, (*gameGUI)->cardPlayerId,
+            gui_chooseCardForBots(gameGUI, gameGUI->cardPlayerId,
                                   MAX_GAME_PLAYERS);
     }
 
     return FUNCTION_NO_ERROR;
 }
 
-int gui_clickMouseOnBid(struct GameGUI **gameGUI, int x, int y)
+int gui_clickMouseOnBid(struct GameGUI *gameGUI, int x, int y)
 {
     if (gameGUI == NULL)
         return POINTER_NULL;
-    if (*gameGUI == NULL)
+    if (gameGUI->select == NULL)
         return POINTER_NULL;
-    if ((*gameGUI)->select == NULL)
-        return POINTER_NULL;
-    if ((*gameGUI)->select->bidPlayerTurn == 0)
+    if (gameGUI->select->bidPlayerTurn == 0)
         return ILLEGAL_VALUE;
-    if ((*gameGUI)->select->game == NULL)
+    if (gameGUI->select->game == NULL)
         return GAME_NULL;
-    if ((*gameGUI)->select->game->currentRound < 0 ||
-        (*gameGUI)->select->game->currentRound >= MAX_GAME_ROUNDS)
+    if (gameGUI->select->game->currentRound < 0 ||
+        gameGUI->select->game->currentRound >= MAX_GAME_ROUNDS)
         return ILLEGAL_VALUE;
 
     int bidValue = gui_getBidValue(x, y);
-    int roundId = (*gameGUI)->select->game->currentRound;
-    int check = round_checkBid((*gameGUI)->select->game->rounds[roundId],
-                               (*gameGUI)->select->player, bidValue);
+    int roundId = gameGUI->select->game->currentRound;
+    int check = round_checkBid(gameGUI->select->game->rounds[roundId],
+                               gameGUI->select->player, bidValue);
 
     if (check == 0) {
-        (*gameGUI)->select->bidPlayerTurn = 0;
-        gui_hideLimitTimeGUI((*gameGUI)->limitTimeGUI);
-        ((*gameGUI)->bidPlayerId)++;
+        gameGUI->select->bidPlayerTurn = 0;
+        gui_hideLimitTimeGUI(gameGUI->limitTimeGUI);
+        (gameGUI->bidPlayerId)++;
 
-        round_placeBid((*gameGUI)->select->game->rounds[roundId],
-                       (*gameGUI)->select->player, bidValue);
+        round_placeBid(gameGUI->select->game->rounds[roundId],
+                       gameGUI->select->player, bidValue);
 
-        gui_hideBidGUI((*gameGUI)->bidGUI);
-        gtk_widget_hide((*gameGUI)->select->imageSelectedBid);
+        gui_hideBidGUI(gameGUI->bidGUI);
+        gtk_widget_hide(gameGUI->select->imageSelectedBid);
 
-        gui_showInformationsPlayers((*gameGUI)->playersGUI, (*gameGUI)->game);
-        gui_setNoOfBids((*gameGUI)->labelNoOfBids,
-                        (*gameGUI)->game->rounds[roundId]);
+        gui_showInformationsPlayers(gameGUI->playersGUI, gameGUI->game);
+        gui_setNoOfBids(gameGUI->labelNoOfBids,
+                        gameGUI->game->rounds[roundId]);
 
-        gui_showPlayerTurn((*gameGUI), (*gameGUI)->bidPlayerId);
+        gui_showPlayerTurn(gameGUI, gameGUI->bidPlayerId);
 
-        if ((*gameGUI)->bidPlayerId == (*gameGUI)->game->playersNumber)
+        if (gameGUI->bidPlayerId == gameGUI->game->playersNumber)
             gui_startHand(gameGUI, 0);
         else
-            gui_chooseBidForBots(gameGUI, (*gameGUI)->bidPlayerId,
+            gui_chooseBidForBots(gameGUI, gameGUI->bidPlayerId,
                                  MAX_GAME_PLAYERS);
     }
 
     return FUNCTION_NO_ERROR;
 }
 
-int gui_clickMouse(GtkWidget *window, GdkEvent *event,
-                   struct GameGUI **gameGUI)
+int gui_clickMouse(GtkWidget *window, GdkEvent *event, struct GameGUI *gameGUI)
 {
-    if (window == NULL || event == NULL ||
-        gameGUI == NULL || *gameGUI == NULL)
+    if (window == NULL || event == NULL || gameGUI == NULL)
         return POINTER_NULL;
 
     int x = (int)((GdkEventButton*)event)->x;
@@ -1066,13 +1087,11 @@ int gui_hideBidGUI(struct BidGUI *bidGUI)
     return FUNCTION_NO_ERROR;
 }
 
-int gui_clickStart(GtkWidget *button, struct GameGUI **gameGUI)
+int gui_clickStart(GtkWidget *button, struct GameGUI *gameGUI)
 {
     if (gameGUI == NULL)
         return POINTER_NULL;
-    if (*gameGUI == NULL)
-        return POINTER_NULL;
-    if ((*gameGUI)->game == NULL)
+    if (gameGUI->game == NULL)
         return GAME_NULL;
 
     gtk_widget_hide(button);
@@ -1081,20 +1100,16 @@ int gui_clickStart(GtkWidget *button, struct GameGUI **gameGUI)
     return FUNCTION_NO_ERROR;
 }
 
-int gui_createButtonStart(struct GameGUI **gameGUI)
+int gui_createButtonStart(struct GameGUI *gameGUI)
 {
-    if (gameGUI == NULL)
-        return POINTER_NULL;
-    if (*gameGUI == NULL)
-        return POINTER_NULL;
-    if ((*gameGUI)->fixedTable == NULL)
+    if (gameGUI == NULL || gameGUI->fixedTable == NULL)
         return POINTER_NULL;
 
-    (*gameGUI)->buttonStart = gtk_button_new_with_label("Start");
-    gtk_fixed_put(GTK_FIXED((*gameGUI)->fixedTable), (*gameGUI)->buttonStart,
+    gameGUI->buttonStart = gtk_button_new_with_label("Start");
+    gtk_fixed_put(GTK_FIXED(gameGUI->fixedTable), gameGUI->buttonStart,
                             381, 247);
-    gtk_widget_show((*gameGUI)->buttonStart);
-    g_signal_connect(G_OBJECT((*gameGUI)->buttonStart), "clicked",
+    gtk_widget_show(gameGUI->buttonStart);
+    g_signal_connect(G_OBJECT(gameGUI->buttonStart), "clicked",
                      G_CALLBACK(gui_clickStart), gameGUI);
 
     return FUNCTION_NO_ERROR;
@@ -1139,66 +1154,53 @@ int gui_deleteGameGUI(struct GameGUI **gameGUI)
     gui_deleteCardsFromTable(&((*gameGUI)->cardsFromTable));
     gui_deleteLimitTimeGUI(&((*gameGUI)->limitTimeGUI));
 
-    (*gameGUI)->noOfGames       = NULL;
-    (*gameGUI)->windowTable     = NULL;
-    (*gameGUI)->fixedTable      = NULL;
-    (*gameGUI)->buttonShowScore = NULL;
-    (*gameGUI)->imageTrump      = NULL;
-    (*gameGUI)->labelRoundType  = NULL;
-    (*gameGUI)->labelNoOfBids   = NULL;
-    (*gameGUI)->buttonStart     = NULL;
-    (*gameGUI)->imagePlayerTurn = NULL;
-
     free(*gameGUI);
     *gameGUI = NULL;
 
     return FUNCTION_NO_ERROR;
 }
 
-int gui_startRound(struct GameGUI **gameGUI)
+int gui_startRound(struct GameGUI *gameGUI)
 {
-    printf("%p AAA\n", gameGUI);
     if (gameGUI == NULL)
         return POINTER_NULL;
-    if (*gameGUI == NULL)
-        return POINTER_NULL;
-    if ((*gameGUI)->game == NULL)
+    if (gameGUI->game == NULL)
         return GAME_NULL;
 
-    int roundId = ++((*gameGUI)->game->currentRound);
-    int playersNumber = (*gameGUI)->game->playersNumber;
-    struct Game *game = (*gameGUI)->game;
+    int roundId = ++(gameGUI->game->currentRound);
+    int playersNumber = gameGUI->game->playersNumber;
+    struct Game *game = gameGUI->game;
 
     if (roundId < 12 + playersNumber * 3) {
         if (roundId > 0)
             round_copyScore(game->rounds[roundId - 1], game->rounds[roundId]);
 
-        gui_showInformationsPlayers((*gameGUI)->playersGUI, (*gameGUI)->game);
+        gui_showInformationsPlayers(gameGUI->playersGUI, gameGUI->game);
 
         deck_deleteDeck(&(game->deck));
         game->deck = deck_createDeck(playersNumber);
         deck_shuffleDeck(game->deck);
         round_distributeDeck(game->rounds[roundId], game->deck);
 
-        gui_showTrump(game->rounds[roundId]->trump, (*gameGUI)->imageTrump);
+        gui_showTrump(game->rounds[roundId]->trump, gameGUI->imageTrump);
 
-        gui_setRoundType((*gameGUI)->labelRoundType, game->rounds[roundId]);
-        gui_setNoOfBids((*gameGUI)->labelNoOfBids, game->rounds[roundId]);
+        gui_setRoundType(gameGUI->labelRoundType, game->rounds[roundId]);
+        gui_setNoOfBids(gameGUI->labelNoOfBids, game->rounds[roundId]);
 
         qsort(game->players[0]->hand, game->rounds[roundId]->roundType,
               sizeof(struct Card*), player_compareCards);
-        gui_showPlayerCards((*gameGUI)->playerCards, game->players[0]);
+        gui_showPlayerCards(gameGUI->playerCards, game->players[0]);
 
-        (*gameGUI)->bidPlayerId = 0;
-        gui_showPlayerTurn((*gameGUI), (*gameGUI)->bidPlayerId);
+        gameGUI->bidPlayerId = 0;
+        gui_showPlayerTurn(gameGUI, gameGUI->bidPlayerId);
 
         if (game->rounds[roundId]->players[0] == game->players[0]) {
-            (*gameGUI)->select->bidPlayerTurn = 1;
-            gui_showBidGUI((*gameGUI)->bidGUI, game->rounds[roundId],
+            gameGUI->select->bidPlayerTurn = 1;
+            gui_showBidGUI(gameGUI->bidGUI, game->rounds[roundId],
                            game->players[0]);
-            gui_selectedBid((*gameGUI)->select);
+            gui_selectedBid(gameGUI->select);
 
-            gui_showLimitTimeGUI((*gameGUI)->limitTimeGUI);
+            gui_showLimitTimeGUI(gameGUI->limitTimeGUI);
             gui_startTime(gameGUI);
         } else {
             int limit = round_getPlayerId(game->rounds[roundId],
@@ -1212,34 +1214,32 @@ int gui_startRound(struct GameGUI **gameGUI)
     return FUNCTION_NO_ERROR;
 }
 
-int gui_startHand(struct GameGUI **gameGUI, int winnerPlayerId)
+int gui_startHand(struct GameGUI *gameGUI, int winnerPlayerId)
 {
     if (gameGUI == NULL)
         return POINTER_NULL;
-    if (*gameGUI == NULL)
-        return POINTER_NULL;
-    if ((*gameGUI)->game == NULL)
+    if (gameGUI->game == NULL)
         return GAME_NULL;
     if (winnerPlayerId < 0 || winnerPlayerId > MAX_GAME_PLAYERS)
         return ILLEGAL_VALUE;
-    if (player_getCardsNumber((*gameGUI)->game->players[0]) == 0)
+    if (player_getCardsNumber(gameGUI->game->players[0]) == 0)
         return ROUND_OVER;
 
-    struct Game *game = (*gameGUI)->game;
-    int roundId = (*gameGUI)->game->currentRound;
+    struct Game *game = gameGUI->game;
+    int roundId = gameGUI->game->currentRound;
 
     hand_deleteHand(&(game->rounds[roundId]->hand));
     game->rounds[roundId]->hand = hand_createHand();
     round_addPlayersInHand(game->rounds[roundId], winnerPlayerId);
 
-    (*gameGUI)->cardPlayerId = 0;
-    gui_showPlayerTurn((*gameGUI), (*gameGUI)->cardPlayerId);
+    gameGUI->cardPlayerId = 0;
+    gui_showPlayerTurn(gameGUI, gameGUI->cardPlayerId);
 
     if (game->rounds[roundId]->hand->players[0] == game->players[0]) {
-        (*gameGUI)->select->cardPlayerTurn = 1;
-        gui_selectedCard((*gameGUI)->select);
+        gameGUI->select->cardPlayerTurn = 1;
+        gui_selectedCard(gameGUI->select);
 
-        gui_showLimitTimeGUI((*gameGUI)->limitTimeGUI);
+        gui_showLimitTimeGUI(gameGUI->limitTimeGUI);
         gui_startTime(gameGUI);
     } else {
         int limit = hand_getPlayerId(game->rounds[roundId]->hand,
@@ -1250,12 +1250,9 @@ int gui_startHand(struct GameGUI **gameGUI, int winnerPlayerId)
     return FUNCTION_NO_ERROR;
 }
 
-gboolean gui_endHand(gpointer data)
+gboolean gui_endHand(gpointer unused)
 {
-    if (data == NULL)
-        return FALSE;
-
-    struct GameGUI *gameGUI = *((struct GameGUI**)data);
+    struct GameGUI *gameGUI = gui_getGameGUI();
     if (gameGUI == NULL)
         return FALSE;
 
@@ -1270,7 +1267,7 @@ gboolean gui_endHand(gpointer data)
     gui_hideCardsFromTable(gameGUI->cardsFromTable);
     gui_showInformationsPlayers(gameGUI->playersGUI, game);
 
-    if (gui_startHand(data, playerId) == ROUND_OVER) {
+    if (gui_startHand(gameGUI, playerId) == ROUND_OVER) {
         if (round_repeatRound(round) == 1) {
             round_reinitializeRound(round);
             --(game->currentRound);
@@ -1278,18 +1275,15 @@ gboolean gui_endHand(gpointer data)
             round_determinesScore(round);
             game_rewardsPlayersFromGame(game, game->currentRound);
         }
-        gui_startRound(data);
+        gui_startRound(gameGUI);
     }
 
     return FALSE;
 }
 
-gboolean gui_botChooseBid(gpointer data)
+gboolean gui_botChooseBid(gpointer unused)
 {
-    if (data == NULL)
-        return FALSE;
-    struct GameGUI *gameGUI = *((struct GameGUI**)data);
-    printf("%p %p %p\n", gameGUI, gameGUI->game, data);
+    struct GameGUI *gameGUI = gui_getGameGUI();
     if (gameGUI == NULL)
         return FALSE;
     if (gameGUI->game == NULL)
@@ -1310,7 +1304,7 @@ gboolean gui_botChooseBid(gpointer data)
     gui_showPlayerTurn(gameGUI, gameGUI->bidPlayerId);
 
     if (gameGUI->bidPlayerId == gameGUI->game->playersNumber)
-        gui_startHand(data, 0);
+        gui_startHand(gameGUI, 0);
     else {
         int bidPlayerId = gameGUI->bidPlayerId;
         int roundId     = gameGUI->game->currentRound;
@@ -1322,50 +1316,44 @@ gboolean gui_botChooseBid(gpointer data)
             gui_selectedBid(gameGUI->select);
 
             gui_showLimitTimeGUI(gameGUI->limitTimeGUI);
-            gui_startTime((struct GameGUI**)data);
+            gui_startTime(gameGUI);
         }
     }
 
     return FALSE;
 }
 
-gboolean gui_chooseBidForBots(struct GameGUI **gameGUI, int leftLimit,
+gboolean gui_chooseBidForBots(struct GameGUI *gameGUI, int leftLimit,
                          int rightLimit)
 {
     if (gameGUI == NULL)
         return FALSE;
-    if (*gameGUI == NULL)
+    if (gameGUI->game == NULL)
         return FALSE;
-    if ((*gameGUI)->game == NULL)
+    if (gameGUI->game->currentRound < 0 ||
+        gameGUI->game->currentRound >= MAX_GAME_ROUNDS)
         return FALSE;
-    if ((*gameGUI)->game->currentRound < 0 ||
-        (*gameGUI)->game->currentRound >= MAX_GAME_ROUNDS)
-        return FALSE;
-    if ((*gameGUI)->game->rounds[(*gameGUI)->game->currentRound] == NULL)
+    if (gameGUI->game->rounds[gameGUI->game->currentRound] == NULL)
         return FALSE;
     if (leftLimit < 0 || leftLimit > MAX_GAME_PLAYERS ||
         rightLimit < 0 || rightLimit > MAX_GAME_PLAYERS)
         return FALSE;
 
-    struct Round *round;
-    round = (*gameGUI)->game->rounds[(*gameGUI)->game->currentRound];
+    struct Round *round = gameGUI->game->rounds[gameGUI->game->currentRound];
     guint seconds = 0;
     for (int i = leftLimit; i < rightLimit; i++)
         if (round->players[i] != NULL)
             if (round->players[i]->isHuman == 0) {
                 seconds++;
-                g_timeout_add_seconds(seconds, gui_botChooseBid, gameGUI);
+                g_timeout_add_seconds(seconds, gui_botChooseBid, NULL);
             }
 
     return FALSE;
 }
 
-gboolean gui_botChooseCard(gpointer data)
+gboolean gui_botChooseCard(gpointer unused)
 {
-    if (data == NULL)
-        return FALSE;
-
-    struct GameGUI *gameGUI = *((struct GameGUI**)data);
+    struct GameGUI *gameGUI = gui_getGameGUI();
     if (gameGUI == NULL || gameGUI->game == NULL)
         return FALSE;
 
@@ -1384,7 +1372,7 @@ gboolean gui_botChooseCard(gpointer data)
     gui_showPlayerTurn(gameGUI, gameGUI->cardPlayerId);
 
     if (gameGUI->cardPlayerId == gameGUI->game->playersNumber)
-        g_timeout_add_seconds(seconds, gui_endHand, (struct GameGUI**)data);
+        g_timeout_add_seconds(seconds, gui_endHand, NULL);
 
     int cardPlayerId = gameGUI->cardPlayerId;
     int roundId      = gameGUI->game->currentRound;
@@ -1394,38 +1382,35 @@ gboolean gui_botChooseCard(gpointer data)
         gui_selectedCard(gameGUI->select);
 
         gui_showLimitTimeGUI(gameGUI->limitTimeGUI);
-        gui_startTime((struct GameGUI**)data);
+        gui_startTime(gameGUI);
     }
 
     return FALSE;
 }
 
-gboolean gui_chooseCardForBots(struct GameGUI **gameGUI, int leftLimit,
+gboolean gui_chooseCardForBots(struct GameGUI *gameGUI, int leftLimit,
                                int rightLimit)
 {
     if (gameGUI == NULL)
         return FALSE;
-    if (*gameGUI == NULL)
+    if (gameGUI->game == NULL)
         return FALSE;
-    if ((*gameGUI)->game == NULL)
+    if (gameGUI->game->currentRound < 0 ||
+        gameGUI->game->currentRound >= MAX_GAME_ROUNDS)
         return FALSE;
-    if ((*gameGUI)->game->currentRound < 0 ||
-        (*gameGUI)->game->currentRound >= MAX_GAME_ROUNDS)
-        return FALSE;
-    if ((*gameGUI)->game->rounds[(*gameGUI)->game->currentRound] == NULL)
+    if (gameGUI->game->rounds[gameGUI->game->currentRound] == NULL)
         return FALSE;
     if (leftLimit < 0 || leftLimit > MAX_GAME_PLAYERS ||
         rightLimit < 0 || rightLimit > MAX_GAME_PLAYERS)
         return FALSE;
 
-    struct Round *round;
-    round = (*gameGUI)->game->rounds[(*gameGUI)->game->currentRound];
+    struct Round *round = gameGUI->game->rounds[gameGUI->game->currentRound];
     guint seconds = 0;
     for (int i = leftLimit; i < rightLimit; i++)
         if (round->hand->players[i] != NULL)
             if (round->hand->players[i]->isHuman == 0) {
                 seconds++;
-                g_timeout_add_seconds(seconds, gui_botChooseCard, gameGUI);
+                g_timeout_add_seconds(seconds, gui_botChooseCard, NULL);
             }
 
     return FALSE;
@@ -1547,24 +1532,22 @@ int gui_hideLastImageFromLimitTimeGUI(struct LimitTimeGUI *limitTimeGUI)
     return FUNCTION_NO_ERROR;
 }
 
-int gui_startTime(struct GameGUI **gameGUI)
+int gui_startTime(struct GameGUI *gameGUI)
 {
     if (gameGUI == NULL)
         return POINTER_NULL;
-    if (*gameGUI == NULL)
-        return POINTER_NULL;
-    if ((*gameGUI)->limitTimeGUI == NULL)
+    if (gameGUI->limitTimeGUI == NULL)
         return POINTER_NULL;
 
     guint interval = (1000 * LIMIT_TIME) / LENGTH_TIME_LINE;
-    g_timeout_add(interval, (GSourceFunc)gui_timer, (gpointer)gameGUI);
+    g_timeout_add(interval, gui_timer, NULL);
 
     return FUNCTION_NO_ERROR;
 }
 
-gboolean gui_timer(gpointer data)
+gboolean gui_timer(gpointer unused)
 {
-    struct GameGUI *gameGUI = *((struct GameGUI**)data);
+    struct GameGUI *gameGUI = gui_getGameGUI();
 
     if (gameGUI == NULL)
         return FALSE;
@@ -1599,10 +1582,10 @@ gboolean gui_timer(gpointer data)
         gui_showPlayerTurn(gameGUI, gameGUI->cardPlayerId);
 
         if (gameGUI->cardPlayerId == gameGUI->game->playersNumber)
-            g_timeout_add_seconds(seconds, gui_endHand, gameGUI);
+            g_timeout_add_seconds(seconds, gui_endHand, NULL);
         else
-            gui_chooseCardForBots((struct GameGUI**)data,
-                                  gameGUI->cardPlayerId, MAX_GAME_PLAYERS);
+            gui_chooseCardForBots(gameGUI, gameGUI->cardPlayerId,
+                                  MAX_GAME_PLAYERS);
 
         return FALSE;
     }

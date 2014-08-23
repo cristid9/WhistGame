@@ -7,13 +7,14 @@
  * @brief The maximum number of games on which a player can play them in
  *        same time.
  */
-#define MAX_GAMES 3
+#define MAX_GAMES 1
 
 int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
 {
     ++*noOfGames;
 
     struct GameGUI *gameGUI = gui_createGameGUI();
+    gui_setGameGUI(gameGUI);
     struct Player *player;
 
     gameGUI->game = game_createGame(gameType);
@@ -66,11 +67,11 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
     g_signal_connect(G_OBJECT(gameGUI->windowTable), "motion-notify-event",
                      G_CALLBACK(gui_moveMouse), gameGUI->select);
     g_signal_connect(G_OBJECT(gameGUI->windowTable), "destroy",
-                     G_CALLBACK(gui_closeWhistGame), &gameGUI);
+                     G_CALLBACK(gui_closeWhistGame), NULL);
     g_signal_connect(G_OBJECT(gameGUI->windowTable), "button-press-event",
-                     G_CALLBACK(gui_clickMouse), &gameGUI);
+                     G_CALLBACK(gui_clickMouse), gameGUI);
 
-    gui_createButtonStart(&gameGUI);
+    gui_createButtonStart(gameGUI);
 
     gameGUI->imagePlayerTurn = gtk_image_new_from_file("pictures/playerTurn.png");
     gtk_fixed_put(GTK_FIXED(gameGUI->fixedTable),
@@ -80,11 +81,8 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
                                                    310, 526);
     gui_initLimitTimeGUI(gameGUI->limitTimeGUI, "pictures/limit_time.png");
 
-    printf("%p %p\n", gameGUI, &gameGUI);
-
     gtk_main();
 
-    printf("%p\n", gameGUI);
     return EXIT_SUCCESS;
 }
 
