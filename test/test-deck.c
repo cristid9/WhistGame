@@ -25,7 +25,7 @@ void test_deck_deleteCard()
 {
     struct Card *card = deck_createCard(DIAMONDS, VALUES[0]);
     cut_assert_equal_int(POINTER_NULL, deck_deleteCard(NULL));
-    cut_assert_equal_int(NO_ERROR, deck_deleteCard(&card));
+    cut_assert_equal_int(FUNCTIOON_NO_ERROR, deck_deleteCard(&card));
     cut_assert_equal_pointer(NULL, card);
     cut_assert_equal_int(CARD_NULL, deck_deleteCard(&card));
 }
@@ -60,7 +60,7 @@ void test_deck_deleteDeck()
 {
     cut_assert_equal_int(POINTER_NULL, deck_deleteDeck(NULL));
     struct Deck *deck = deck_createDeck(MAX_GAME_PLAYERS);
-    cut_assert_equal_int(NO_ERROR, deck_deleteDeck(&deck));
+    cut_assert_equal_int(FUNCTIOON_NO_ERROR, deck_deleteDeck(&deck));
     cut_assert_equal_pointer(NULL, deck);
     cut_assert_equal_int(DECK_NULL, deck_deleteDeck(&deck));
 }
@@ -83,7 +83,7 @@ void test_deck_shuffleDeck()
     struct Deck *deck = deck_createDeck(MAX_GAME_PLAYERS);
     struct Deck *shuffled_deck = malloc(sizeof(struct Deck));
     memcpy(shuffled_deck, deck, sizeof(struct Deck));
-    cut_assert_equal_int(NO_ERROR, deck_shuffleDeck(shuffled_deck));
+    cut_assert_equal_int(FUNCTIOON_NO_ERROR, deck_shuffleDeck(shuffled_deck));
 
     int deckSize = deck_getDeckSize(deck);
     int differences = 0;
