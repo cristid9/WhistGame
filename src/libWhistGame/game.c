@@ -32,7 +32,7 @@ struct Game *game_createGame(int gameType)
     return game;
 }
 
-int game_deleteGame(struct Game **game)
+int game_deleteGame(struct Game** game)
 {
     if (game == NULL)
         return POINTER_NULL;
@@ -56,7 +56,7 @@ int game_deleteGame(struct Game **game)
     return FUNCTION_NO_ERROR;
 }
 
-int game_addDeck(struct Game *game, struct Deck **deck)
+int game_addDeck(struct Game* game, struct Deck** deck)
 {
     if (game == NULL)
         return GAME_NULL;
@@ -74,7 +74,7 @@ int game_addDeck(struct Game *game, struct Deck **deck)
     return FUNCTION_NO_ERROR;
 }
 
-int game_addPlayer(struct Game *game, struct Player **player)
+int game_addPlayer(struct Game* game, struct Player** player)
 {
     if (game == NULL)
         return GAME_NULL;
@@ -103,7 +103,7 @@ int game_addPlayer(struct Game *game, struct Player **player)
     return FULL;
 }
 
-int game_addRound(struct Game *game, struct Round **round)
+int game_addRound(struct Game* game, struct Round** round)
 {
     if (game == NULL)
         return GAME_NULL;
@@ -126,7 +126,7 @@ int game_addRound(struct Game *game, struct Round **round)
     return FULL;
 }
 
-int game_addPlayersInRound(struct Game *game, struct Round *round,
+int game_addPlayersInRound(const struct Game* game, struct Round* round,
                            int firstPlayer)
 {
     if (game == NULL)
@@ -146,7 +146,7 @@ int game_addPlayersInRound(struct Game *game, struct Round *round,
     return FUNCTION_NO_ERROR;
 }
 
-int game_addPlayersInAllRounds(struct Game *game)
+int game_addPlayersInAllRounds(const struct Game* game)
 {
     if (game == NULL)
         return GAME_NULL;
@@ -159,7 +159,7 @@ int game_addPlayersInAllRounds(struct Game *game)
     return FUNCTION_NO_ERROR;
 }
 
-int game_createAndAddRounds(struct Game *game)
+int game_createAndAddRounds(struct Game* game)
 {
     if (game == NULL)
         return GAME_NULL;
@@ -208,7 +208,7 @@ int game_createAndAddRounds(struct Game *game)
     return FUNCTION_NO_ERROR;
 }
 
-int game_rewardsPlayer(struct Game *game, struct Player *player,
+int game_rewardsPlayer(const struct Game* game, const struct Player* player,
                        int currentRound)
 {
     if (game == NULL)
@@ -256,7 +256,7 @@ int game_rewardsPlayer(struct Game *game, struct Player *player,
     return FUNCTION_NO_ERROR;
 }
 
-int game_rewardsPlayersFromGame(struct Game *game, int currentRound)
+int game_rewardsPlayersFromGame(const struct Game* game, int currentRound)
 {
     if (game == NULL)
         return GAME_NULL;
@@ -276,7 +276,8 @@ int game_rewardsPlayersFromGame(struct Game *game, int currentRound)
     return FUNCTION_NO_ERROR;
 }
 
-int game_getPlayerPosition(struct Game *game, struct Player *player)
+int game_getPlayerPosition(const struct Game *game,
+                           const struct Player *player)
 {
     if (game == NULL)
         return GAME_NULL;

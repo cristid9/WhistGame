@@ -33,7 +33,7 @@ struct Round *round_createRound(int roundType)
     return round;
 }
 
-int round_deleteRound(struct Round **round)
+int round_deleteRound(struct Round** round)
 {
     if (round == NULL)
         return POINTER_NULL;
@@ -54,7 +54,7 @@ int round_deleteRound(struct Round **round)
     return FUNCTION_NO_ERROR;
 }
 
-int round_addPlayer(struct Round *round, struct Player *player)
+int round_addPlayer(struct Round* round, struct Player* player)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -77,7 +77,7 @@ int round_addPlayer(struct Round *round, struct Player *player)
     return FULL;
 }
 
-int round_addHand(struct Round *round, struct Hand **hand)
+int round_addHand(struct Round* round, struct Hand** hand)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -95,7 +95,7 @@ int round_addHand(struct Round *round, struct Hand **hand)
     return FUNCTION_NO_ERROR;
 }
 
-int round_addTrump(struct Round *round, struct Card **trump)
+int round_addTrump(struct Round* round, struct Card** trump)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -111,7 +111,7 @@ int round_addTrump(struct Round *round, struct Card **trump)
     return FUNCTION_NO_ERROR;
 }
 
-int round_addPlayersInHand(struct Round *round, int firstPlayer)
+int round_addPlayersInHand(const struct Round* round, int firstPlayer)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -136,7 +136,7 @@ int round_addPlayersInHand(struct Round *round, int firstPlayer)
     return FUNCTION_NO_ERROR;
 }
 
-int round_distributeCard(struct Round *round, struct Deck *deck)
+int round_distributeCard(const struct Round* round, struct Deck* deck)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -172,7 +172,7 @@ int round_distributeCard(struct Round *round, struct Deck *deck)
     return FUNCTION_NO_ERROR;
 }
 
-int round_distributeDeck(struct Round *round, struct Deck *deck)
+int round_distributeDeck(struct Round* round, struct Deck* deck)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -195,7 +195,8 @@ int round_distributeDeck(struct Round *round, struct Deck *deck)
     return FUNCTION_NO_ERROR;
 }
 
-int round_getPlayerId(struct Round *round, struct Player *player)
+int round_getPlayerId(const struct Round* round,
+                      const struct Player* player)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -209,7 +210,7 @@ int round_getPlayerId(struct Round *round, struct Player *player)
     return NOT_FOUND;
 }
 
-int round_getBidsSum(struct Round *round)
+int round_getBidsSum(const struct Round* round)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -222,7 +223,8 @@ int round_getBidsSum(struct Round *round)
     return sum;
 }
 
-int round_checkBid(struct Round *round, struct Player *player, int bid)
+int round_checkBid(const struct Round* round,
+                   const struct Player* player, int bid)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -245,7 +247,7 @@ int round_checkBid(struct Round *round, struct Player *player, int bid)
     return FUNCTION_NO_ERROR;
 }
 
-int round_placeBid(struct Round *round, struct Player *player, int bid)
+int round_placeBid(struct Round* round, const struct Player* player, int bid)
 {
     int check = round_checkBid(round, player, bid);
     if (check != 0)
@@ -257,7 +259,7 @@ int round_placeBid(struct Round *round, struct Player *player, int bid)
     return FUNCTION_NO_ERROR;
 }
 
-struct Player *round_getPlayerWhichWonHand(struct Round *round)
+struct Player *round_getPlayerWhichWonHand(const struct Round* round)
 {
     if (round == NULL || round->hand == NULL)
         return NULL;
@@ -291,7 +293,7 @@ struct Player *round_getPlayerWhichWonHand(struct Round *round)
     return winningPlayer;
 }
 
-int round_determinesScore(struct Round *round)
+int round_determinesScore(struct Round* round)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -311,7 +313,7 @@ int round_determinesScore(struct Round *round)
     return FUNCTION_NO_ERROR;
 }
 
-int round_copyScore(struct Round *round1, struct Round *round2)
+int round_copyScore(const struct Round* round1, struct Round* round2)
 {
     if (round1 == NULL || round2 == NULL)
         return ROUND_NULL;
@@ -328,7 +330,7 @@ int round_copyScore(struct Round *round1, struct Round *round2)
     return FUNCTION_NO_ERROR;
 }
 
-int round_repeatRound(struct Round *round)
+int round_repeatRound(const struct Round* round)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -341,7 +343,7 @@ int round_repeatRound(struct Round *round)
     return 1;
 }
 
-int round_reinitializeRound(struct Round *round)
+int round_reinitializeRound(struct Round* round)
 {
     if (round == NULL)
         return ROUND_NULL;

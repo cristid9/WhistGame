@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-struct Player *player_createPlayer(const char *name, int isHuman)
+struct Player *player_createPlayer(const char* name, int isHuman)
 {
     if (name == NULL)
         return NULL;
@@ -34,7 +34,7 @@ struct Player *player_createPlayer(const char *name, int isHuman)
     return player;
 }
 
-int player_deletePlayer(struct Player **player)
+int player_deletePlayer(struct Player** player)
 {
     if (player == NULL)
         return POINTER_NULL;
@@ -50,7 +50,7 @@ int player_deletePlayer(struct Player **player)
     return FUNCTION_NO_ERROR;
 }
 
-int player_addCard(struct Player *player, struct Card **card)
+int player_addCard(struct Player* player, struct Card** card)
 {
     if (player == NULL)
         return PLAYER_NULL;
@@ -76,7 +76,7 @@ int player_addCard(struct Player *player, struct Card **card)
     return FULL;
 }
 
-int player_compareCards(const void *a, const void *b)
+int player_compareCards(const void* const a, const void* const b)
 {
     int suit = (*(struct Card**)a)->suit - (*(struct Card**)b)->suit;
     int value = (*(struct Card**)a)->value - (*(struct Card**)b)->value;
@@ -86,7 +86,7 @@ int player_compareCards(const void *a, const void *b)
     return suit;
 }
 
-int player_checkPlayerName(const char *name)
+int player_checkPlayerName(const char* name)
 {
     if (name == NULL)
         return POINTER_NULL;
@@ -98,7 +98,8 @@ int player_checkPlayerName(const char *name)
     return FUNCTION_NO_ERROR;
 }
 
-int player_getIdNumberthCardWhichIsNotNull(struct Player *player, int number)
+int player_getIdNumberthCardWhichIsNotNull(const struct Player* player,
+                                           int number)
 {
     if (player == NULL)
         return PLAYER_NULL;
@@ -116,7 +117,7 @@ int player_getIdNumberthCardWhichIsNotNull(struct Player *player, int number)
     return ILLEGAL_VALUE;
 }
 
-int player_getCardsNumber(struct Player *player)
+int player_getCardsNumber(const struct Player* player)
 {
     if (player == NULL)
         return PLAYER_NULL;

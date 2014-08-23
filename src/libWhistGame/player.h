@@ -36,7 +36,7 @@ struct Player {
  *
  * @return Pointer to the new player on success or NULL on failure.
  */
-struct Player *player_createPlayer(const char *name, int isHuman);
+struct Player *player_createPlayer(const char* name, int isHuman);
 
 /**
  * @brief Function releases the memory of a player and makes pointer NULL.
@@ -45,7 +45,7 @@ struct Player *player_createPlayer(const char *name, int isHuman);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int player_deletePlayer(struct Player **player);
+int player_deletePlayer(struct Player** player);
 
 /**
  * @brief Function add the card of the player.
@@ -55,7 +55,7 @@ int player_deletePlayer(struct Player **player);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int player_addCard(struct Player *player, struct Card **card);
+int player_addCard(struct Player* player, struct Card** card);
 
 /**
  * @brief Function compare two cards. This function will be used of qsort().
@@ -68,7 +68,7 @@ int player_addCard(struct Player *player, struct Card **card);
  * @return A positive value if the first card is greater, otherwise a negative
  *         value.
  */
-int player_compareCards(const void *a, const void *b);
+int player_compareCards(const void* const a, const void* const b);
 
 /**
  * @brief Function check if the player introduced a correct name.
@@ -77,7 +77,7 @@ int player_compareCards(const void *a, const void *b);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int player_checkPlayerName(const char *name);
+int player_checkPlayerName(const char* name);
 
 /**
  * @brief Function get the position of the number-th card which is not null
@@ -91,7 +91,8 @@ int player_checkPlayerName(const char *name);
  * @return A value between 0 and MAX_CARDS - 1 on success, a negative value on
  *         failure.
  */
-int player_getIdNumberthCardWhichIsNotNull(struct Player *player, int number);
+int player_getIdNumberthCardWhichIsNotNull(const struct Player* player,
+                                           int number);
 
 /* @brief Function get the number of cards from player's hand.
  *
@@ -100,7 +101,7 @@ int player_getIdNumberthCardWhichIsNotNull(struct Player *player, int number);
  * @return A value between 0 and MAX_CARDS - 1 on success.
  *         PLAYER_NULL on failure.
  */
-int player_getCardsNumber(struct Player *player);
+int player_getCardsNumber(const struct Player* player);
 
 #endif
 

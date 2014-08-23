@@ -96,7 +96,7 @@ int game_addRound(struct Game *game, struct Round **round);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int game_addPlayersInRound(struct Game *game, struct Round *round,
+int game_addPlayersInRound(const struct Game *game, struct Round *round,
                            int firstPlayer);
 
 /**
@@ -106,7 +106,7 @@ int game_addPlayersInRound(struct Game *game, struct Round *round,
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int game_addPlayersInAllRounds(struct Game *game);
+int game_addPlayersInAllRounds(const struct Game *game);
 
 /**
  * @brief Function creates and adds all the rounds in game.
@@ -130,7 +130,7 @@ int game_createAndAddRounds(struct Game *game);
  *         2 if the player was rewarded on negative.
  *         A negative value on failure.
  */
-int game_rewardsPlayer(struct Game *game, struct Player *player,
+int game_rewardsPlayer(const struct Game *game, const struct Player *player,
                        int currentRound);
 
 /**
@@ -143,7 +143,7 @@ int game_rewardsPlayer(struct Game *game, struct Player *player,
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int game_rewardsPlayersFromGame(struct Game *game, int currentRound);
+int game_rewardsPlayersFromGame(const struct Game *game, int currentRound);
 
 /**
  * @brief Function calculates the position a player in game. The function
@@ -155,7 +155,8 @@ int game_rewardsPlayersFromGame(struct Game *game, int currentRound);
  * @return A positive value between 0 and MAX_GAME_PLAYERS - 1 on success, a
  *         negative value on failure.
  */
-int game_getPlayerPosition(struct Game *game, struct Player *player);
+int game_getPlayerPosition(const struct Game *game,
+                           const struct Player *player);
 
 #endif
 

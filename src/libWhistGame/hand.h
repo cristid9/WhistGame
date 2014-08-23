@@ -40,7 +40,7 @@ struct Hand *hand_createHand();
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int hand_deleteHand(struct Hand **hand);
+int hand_deleteHand(struct Hand** hand);
 
 /**
  * @brief Function adds a player in a hand.
@@ -50,7 +50,7 @@ int hand_deleteHand(struct Hand **hand);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int hand_addPlayer(struct Hand *hand, struct Player *player);
+int hand_addPlayer(struct Hand* hand, struct Player* player);
 
 /**
  * @brief Function adds a card in a hand.
@@ -61,7 +61,8 @@ int hand_addPlayer(struct Hand *hand, struct Player *player);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card);
+int hand_addCard(struct Hand* hand, const struct Player* player,
+                 struct Card** card);
 
 /**
  * @brief Function checks if a card can be put down.
@@ -76,8 +77,8 @@ int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card);
  *         0 if the card can't be put down. 
  *         other value on failure.
  */
-int hand_checkCard(struct Hand *hand, struct Player *player,
-                   int cardId, struct Card *trump);
+int hand_checkCard(const struct Hand* hand, const struct Player* player,
+                   int cardId, const struct Card* trump);
 
 /**
  * @brief Function get the id of the player.
@@ -88,7 +89,7 @@ int hand_checkCard(struct Hand *hand, struct Player *player,
  * @return A number between 0 and MAX_GAME_PLAYERS - 1 on success, a negative
  *         value on failure.
  */
-int hand_getPlayerId(struct Hand *hand, struct Player *player);
+int hand_getPlayerId(const struct Hand* hand, const struct Player* player);
 
 #endif
 

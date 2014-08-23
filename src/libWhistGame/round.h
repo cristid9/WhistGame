@@ -62,7 +62,7 @@ struct Round *round_createRound(int roundType);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int round_deleteRound(struct Round **round);
+int round_deleteRound(struct Round** round);
 
 /**
  * @brief Function adds a player in a round.
@@ -72,7 +72,7 @@ int round_deleteRound(struct Round **round);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int round_addPlayer(struct Round *round, struct Player *player);
+int round_addPlayer(struct Round* round, struct Player* player);
 
 /**
  * @brief Function adds a hand in a round.
@@ -82,7 +82,7 @@ int round_addPlayer(struct Round *round, struct Player *player);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int round_addHand(struct Round *round, struct Hand **hand);
+int round_addHand(struct Round* round, struct Hand** hand);
 
 /**
  * @brief Function adds the trump in a round.
@@ -92,7 +92,7 @@ int round_addHand(struct Round *round, struct Hand **hand);
  *
  * @return FUNCTION_NO_ERROR or 0 on succes, other value on failure.
  */
-int round_addTrump(struct Round *round, struct Card **trump);
+int round_addTrump(struct Round* round, struct Card** trump);
 
 /**
  * @brief Function adds players in hand in a certain order.
@@ -102,7 +102,7 @@ int round_addTrump(struct Round *round, struct Card **trump);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int round_addPlayersInHand(struct Round *round, int firstPlayer);
+int round_addPlayersInHand(const struct Round* round, int firstPlayer);
 
 /**
  * @brief Function distributes one card each player from round.
@@ -112,7 +112,7 @@ int round_addPlayersInHand(struct Round *round, int firstPlayer);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int round_distributeCard(struct Round *round, struct Deck *deck);
+int round_distributeCard(const struct Round* round, struct Deck* deck);
 
 /**
  * @brief Function distributes the cards of the players.
@@ -122,7 +122,7 @@ int round_distributeCard(struct Round *round, struct Deck *deck);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int round_distributeDeck(struct Round *round, struct Deck *deck);
+int round_distributeDeck(struct Round* round, struct Deck* deck);
 
 /**
  * @brief Function get the id of the player.
@@ -133,7 +133,7 @@ int round_distributeDeck(struct Round *round, struct Deck *deck);
  * @return A number between 0 and MAX_GAME_PLAYERS - 1 on success, a negative
  *         value on failure.
  */
-int round_getPlayerId(struct Round *round, struct Player *player);
+int round_getPlayerId(const struct Round* round, const struct Player* player);
 
 /**
  * @brief Function get the sum of the bids from a round.
@@ -143,7 +143,7 @@ int round_getPlayerId(struct Round *round, struct Player *player);
  *
  * @return A positive value on success, a negative value on failure.
  */
-int round_getBidsSum(struct Round *round);
+int round_getBidsSum(const struct Round* round);
 
 /**
  * @brief Function checks if a bid can be bid.
@@ -155,7 +155,8 @@ int round_getBidsSum(struct Round *round);
  * @return FUNCTION_NO_ERROR or 0 if the player introduced a correct bid.
  *         A negative value on failure.
  */
-int round_checkBid(struct Round *round, struct Player *player, int bid);
+int round_checkBid(const struct Round* round,
+                   const struct Player* player, int bid);
 
 /**
  * @brief Function places a bid of a player.
@@ -166,7 +167,7 @@ int round_checkBid(struct Round *round, struct Player *player, int bid);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int round_placeBid(struct Round *round, struct Player *player, int bid);
+int round_placeBid(struct Round* round, const struct Player* player, int bid);
 
 /**
  * @brief Function determines who won the hand and incremets handsNumber for
@@ -177,7 +178,7 @@ int round_placeBid(struct Round *round, struct Player *player, int bid);
  *
  * @return Pointer to the winning player on success, NULL on failure.
  */
-struct Player *round_getPlayerWhichWonHand(struct Round *round);
+struct Player *round_getPlayerWhichWonHand(const struct Round* round);
 
 /**
  * @brief Function determines score after what the round ended.
@@ -186,7 +187,7 @@ struct Player *round_getPlayerWhichWonHand(struct Round *round);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int round_determinesScore(struct Round *round);
+int round_determinesScore(struct Round* round);
 
 /**
  * @brief Function copy the score from round1 in round2.
@@ -196,7 +197,7 @@ int round_determinesScore(struct Round *round);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int round_copyScore(struct Round *round1, struct Round *round2);
+int round_copyScore(const struct Round* round1, struct Round* round2);
 
 /**
  * @brief Function checks if in round exists at least a player which won the 
@@ -209,7 +210,7 @@ int round_copyScore(struct Round *round1, struct Round *round2);
  *         1 if the round must to be replayed.
  *         A negative value on failure.
  */
-int round_repeatRound(struct Round *round);
+int round_repeatRound(const struct Round* round);
 
 /**
  * @brief Function reinitializes the round. This function will be used when a
@@ -219,7 +220,7 @@ int round_repeatRound(struct Round *round);
  *
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int round_reinitializeRound(struct Round *round);
+int round_reinitializeRound(struct Round* round);
 
 #endif
 

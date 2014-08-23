@@ -24,7 +24,7 @@ struct Hand *hand_createHand()
     return hand;
 }
 
-int hand_deleteHand(struct Hand **hand)
+int hand_deleteHand(struct Hand** hand)
 {
     if (hand == NULL)
         return POINTER_NULL;
@@ -44,7 +44,7 @@ int hand_deleteHand(struct Hand **hand)
     return FUNCTION_NO_ERROR;
 }
 
-int hand_addPlayer(struct Hand *hand, struct Player *player)
+int hand_addPlayer(struct Hand* hand, struct Player* player)
 {
     if (hand == NULL)
         return HAND_NULL;
@@ -67,7 +67,8 @@ int hand_addPlayer(struct Hand *hand, struct Player *player)
     return FULL;
 }
 
-int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card)
+int hand_addCard(struct Hand* hand, const struct Player* player,
+                 struct Card** card)
 {
     if (hand == NULL)
         return HAND_NULL;
@@ -88,8 +89,8 @@ int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card)
     return NOT_FOUND;
 }
 
-int hand_checkCard(struct Hand *hand, struct Player *player,
-                   int cardId, struct Card *trump)
+int hand_checkCard(const struct Hand* hand, const struct Player* player,
+                   int cardId, const struct Card* trump)
 {
     if (hand == NULL)
         return HAND_NULL;
@@ -128,7 +129,7 @@ int hand_checkCard(struct Hand *hand, struct Player *player,
     return 0;
 }
 
-int hand_getPlayerId(struct Hand *hand, struct Player *player)
+int hand_getPlayerId(const struct Hand* hand, const struct Player* player)
 {
     if (hand == NULL)
         return HAND_NULL;
