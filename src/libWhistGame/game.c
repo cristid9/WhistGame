@@ -295,3 +295,44 @@ int game_getPlayerPosition(const struct Game *game,
     return NOT_FOUND;
 }
 
+int game_checkIfPlayerIsAtReward(const struct Game* game, int currentRound,
+                                 const struct Player* player)
+{
+    if (game == NULL)
+        return GAME_NULL;
+    if (player == NULL)
+        return PLAYER_NULL;
+    if (currentRound < 0 || currentRound >= MAX_GAME_ROUNDS)
+        return ILLEGAL_VALUE;
+    if (currentRound - BONUS_ROUNDS_NUMBER + 1 < 0)
+        return FUNCTION_NO_ERROR;
+
+    int wonRounds  = 0;
+    int lostRounds = 0;
+    int i = currentRound - BONUS_ROUNDS_NUMBER + 1;
+
+    for (; i < currentRound; i++)
+        if (game->rounds[i] != NULL) {
+            int position = round_getPlayerId(game->rounds[i], player);
+            if (position < 0)
+                return position;
+            if (game->rounds[i]->bonus[position] == 0 && 
+                game->rounds[i]->roundType != 1) {
+                if (game->rounds[i]->bids[position] == 
+                    game->rounds[i]->handsNumber[position])
+                    wonRounds++;
+                else
+                    lostRounds++;
+            }
+        } else {
+            return ROUND_NULL;
+        }
+
+    if (wonRounds == BONUS_ROUNDS_NUMBER - 1)
+        return 1;
+    if (lostRounds == BONUS_ROUNDS_NUMBER - 1)
+        return 2;
+
+    return FUNCTION_NO_ERROR;
+}
+
