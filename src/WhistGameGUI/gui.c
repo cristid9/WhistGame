@@ -772,7 +772,7 @@ int gui_showPlayers(struct Game *game, GtkWidget *fixed,
             gtk_fixed_put(GTK_FIXED(fixed), playersGUI->scoreLabel[i],
                           coordinates[i][0] + 53, coordinates[i][1] + 28);
             gtk_widget_show(playersGUI->scoreLabel[i]);
-            
+
             playersGUI->rewardImage[i] = gtk_image_new();
             gtk_fixed_put(GTK_FIXED(fixed), playersGUI->rewardImage[i],
                           coordinates[i][0] + 100, coordinates[i][1] + 16);
@@ -1701,6 +1701,10 @@ gboolean gui_timer(gpointer unused)
 
 int gui_getResourceId(const char* name)
 {
+    if(strcmp(name, "pictures/positive_reward.png") == 0)
+        return ID_pictures_positive_reward_png;
+    if(strcmp(name, "pictures/negative_reward.png") == 0)
+        return ID_pictures_negative_reward_png;
     if(strcmp(name, "pictures/bid.png") == 0)
         return ID_pictures_bid_png;
     if(strcmp(name, "pictures/limit_time.png") == 0)
