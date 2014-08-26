@@ -158,5 +158,20 @@ int game_rewardsPlayersFromGame(const struct Game *game, int currentRound);
 int game_getPlayerPosition(const struct Game *game,
                            const struct Player *player);
 
+/**
+ * @brief Function check if the player is at reward.
+ *
+ * @param game Pointer to the game in which is the player.
+ * @param currentround The id of the current round.
+ * @param player Pointer to the player for which checks it if is at reward.
+ *
+ * @return FUNCTION_NO_ERROR or 0 if the player isn't at reward.
+ *         1 if the player is at positive reward.
+ *         2 if the player is at negative reward.
+ *         A negative value on failure.
+ */
+int game_checkIfPlayerIsAtReward(const struct Game* game, int currentRound,
+                                 const struct Player* player);
+
 #endif
 
