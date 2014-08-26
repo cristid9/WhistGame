@@ -117,6 +117,7 @@
 #define ID_pictures_80x110_9B_jpg	    0x1073
 #define ID_pictures_80x110_9C_jpg	    0x1074
 #define ID_pictures_80x110_9D_jpg	    0x1075
-
+#define ID_pictures_positive_reward_png 0x1076
+#define ID_pictures_negative_reward_png 0x1077
 
 #endif // RESOURCES_H_INCLUDED
