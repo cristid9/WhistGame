@@ -1318,6 +1318,13 @@ int gui_startHand(struct GameGUI *gameGUI, int winnerPlayerId)
     return FUNCTION_NO_ERROR;
 }
 
+static gboolean gui_startRoundTimer(gpointer data)
+{
+    gui_startRound((struct GameGUI*)data);
+
+    return FALSE;
+}
+
 gboolean gui_endHand(gpointer unused)
 {
     struct GameGUI *gameGUI = gui_getGameGUI();
@@ -1344,7 +1351,8 @@ gboolean gui_endHand(gpointer unused)
             game_rewardsPlayersFromGame(game, game->currentRound);
             gui_hideRewardImages(gameGUI->playersGUI);
         }
-        gui_startRound(gameGUI);
+        guint time = 1;
+        g_timeout_add_seconds(time, gui_startRoundTimer, gameGUI);
     }
 
     return FALSE;
