@@ -3,9 +3,14 @@
  * @brief In this file are defined functions used for GUI.
  */
 
-#include "gui.h"
-
 #include <string.h>
+#ifdef WIN32
+#include <Windows.h>
+#include <unistd.h>
+#endif
+
+#include "gui.h"
+#include "resources.h"
 
 #define square(a) (a) * (a)
 
@@ -13,8 +18,7 @@ struct GameGUI* gui_changeGameGUI(const struct GameGUI* gameGUI,
                                   const int onlyReturn)
 {
     static struct GameGUI* gameGUIStore = NULL;
-    if (onlyReturn == 0)
-    {
+    if (onlyReturn == 0) {
         gameGUIStore = (struct GameGUI*)gameGUI;
     }
     return gameGUIStore;
@@ -29,6 +33,25 @@ struct GameGUI* gui_getGameGUI()
 {
     struct GameGUI* gameGUI = gui_changeGameGUI(NULL, 1);
     return gameGUI;
+}
+
+GtkWidget* gui_changeWindowScore(const GtkWidget *window, const int onlyReturn)
+{
+    static GtkWidget* windowStore = NULL;
+    if (onlyReturn == 0) {
+        windowStore = (GtkWidget*)window;
+    }
+    return windowStore;
+}
+
+void gui_setWindowScore(const GtkWidget *window)
+{
+    gui_changeWindowScore(window, 0);
+}
+
+GtkWidget* gui_getWindowScore()
+{
+    return gui_changeWindowScore(NULL, 1);
 }
 
 int gui_init(GtkWidget **window, GtkWidget **fixed, char *title,
@@ -118,7 +141,7 @@ int gui_setBackground(GtkWidget *fixed, char *pathPicture)
     if (fixed == NULL || pathPicture == NULL)
         return POINTER_NULL;
 
-    GtkWidget *image = gtk_image_new_from_file(pathPicture);
+    GtkWidget *image = gui_imageNewFromFile(pathPicture);
     gtk_fixed_put(GTK_FIXED(fixed), image, 0, 0);
     gtk_widget_show(image);
 
@@ -247,14 +270,27 @@ gboolean gui_drawScore(GtkWidget *button, GdkEventExpose *event,
     return TRUE;
 }
 
+int gui_closeWindowScore(GtkWidget *window, gpointer unused)
+{
+    if (window == NULL)
+        return POINTER_NULL;
+
+    gui_setWindowScore(NULL);
+    gtk_widget_destroy(window);
+
+    return FUNCTION_NO_ERROR;
+}
+
 int gui_showScore(GtkWidget *button, struct Game *game)
 {
-    GtkWidget *window, *helpfulButton;
-    GtkWidget *fixed;
+    GtkWidget *window, *helpfulButton, *fixed;
+
+    gui_closeWindowScore(gui_getWindowScore(), NULL);
 
     gui_init(&window, &fixed, "Score", 496, 500);
+    gui_setWindowScore(window);
     g_signal_connect(G_OBJECT(window), "destroy",
-                     G_CALLBACK(gtk_main_quit), NULL);
+                     G_CALLBACK(gui_closeWindowScore), NULL);
 
     gui_setBackground(fixed, "pictures/score.png");
 
@@ -265,8 +301,6 @@ int gui_showScore(GtkWidget *button, struct Game *game)
     gtk_widget_show(helpfulButton);
     g_signal_connect(G_OBJECT(helpfulButton), "expose-event",
                      G_CALLBACK(gui_drawScore), game);
-
-    gtk_main();
 
     return FUNCTION_NO_ERROR;
 }
@@ -359,7 +393,7 @@ int gui_showTrump(struct Card *trump, GtkWidget *image)
         strcat(pathTrump, pictureName);
     }
 
-    gtk_image_set_from_file(GTK_IMAGE(image), pathTrump);
+    gui_imageSetFromFile(image, pathTrump);
     gtk_widget_show(image);
 
     return FUNCTION_NO_ERROR;
@@ -418,8 +452,7 @@ int gui_showPlayerCards(struct PlayerCards *playerCards, struct Player *player)
             gui_getPictureName(player->hand[i], pictureName);
             char pathImage [30] = "pictures/80x110/";
             strcat(pathImage, pictureName);
-            gtk_image_set_from_file(GTK_IMAGE(playerCards->images[noOfCards]),
-                                    pathImage);
+            gui_imageSetFromFile(playerCards->images[noOfCards], pathImage);
             gtk_widget_show(playerCards->images[noOfCards]);
             noOfCards++;
         }
@@ -470,7 +503,7 @@ int gui_initAndShowDialogMaxGames(GtkWidget *window)
     gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
     gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 
-    label = gtk_label_new("Already exist too much open games.");
+    label = gtk_label_new("Already exist a open game.");
     image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_ERROR,
                                      GTK_ICON_SIZE_DIALOG);
     hbox = gtk_hbox_new(FALSE, 5);
@@ -492,6 +525,8 @@ int gui_closeWhistGame(GtkWidget *windowTable, gpointer unused)
     struct GameGUI* gameGUI = gui_getGameGUI();
     if (windowTable == NULL)
         return POINTER_NULL;
+
+    gui_closeWindowScore(gui_getWindowScore(), NULL);
 
     *(gameGUI->noOfGames) -= 1;
     gui_deleteGameGUI(&gameGUI);
@@ -627,9 +662,9 @@ struct Select *gui_createSelect(GtkWidget *fixed, struct Player *player,
     struct Select *select;
 
     select = malloc(sizeof(struct Select));
-    select->imageSelectedCard = gtk_image_new_from_file
+    select->imageSelectedCard = gui_imageNewFromFile
                                 ("pictures/select_card.png");
-    select->imageSelectedBid = gtk_image_new_from_file
+    select->imageSelectedBid = gui_imageNewFromFile
                                ("pictures/select_bid.png");
     select->fixed          = fixed;
     select->player         = player;
@@ -686,11 +721,12 @@ struct PlayersGUI *gui_createPlayersGUI()
     struct PlayersGUI *playersGUI = malloc(sizeof(struct PlayersGUI));
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
-        playersGUI->image[i]      = NULL;
-        playersGUI->nameLabel[i]  = NULL;
-        playersGUI->bidsLabel[i]  = NULL;
-        playersGUI->tookLabel[i]  = NULL;
-        playersGUI->scoreLabel[i] = NULL;
+        playersGUI->rewardImage[i] = NULL;
+        playersGUI->image[i]       = NULL;
+        playersGUI->nameLabel[i]   = NULL;
+        playersGUI->bidsLabel[i]   = NULL;
+        playersGUI->tookLabel[i]   = NULL;
+        playersGUI->scoreLabel[i]  = NULL;
     }
 
     return playersGUI;
@@ -711,7 +747,7 @@ int gui_showPlayers(struct Game *game, GtkWidget *fixed,
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
         if (game->players[i] != NULL) {
-            playersGUI->image[i] = gtk_image_new_from_file
+            playersGUI->image[i] = gui_imageNewFromFile
                                    ("pictures/player.png");
             gtk_fixed_put(GTK_FIXED(fixed), playersGUI->image[i],
                           coordinates[i][0], coordinates[i][1]);
@@ -736,6 +772,10 @@ int gui_showPlayers(struct Game *game, GtkWidget *fixed,
             gtk_fixed_put(GTK_FIXED(fixed), playersGUI->scoreLabel[i],
                           coordinates[i][0] + 53, coordinates[i][1] + 28);
             gtk_widget_show(playersGUI->scoreLabel[i]);
+            
+            playersGUI->rewardImage[i] = gtk_image_new();
+            gtk_fixed_put(GTK_FIXED(fixed), playersGUI->rewardImage[i],
+                          coordinates[i][0] + 100, coordinates[i][1] + 16);
         }
     }
 
@@ -855,8 +895,7 @@ int gui_showCardsOnTable(struct CardsFromTable *cardsFromTable,
                 gui_getPictureName(hand->cards[position], pictureName);
                 char pathImage [30] = "pictures/45x60/";
                 strcat(pathImage, pictureName);
-                gtk_image_set_from_file(GTK_IMAGE(cardsFromTable->images[i]),
-                                        pathImage);
+                gui_imageSetFromFile(cardsFromTable->images[i], pathImage);
                 gtk_widget_show(cardsFromTable->images[i]);
             }
         }
@@ -985,7 +1024,7 @@ int gui_initBidGUI(struct BidGUI *bidGUI, GtkWidget *fixed)
     if (bidGUI == NULL || fixed == NULL)
         return POINTER_NULL;
 
-    bidGUI->image = gtk_image_new_from_file("pictures/bid.png");
+    bidGUI->image = gui_imageNewFromFile("pictures/bid.png");
     gtk_fixed_put(GTK_FIXED(fixed), bidGUI->image, 250, 235);
 
     for (int i = 0; i < MAX_CARDS + 1; i++) {
@@ -1160,6 +1199,18 @@ int gui_deleteGameGUI(struct GameGUI **gameGUI)
     return FUNCTION_NO_ERROR;
 }
 
+int gui_hideRewardImages(struct PlayersGUI* playersGUI)
+{
+    if (playersGUI == NULL)
+        return POINTER_NULL;
+
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (playersGUI->rewardImage[i] != NULL)
+            gtk_widget_hide(playersGUI->rewardImage[i]);
+
+    return FUNCTION_NO_ERROR;
+}
+
 int gui_startRound(struct GameGUI *gameGUI)
 {
     if (gameGUI == NULL)
@@ -1176,6 +1227,23 @@ int gui_startRound(struct GameGUI *gameGUI)
             round_copyScore(game->rounds[roundId - 1], game->rounds[roundId]);
 
         gui_showInformationsPlayers(gameGUI->playersGUI, gameGUI->game);
+
+        for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
+            int rewardType = game_checkIfPlayerIsAtReward(game,
+                                                          game->currentRound,
+                                                          game->players[i]);
+            if (rewardType == 1) {
+                gui_imageSetFromFile(gameGUI->playersGUI->rewardImage[i],
+                                     "pictures/positive_reward.png");
+                gtk_widget_show(gameGUI->playersGUI->rewardImage[i]);
+            }
+            if (rewardType == 2) {
+                gui_imageSetFromFile(gameGUI->playersGUI->rewardImage[i],
+                                     "pictures/negative_reward.png");
+                gtk_widget_show(gameGUI->playersGUI->rewardImage[i]);
+            }
+        }
+
 
         deck_deleteDeck(&(game->deck));
         game->deck = deck_createDeck(playersNumber);
@@ -1274,6 +1342,7 @@ gboolean gui_endHand(gpointer unused)
         } else {
             round_determinesScore(round);
             game_rewardsPlayersFromGame(game, game->currentRound);
+            gui_hideRewardImages(gameGUI->playersGUI);
         }
         gui_startRound(gameGUI);
     }
@@ -1513,7 +1582,7 @@ int gui_initLimitTimeGUI(struct LimitTimeGUI *limitTimeGUI, char *pathImage)
         return POINTER_NULL;
 
     for (int i = 0; i < LENGTH_TIME_LINE; i++) {
-        limitTimeGUI->images[i] = gtk_image_new_from_file(pathImage);
+        limitTimeGUI->images[i] = gui_imageNewFromFile(pathImage);
         gtk_fixed_put(GTK_FIXED(limitTimeGUI->fixed), limitTimeGUI->images[i],
                       25 + 3 * i, 378);
     }
@@ -1562,15 +1631,17 @@ gboolean gui_timer(gpointer unused)
     }
 
     gui_hideLastImageFromLimitTimeGUI(gameGUI->limitTimeGUI);
-    if (gameGUI->limitTimeGUI->lastImage == -1) {
+    if (gameGUI->limitTimeGUI->lastImage == -1 &&
+        gameGUI->select->cardPlayerTurn == 1)
+    {
         struct Round *round;
         struct Player *player;
         guint seconds = 1;
         round = gameGUI->game->rounds[gameGUI->game->currentRound];
         player = gameGUI->game->players[0];
 
-        int cardId = robot_getCardId(player, round);
         gameGUI->select->cardPlayerTurn = 0;
+        int cardId = robot_getCardId(player, round);
         hand_addCard(round->hand, player, &(player->hand[cardId]));
         gui_showCardsOnTable(gameGUI->cardsFromTable, gameGUI->game);
 
@@ -1590,6 +1661,337 @@ gboolean gui_timer(gpointer unused)
         return FALSE;
     }
 
+    if (gameGUI->limitTimeGUI->lastImage == -1 &&
+        gameGUI->select->bidPlayerTurn == 1)
+    {
+        struct Round *round;
+        struct Player *player;
+        round = gameGUI->game->rounds[gameGUI->game->currentRound];
+        player = gameGUI->game->players[0];
+
+        gameGUI->select->bidPlayerTurn = 0;
+        int bid = robot_getBid(player, round);
+        round_placeBid(round, player, bid);
+        gui_hideBidGUI(gameGUI->bidGUI);
+        gtk_widget_hide(gameGUI->select->imageSelectedBid);
+
+        gui_showInformationsPlayers(gameGUI->playersGUI, gameGUI->game);
+        gui_setNoOfBids(gameGUI->labelNoOfBids, round);
+
+        ++(gameGUI->bidPlayerId);
+        gui_showPlayerTurn(gameGUI, gameGUI->bidPlayerId);
+
+        if (gameGUI->bidPlayerId == gameGUI->game->playersNumber)
+            gui_startHand(gameGUI, 0);
+        else
+            gui_chooseBidForBots(gameGUI, gameGUI->bidPlayerId,
+                                 MAX_GAME_PLAYERS);
+    }
+
     return TRUE;
+}
+
+int gui_getResourceId(const char* name)
+{
+    if(strcmp(name, "pictures/bid.png") == 0)
+        return ID_pictures_bid_png;
+    if(strcmp(name, "pictures/limit_time.png") == 0)
+        return ID_pictures_limit_time_png;
+    if(strcmp(name, "pictures/logo_game.png") == 0)
+        return ID_pictures_logo_game_png;
+    if(strcmp(name, "pictures/player.png") == 0)
+        return ID_pictures_player_png;
+    if(strcmp(name, "pictures/playerTurn.png") == 0)
+        return ID_pictures_playerTurn_png;
+    if(strcmp(name, "pictures/score.png") == 0)
+        return ID_pictures_score_png;
+    if(strcmp(name, "pictures/select_bid.png") == 0)
+        return ID_pictures_select_bid_png;
+    if(strcmp(name, "pictures/select_card.png") == 0)
+        return ID_pictures_select_card_png;
+    if(strcmp(name, "pictures/splash_screen.jpg") == 0)
+        return ID_pictures_splash_screen_jpg;
+    if(strcmp(name, "pictures/table.png") == 0)
+        return ID_pictures_table_png;
+    if(strcmp(name, "pictures/45x60/10A.jpg") == 0)
+        return ID_pictures_45x60_10A_jpg;
+    if(strcmp(name, "pictures/45x60/10B.jpg") == 0)
+        return ID_pictures_45x60_10B_jpg;
+    if(strcmp(name, "pictures/45x60/10C.jpg") == 0)
+        return ID_pictures_45x60_10C_jpg;
+    if(strcmp(name, "pictures/45x60/10D.jpg") == 0)
+        return ID_pictures_45x60_10D_jpg;
+    if(strcmp(name, "pictures/45x60/12A.jpg") == 0)
+        return ID_pictures_45x60_12A_jpg;
+    if(strcmp(name, "pictures/45x60/12B.jpg") == 0)
+        return ID_pictures_45x60_12B_jpg;
+    if(strcmp(name, "pictures/45x60/12C.jpg") == 0)
+        return ID_pictures_45x60_12C_jpg;
+    if(strcmp(name, "pictures/45x60/12D.jpg") == 0)
+        return ID_pictures_45x60_12D_jpg;
+    if(strcmp(name, "pictures/45x60/13A.jpg") == 0)
+        return ID_pictures_45x60_13A_jpg;
+    if(strcmp(name, "pictures/45x60/13B.jpg") == 0)
+        return ID_pictures_45x60_13B_jpg;
+    if(strcmp(name, "pictures/45x60/13C.jpg") == 0)
+        return ID_pictures_45x60_13C_jpg;
+    if(strcmp(name, "pictures/45x60/13D.jpg") == 0)
+        return ID_pictures_45x60_13D_jpg;
+    if(strcmp(name, "pictures/45x60/14A.jpg") == 0)
+        return ID_pictures_45x60_14A_jpg;
+    if(strcmp(name, "pictures/45x60/14B.jpg") == 0)
+        return ID_pictures_45x60_14B_jpg;
+    if(strcmp(name, "pictures/45x60/14C.jpg") == 0)
+        return ID_pictures_45x60_14C_jpg;
+    if(strcmp(name, "pictures/45x60/14D.jpg") == 0)
+        return ID_pictures_45x60_14D_jpg;
+    if(strcmp(name, "pictures/45x60/15A.jpg") == 0)
+        return ID_pictures_45x60_15A_jpg;
+    if(strcmp(name, "pictures/45x60/15B.jpg") == 0)
+        return ID_pictures_45x60_15B_jpg;
+    if(strcmp(name, "pictures/45x60/15C.jpg") == 0)
+        return ID_pictures_45x60_15C_jpg;
+    if(strcmp(name, "pictures/45x60/15D.jpg") == 0)
+        return ID_pictures_45x60_15D_jpg;
+    if(strcmp(name, "pictures/45x60/2A.jpg") == 0)
+        return ID_pictures_45x60_2A_jpg;
+    if(strcmp(name, "pictures/45x60/2B.jpg") == 0)
+        return ID_pictures_45x60_2B_jpg;
+    if(strcmp(name, "pictures/45x60/2C.jpg") == 0)
+        return ID_pictures_45x60_2C_jpg;
+    if(strcmp(name, "pictures/45x60/2D.jpg") == 0)
+        return ID_pictures_45x60_2D_jpg;
+    if(strcmp(name, "pictures/45x60/3A.jpg") == 0)
+        return ID_pictures_45x60_3A_jpg;
+    if(strcmp(name, "pictures/45x60/3B.jpg") == 0)
+        return ID_pictures_45x60_3B_jpg;
+    if(strcmp(name, "pictures/45x60/3C.jpg") == 0)
+        return ID_pictures_45x60_3C_jpg;
+    if(strcmp(name, "pictures/45x60/3D.jpg") == 0)
+        return ID_pictures_45x60_3D_jpg;
+    if(strcmp(name, "pictures/45x60/45x60.jpg") == 0)
+        return ID_pictures_45x60_45x60_jpg;
+    if(strcmp(name, "pictures/45x60/4A.jpg") == 0)
+        return ID_pictures_45x60_4A_jpg;
+    if(strcmp(name, "pictures/45x60/4B.jpg") == 0)
+        return ID_pictures_45x60_4B_jpg;
+    if(strcmp(name, "pictures/45x60/4C.jpg") == 0)
+        return ID_pictures_45x60_4C_jpg;
+    if(strcmp(name, "pictures/45x60/4D.jpg") == 0)
+        return ID_pictures_45x60_4D_jpg;
+    if(strcmp(name, "pictures/45x60/5A.jpg") == 0)
+        return ID_pictures_45x60_5A_jpg;
+    if(strcmp(name, "pictures/45x60/5B.jpg") == 0)
+        return ID_pictures_45x60_5B_jpg;
+    if(strcmp(name, "pictures/45x60/5C.jpg") == 0)
+        return ID_pictures_45x60_5C_jpg;
+    if(strcmp(name, "pictures/45x60/5D.jpg") == 0)
+        return ID_pictures_45x60_5D_jpg;
+    if(strcmp(name, "pictures/45x60/6A.jpg") == 0)
+        return ID_pictures_45x60_6A_jpg;
+    if(strcmp(name, "pictures/45x60/6B.jpg") == 0)
+        return ID_pictures_45x60_6B_jpg;
+    if(strcmp(name, "pictures/45x60/6C.jpg") == 0)
+        return ID_pictures_45x60_6C_jpg;
+    if(strcmp(name, "pictures/45x60/6D.jpg") == 0)
+        return ID_pictures_45x60_6D_jpg;
+    if(strcmp(name, "pictures/45x60/7A.jpg") == 0)
+        return ID_pictures_45x60_7A_jpg;
+    if(strcmp(name, "pictures/45x60/7B.jpg") == 0)
+        return ID_pictures_45x60_7B_jpg;
+    if(strcmp(name, "pictures/45x60/7C.jpg") == 0)
+        return ID_pictures_45x60_7C_jpg;
+    if(strcmp(name, "pictures/45x60/7D.jpg") == 0)
+        return ID_pictures_45x60_7D_jpg;
+    if(strcmp(name, "pictures/45x60/8A.jpg") == 0)
+        return ID_pictures_45x60_8A_jpg;
+    if(strcmp(name, "pictures/45x60/8B.jpg") == 0)
+        return ID_pictures_45x60_8B_jpg;
+    if(strcmp(name, "pictures/45x60/8C.jpg") == 0)
+        return ID_pictures_45x60_8C_jpg;
+    if(strcmp(name, "pictures/45x60/8D.jpg") == 0)
+        return ID_pictures_45x60_8D_jpg;
+    if(strcmp(name, "pictures/45x60/9A.jpg") == 0)
+        return ID_pictures_45x60_9A_jpg;
+    if(strcmp(name, "pictures/45x60/9B.jpg") == 0)
+        return ID_pictures_45x60_9B_jpg;
+    if(strcmp(name, "pictures/45x60/9C.jpg") == 0)
+        return ID_pictures_45x60_9C_jpg;
+    if(strcmp(name, "pictures/45x60/9D.jpg") == 0)
+        return ID_pictures_45x60_9D_jpg;
+    if(strcmp(name, "pictures/80x110/10A.jpg") == 0)
+        return ID_pictures_80x110_10A_jpg;
+    if(strcmp(name, "pictures/80x110/10B.jpg") == 0)
+        return ID_pictures_80x110_10B_jpg;
+    if(strcmp(name, "pictures/80x110/10C.jpg") == 0)
+        return ID_pictures_80x110_10C_jpg;
+    if(strcmp(name, "pictures/80x110/10D.jpg") == 0)
+        return ID_pictures_80x110_10D_jpg;
+    if(strcmp(name, "pictures/80x110/12A.jpg") == 0)
+        return ID_pictures_80x110_12A_jpg;
+    if(strcmp(name, "pictures/80x110/12B.jpg") == 0)
+        return ID_pictures_80x110_12B_jpg;
+    if(strcmp(name, "pictures/80x110/12C.jpg") == 0)
+        return ID_pictures_80x110_12C_jpg;
+    if(strcmp(name, "pictures/80x110/12D.jpg") == 0)
+        return ID_pictures_80x110_12D_jpg;
+    if(strcmp(name, "pictures/80x110/13A.jpg") == 0)
+        return ID_pictures_80x110_13A_jpg;
+    if(strcmp(name, "pictures/80x110/13B.jpg") == 0)
+        return ID_pictures_80x110_13B_jpg;
+    if(strcmp(name, "pictures/80x110/13C.jpg") == 0)
+        return ID_pictures_80x110_13C_jpg;
+    if(strcmp(name, "pictures/80x110/13D.jpg") == 0)
+        return ID_pictures_80x110_13D_jpg;
+    if(strcmp(name, "pictures/80x110/14A.jpg") == 0)
+        return ID_pictures_80x110_14A_jpg;
+    if(strcmp(name, "pictures/80x110/14B.jpg") == 0)
+        return ID_pictures_80x110_14B_jpg;
+    if(strcmp(name, "pictures/80x110/14C.jpg") == 0)
+        return ID_pictures_80x110_14C_jpg;
+    if(strcmp(name, "pictures/80x110/14D.jpg") == 0)
+        return ID_pictures_80x110_14D_jpg;
+    if(strcmp(name, "pictures/80x110/15A.jpg") == 0)
+        return ID_pictures_80x110_15A_jpg;
+    if(strcmp(name, "pictures/80x110/15B.jpg") == 0)
+        return ID_pictures_80x110_15B_jpg;
+    if(strcmp(name, "pictures/80x110/15C.jpg") == 0)
+        return ID_pictures_80x110_15C_jpg;
+    if(strcmp(name, "pictures/80x110/15D.jpg") == 0)
+        return ID_pictures_80x110_15D_jpg;
+    if(strcmp(name, "pictures/80x110/2A.jpg") == 0)
+        return ID_pictures_80x110_2A_jpg;
+    if(strcmp(name, "pictures/80x110/2B.jpg") == 0)
+        return ID_pictures_80x110_2B_jpg;
+    if(strcmp(name, "pictures/80x110/2C.jpg") == 0)
+        return ID_pictures_80x110_2C_jpg;
+    if(strcmp(name, "pictures/80x110/2D.jpg") == 0)
+        return ID_pictures_80x110_2D_jpg;
+    if(strcmp(name, "pictures/80x110/3A.jpg") == 0)
+        return ID_pictures_80x110_3A_jpg;
+    if(strcmp(name, "pictures/80x110/3B.jpg") == 0)
+        return ID_pictures_80x110_3B_jpg;
+    if(strcmp(name, "pictures/80x110/3C.jpg") == 0)
+        return ID_pictures_80x110_3C_jpg;
+    if(strcmp(name, "pictures/80x110/3D.jpg") == 0)
+        return ID_pictures_80x110_3D_jpg;
+    if(strcmp(name, "pictures/80x110/4A.jpg") == 0)
+        return ID_pictures_80x110_4A_jpg;
+    if(strcmp(name, "pictures/80x110/4B.jpg") == 0)
+        return ID_pictures_80x110_4B_jpg;
+    if(strcmp(name, "pictures/80x110/4C.jpg") == 0)
+        return ID_pictures_80x110_4C_jpg;
+    if(strcmp(name, "pictures/80x110/4D.jpg") == 0)
+        return ID_pictures_80x110_4D_jpg;
+    if(strcmp(name, "pictures/80x110/5A.jpg") == 0)
+        return ID_pictures_80x110_5A_jpg;
+    if(strcmp(name, "pictures/80x110/5B.jpg") == 0)
+        return ID_pictures_80x110_5B_jpg;
+    if(strcmp(name, "pictures/80x110/5C.jpg") == 0)
+        return ID_pictures_80x110_5C_jpg;
+    if(strcmp(name, "pictures/80x110/5D.jpg") == 0)
+        return ID_pictures_80x110_5D_jpg;
+    if(strcmp(name, "pictures/80x110/6A.jpg") == 0)
+        return ID_pictures_80x110_6A_jpg;
+    if(strcmp(name, "pictures/80x110/6B.jpg") == 0)
+        return ID_pictures_80x110_6B_jpg;
+    if(strcmp(name, "pictures/80x110/6C.jpg") == 0)
+        return ID_pictures_80x110_6C_jpg;
+    if(strcmp(name, "pictures/80x110/6D.jpg") == 0)
+        return ID_pictures_80x110_6D_jpg;
+    if(strcmp(name, "pictures/80x110/7A.jpg") == 0)
+        return ID_pictures_80x110_7A_jpg;
+    if(strcmp(name, "pictures/80x110/7B.jpg") == 0)
+        return ID_pictures_80x110_7B_jpg;
+    if(strcmp(name, "pictures/80x110/7C.jpg") == 0)
+        return ID_pictures_80x110_7C_jpg;
+    if(strcmp(name, "pictures/80x110/7D.jpg") == 0)
+        return ID_pictures_80x110_7D_jpg;
+    if(strcmp(name, "pictures/80x110/80x110.jpg") == 0)
+        return ID_pictures_80x110_80x110_jpg;
+    if(strcmp(name, "pictures/80x110/8A.jpg") == 0)
+        return ID_pictures_80x110_8A_jpg;
+    if(strcmp(name, "pictures/80x110/8B.jpg") == 0)
+        return ID_pictures_80x110_8B_jpg;
+    if(strcmp(name, "pictures/80x110/8C.jpg") == 0)
+        return ID_pictures_80x110_8C_jpg;
+    if(strcmp(name, "pictures/80x110/8D.jpg") == 0)
+        return ID_pictures_80x110_8D_jpg;
+    if(strcmp(name, "pictures/80x110/9A.jpg") == 0)
+        return ID_pictures_80x110_9A_jpg;
+    if(strcmp(name, "pictures/80x110/9B.jpg") == 0)
+        return ID_pictures_80x110_9B_jpg;
+    if(strcmp(name, "pictures/80x110/9C.jpg") == 0)
+        return ID_pictures_80x110_9C_jpg;
+    if(strcmp(name, "pictures/80x110/9D.jpg") == 0)
+        return ID_pictures_80x110_9D_jpg;
+
+    return 0;
+}
+
+static void gui_imageFromFileInternal(GtkWidget** img, const char *name)
+{
+    if (name == NULL)
+        return;
+    if (img == NULL)
+        return;
+
+#ifdef WIN32
+    int id = gui_getResourceId(name);
+    if (id == 0)
+        return;
+
+    HRSRC res = FindResource(NULL, MAKEINTRESOURCE(id), "BINARY");
+    HGLOBAL resource = LoadResource(NULL, res);
+    void* resourceData = LockResource(resource);
+    DWORD resourceSize = SizeofResource(NULL, res);
+
+    char tempPath[1024] = {0};
+    char tempFile[1024] = {0};
+    GetTempPath(sizeof(tempPath) / sizeof(tempPath[0]), tempPath);
+    GetTempFileName(tempPath, "WHIST", 0, tempFile);
+
+    FILE* f = fopen(tempFile, "wb");
+    fwrite(resourceData, 1, resourceSize, f);
+    fclose(f);
+
+    if (*img == NULL)
+    {
+        *img = gtk_image_new_from_file(tempFile);
+    }
+    else
+    {
+        gtk_image_set_from_file(GTK_IMAGE(*img), tempFile);
+    }
+    unlink(tempFile);
+
+#else
+    if (*img == NULL)
+    {
+        *img = gtk_image_new_from_file(name);
+    }
+    else
+    {
+        gtk_image_set_from_file(GTK_IMAGE(*img), name);
+    }
+#endif
+
+    return;
+}
+
+GtkWidget *gui_imageNewFromFile(const char *name)
+{
+    if (name == NULL)
+        return NULL;
+
+    GtkWidget *image = NULL;
+    gui_imageFromFileInternal(&image, name);
+
+    return image;
+}
+
+void gui_imageSetFromFile(GtkWidget* image, const char* name)
+{
+    gui_imageFromFileInternal(&image, name);
 }
 

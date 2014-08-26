@@ -73,7 +73,7 @@ int InitWhistGame(const char *name, int gameType, int noOfBots, int *noOfGames)
 
     gui_createButtonStart(gameGUI);
 
-    gameGUI->imagePlayerTurn = gtk_image_new_from_file("pictures/playerTurn.png");
+    gameGUI->imagePlayerTurn = gui_imageNewFromFile("pictures/playerTurn.png");
     gtk_fixed_put(GTK_FIXED(gameGUI->fixedTable),
                   gameGUI->imagePlayerTurn, 0, 0);
 

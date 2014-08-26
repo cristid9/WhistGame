@@ -28,6 +28,7 @@ struct CardsFromTable {
 };
 
 struct PlayersGUI {
+    GtkWidget *rewardImage[MAX_GAME_PLAYERS];
     GtkWidget *image[MAX_GAME_PLAYERS];
     GtkWidget *nameLabel[MAX_GAME_PLAYERS];
     GtkWidget *bidsLabel[MAX_GAME_PLAYERS];
@@ -103,6 +104,19 @@ struct Input {
     GtkWidget *mainWindow;
     int noOfGames;
 };
+
+struct GameGUI* gui_changeGameGUI(const struct GameGUI* gameGUI,
+                                  const int onlyReturn);
+
+void gui_setGameGUI(const struct GameGUI* gameGUI);
+
+struct GameGUI* gui_getGameGUI();
+
+GtkWidget* gui_changeWindowScore(const GtkWidget *window, const int onlyReturn);
+
+void gui_setWindowScore(const GtkWidget *window);
+
+GtkWidget* gui_getWindowScore();
 
 /**
  * @brief Function initializes the window and add fixed in window.
@@ -185,6 +199,8 @@ int gui_gameType(GtkWidget *window, GtkWidget *fixed, GtkWidget **label,
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int gui_setBackground(GtkWidget *fixed, char *pathPicture);
+
+int gui_closeWhistGame(GtkWidget *window, gpointer unused);
 
 /**
  * @brief Function displays the score when is clicked the ShowScore button.
@@ -408,6 +424,8 @@ struct GameGUI *gui_createGameGUI();
 
 int gui_deleteGameGUI(struct GameGUI **gameGUI);
 
+int gui_hideRewardImages(struct PlayersGUI* playersGUI);
+
 int gui_startRound(struct GameGUI *gameGUI);
 
 int gui_startHand(struct GameGUI *gameGUI, int winnerPlayerId);
@@ -441,6 +459,10 @@ int gui_hideLastImageFromLimitTimeGUI(struct LimitTimeGUI *limitTimeGUI);
 int gui_startTime(struct GameGUI *gameGUI);
 
 gboolean gui_timer(gpointer data);
+
+GtkWidget *gui_imageNewFromFile(const char *name);
+
+void gui_imageSetFromFile(GtkWidget* image, const char* name);
 
 #endif
 
