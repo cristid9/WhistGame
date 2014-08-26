@@ -17,7 +17,7 @@
  * @return A value between 0 and roundType on success, a negative value on
  *         failure.
  */
-int robot_getBid(struct Player *player, struct Round *round);
+int robot_getBid(const struct Player* player, const struct Round* round);
 
 /**
  * @brief Function determines the position of the card on which the robot her 
@@ -29,7 +29,7 @@ int robot_getBid(struct Player *player, struct Round *round);
  * @return A value between 0 and roundType on success, a negative value on
  *         failure.
  */
-int robot_getCardId(struct Player *player, struct Round *round);
+int robot_getCardId(const struct Player* player, const struct Round* round);
 
 #endif
 

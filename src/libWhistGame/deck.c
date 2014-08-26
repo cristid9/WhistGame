@@ -41,7 +41,7 @@ struct Card *deck_createCard(enum Suit suit, int value)
     return card;
 }
 
-int deck_deleteCard(struct Card **card)
+int deck_deleteCard(struct Card** card)
 {
     if (card == NULL)
         return POINTER_NULL;
@@ -51,7 +51,7 @@ int deck_deleteCard(struct Card **card)
     free(*card);
     *card = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
 struct Deck *deck_createDeck(int playersNumber)
@@ -76,7 +76,7 @@ struct Deck *deck_createDeck(int playersNumber)
     return deck;
 }
 
-int deck_deleteDeck(struct Deck **deck)
+int deck_deleteDeck(struct Deck** deck)
 {
     if (deck == NULL)
         return POINTER_NULL;
@@ -89,10 +89,10 @@ int deck_deleteDeck(struct Deck **deck)
     free(*deck);
     *deck = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int deck_getDeckSize(struct Deck *deck)
+int deck_getDeckSize(const struct Deck* deck)
 {
     if (deck == NULL)
         return DECK_NULL;
@@ -105,7 +105,7 @@ int deck_getDeckSize(struct Deck *deck)
     return deckSize;
 }
 
-int deck_shuffleDeck(struct Deck *deck)
+int deck_shuffleDeck(struct Deck* deck)
 {
     if (deck == NULL)
         return DECK_NULL;
@@ -124,20 +124,19 @@ int deck_shuffleDeck(struct Deck *deck)
         deck->cards[b] = card;
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int deck_compareCards(struct Card *card1, struct Card *card2, enum Suit trump)
+int deck_compareCards(const struct Card* card1, const struct Card* card2,
+                      enum Suit trump)
 {
     if (card1 == NULL || card2 == NULL)
         return CARD_NULL;
-
     if (card1->suit == card2->suit && card1->value == card2->value)
         return 0;
 
     int value1 = card1->value;
     int value2 = card2->value;
-
     if ((card1->suit == trump && card2->suit != trump) ||
         (card1->suit == card2->suit && value1 > value2) ||
         (card1->suit != card2->suit && card2->suit != trump))

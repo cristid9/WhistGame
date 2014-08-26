@@ -17,8 +17,11 @@ src/libWhistGame/.deps/
 src/libWhistGame/.dirstamp
 src/AI/.deps/
 src/AI/.dirstamp
+src/WhistGameGUI/.deps
+src/WhistGameGUI/.dirstamp
 src/config.h
 src/stamp-h1
+src/Whist
 autom4te.cache/
 test/run-test.sh.trs
 ipch/

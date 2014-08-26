@@ -9,8 +9,9 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
-struct Player *player_createPlayer(char *name, int isHuman)
+struct Player *player_createPlayer(const char* name, int isHuman)
 {
     if (name == NULL)
         return NULL;
@@ -33,7 +34,7 @@ struct Player *player_createPlayer(char *name, int isHuman)
     return player;
 }
 
-int player_deletePlayer(struct Player **player)
+int player_deletePlayer(struct Player** player)
 {
     if (player == NULL)
         return POINTER_NULL;
@@ -46,10 +47,10 @@ int player_deletePlayer(struct Player **player)
     free(*player);
     *player = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int player_addCard(struct Player *player, struct Card **card)
+int player_addCard(struct Player* player, struct Card** card)
 {
     if (player == NULL)
         return PLAYER_NULL;
@@ -61,7 +62,7 @@ int player_addCard(struct Player *player, struct Card **card)
     int position = -1;
     for (int i = 0; i < MAX_CARDS; i++) {
         if (player->hand[i] == *card)
-            return DUPLICATE;
+            return DUPLICATE_POINTER;
         if (position == -1 && player->hand[i] == NULL)
             position = i;
     }
@@ -69,9 +70,63 @@ int player_addCard(struct Player *player, struct Card **card)
     if (position != -1) {
         player->hand[position] = *card;
         *card = NULL;
-        return NO_ERROR;
+        return FUNCTION_NO_ERROR;
     }
 
     return FULL;
+}
+
+int player_compareCards(const void* const a, const void* const b)
+{
+    int suit = (*(struct Card**)a)->suit - (*(struct Card**)b)->suit;
+    int value = (*(struct Card**)a)->value - (*(struct Card**)b)->value;
+    if (suit == 0)
+        return value;
+
+    return suit;
+}
+
+int player_checkPlayerName(const char* name)
+{
+    if (name == NULL)
+        return POINTER_NULL;
+
+    int firstLetter = (int)tolower(name[0]);
+    if (strlen(name) < 5 || firstLetter < 97 || firstLetter > 122)
+        return INCORRECT_NAME;
+
+    return FUNCTION_NO_ERROR;
+}
+
+int player_getIdNumberthCardWhichIsNotNull(const struct Player* player,
+                                           int number)
+{
+    if (player == NULL)
+        return PLAYER_NULL;
+    if (number < 1 || number > MAX_CARDS)
+        return ILLEGAL_VALUE;
+
+    int noOfCards = 0;
+    for (int i = 0; i < MAX_CARDS; i++)
+        if (player->hand[i] != NULL) {
+            noOfCards++;
+            if (noOfCards == number)
+                return i;
+        }
+
+    return ILLEGAL_VALUE;
+}
+
+int player_getCardsNumber(const struct Player* player)
+{
+    if (player == NULL)
+        return PLAYER_NULL;
+
+    int cardsNumber = 0;
+    for (int i = 0; i < MAX_CARDS; i++)
+        if (player->hand[i] != NULL)
+            cardsNumber++;
+
+    return cardsNumber;
 }
 

@@ -20,6 +20,7 @@ struct Game *game_createGame(int gameType)
         return NULL;
 
     game->playersNumber = 0;
+    game->currentRound  = -1;
     game->gameType      = gameType;
     game->deck          = NULL;
 
@@ -31,7 +32,7 @@ struct Game *game_createGame(int gameType)
     return game;
 }
 
-int game_deleteGame(struct Game **game)
+int game_deleteGame(struct Game** game)
 {
     if (game == NULL)
         return POINTER_NULL;
@@ -52,10 +53,10 @@ int game_deleteGame(struct Game **game)
     free(*game);
     *game = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int game_addDeck(struct Game *game, struct Deck **deck)
+int game_addDeck(struct Game* game, struct Deck** deck)
 {
     if (game == NULL)
         return GAME_NULL;
@@ -70,10 +71,10 @@ int game_addDeck(struct Game *game, struct Deck **deck)
     game->deck = *deck;
     *deck = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int game_addPlayer(struct Game *game, struct Player **player)
+int game_addPlayer(struct Game* game, struct Player** player)
 {
     if (game == NULL)
         return GAME_NULL;
@@ -84,7 +85,7 @@ int game_addPlayer(struct Game *game, struct Player **player)
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
         if (game->players[i] == *player)
-            return DUPLICATE;
+            return DUPLICATE_POINTER;
         if (game->players[i] != NULL && 
             !strcmp(game->players[i]->name, (*player)->name))
             return DUPLICATE_NAME;
@@ -96,13 +97,13 @@ int game_addPlayer(struct Game *game, struct Player **player)
             game->players[i] = *player;
             *player = NULL;
             game->playersNumber++;
-            return NO_ERROR;
+            return FUNCTION_NO_ERROR;
         }
 
     return FULL;
 }
 
-int game_addRound(struct Game *game, struct Round **round)
+int game_addRound(struct Game* game, struct Round** round)
 {
     if (game == NULL)
         return GAME_NULL;
@@ -113,19 +114,19 @@ int game_addRound(struct Game *game, struct Round **round)
 
     for (int i = 0; i < MAX_GAME_ROUNDS; i++)
         if (game->rounds[i] == *round)
-            return DUPLICATE;
+            return DUPLICATE_POINTER;
 
     for (int i = 0; i < MAX_GAME_ROUNDS; i++)
         if (game->rounds[i] == NULL) {
             game->rounds[i] = *round;
             *round = NULL;
-            return NO_ERROR;
+            return FUNCTION_NO_ERROR;
         }
 
     return FULL;
 }
 
-int game_addPlayersInRound(struct Game *game, struct Round *round,
+int game_addPlayersInRound(const struct Game* game, struct Round* round,
                            int firstPlayer)
 {
     if (game == NULL)
@@ -142,10 +143,23 @@ int game_addPlayersInRound(struct Game *game, struct Round *round,
     for (int i = 0; i < firstPlayer; i++)
         round_addPlayer(round, game->players[i]);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int game_createAndAddRounds(struct Game *game)
+int game_addPlayersInAllRounds(const struct Game* game)
+{
+    if (game == NULL)
+        return GAME_NULL;
+
+    for (int i = 0; i < MAX_GAME_ROUNDS; i++)
+        if (game->rounds[i] != NULL)
+            game_addPlayersInRound(game, game->rounds[i],
+                                   i % game->playersNumber);
+
+    return FUNCTION_NO_ERROR;
+}
+
+int game_createAndAddRounds(struct Game* game)
 {
     if (game == NULL)
         return GAME_NULL;
@@ -191,10 +205,10 @@ int game_createAndAddRounds(struct Game *game)
         game_addRound(game, &round);
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int game_rewardsPlayer(struct Game *game, struct Player *player,
+int game_rewardsPlayer(const struct Game* game, const struct Player* player,
                        int currentRound)
 {
     if (game == NULL)
@@ -204,7 +218,7 @@ int game_rewardsPlayer(struct Game *game, struct Player *player,
     if (currentRound < 0 || currentRound >= MAX_GAME_ROUNDS)
         return ILLEGAL_VALUE;
     if (currentRound - BONUS_ROUNDS_NUMBER + 1 < 0)
-        return NO_ERROR;
+        return FUNCTION_NO_ERROR;
 
     int wonRounds  = 0;
     int lostRounds = 0;
@@ -235,21 +249,21 @@ int game_rewardsPlayer(struct Game *game, struct Player *player,
     }
     if (lostRounds == BONUS_ROUNDS_NUMBER) {
         game->rounds[currentRound]->pointsNumber[position] -= BONUS;
-        game->rounds[currentRound]->bonus[position]         = 1;
+        game->rounds[currentRound]->bonus[position]         = 2;
         return 2;
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int game_rewardsPlayersFromGame(struct Game *game, int currentRound)
+int game_rewardsPlayersFromGame(const struct Game* game, int currentRound)
 {
     if (game == NULL)
         return GAME_NULL;
     if (currentRound < 0 || currentRound >= MAX_GAME_ROUNDS)
         return ILLEGAL_VALUE;
-    if (currentRound - BONUS_ROUNDS_NUMBER < 0)
-        return NO_ERROR;
+    if (currentRound - BONUS_ROUNDS_NUMBER + 1 < 0)
+        return FUNCTION_NO_ERROR;
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++)
         if (game->players[i] != NULL) {
@@ -259,6 +273,66 @@ int game_rewardsPlayersFromGame(struct Game *game, int currentRound)
                 return result;
         }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
+}
+
+int game_getPlayerPosition(const struct Game *game,
+                           const struct Player *player)
+{
+    if (game == NULL)
+        return GAME_NULL;
+    if (player == NULL)
+        return PLAYER_NULL;
+
+    int position = -1;
+    for (int i = 0; i < MAX_GAME_PLAYERS; i++)
+        if (game->players[i] != NULL) {
+            position++;
+            if (game->players[i] == player)
+                return position;
+        }
+
+    return NOT_FOUND;
+}
+
+int game_checkIfPlayerIsAtReward(const struct Game* game, int currentRound,
+                                 const struct Player* player)
+{
+    if (game == NULL)
+        return GAME_NULL;
+    if (player == NULL)
+        return PLAYER_NULL;
+    if (currentRound < 0 || currentRound >= MAX_GAME_ROUNDS)
+        return ILLEGAL_VALUE;
+    if (currentRound - BONUS_ROUNDS_NUMBER + 1 < 0)
+        return FUNCTION_NO_ERROR;
+
+    int wonRounds  = 0;
+    int lostRounds = 0;
+    int i = currentRound - BONUS_ROUNDS_NUMBER + 1;
+
+    for (; i < currentRound; i++)
+        if (game->rounds[i] != NULL) {
+            int position = round_getPlayerId(game->rounds[i], player);
+            if (position < 0)
+                return position;
+            if (game->rounds[i]->bonus[position] == 0 && 
+                game->rounds[i]->roundType != 1) {
+                if (game->rounds[i]->bids[position] == 
+                    game->rounds[i]->handsNumber[position])
+                    wonRounds++;
+                else
+                    lostRounds++;
+            }
+        } else {
+            return ROUND_NULL;
+        }
+
+    if (wonRounds == BONUS_ROUNDS_NUMBER - 1)
+        return 1;
+    if (lostRounds == BONUS_ROUNDS_NUMBER - 1)
+        return 2;
+
+    return FUNCTION_NO_ERROR;
 }
 

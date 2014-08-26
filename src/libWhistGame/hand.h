@@ -38,9 +38,9 @@ struct Hand *hand_createHand();
  *
  * @param hand Pointer to pointer to the hand which to be released.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int hand_deleteHand(struct Hand **hand);
+int hand_deleteHand(struct Hand** hand);
 
 /**
  * @brief Function adds a player in a hand.
@@ -48,9 +48,9 @@ int hand_deleteHand(struct Hand **hand);
  * @param hand Pointer to the hand in which is added the player.
  * @param player Pointer to the player which to be added.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int hand_addPlayer(struct Hand *hand, struct Player *player);
+int hand_addPlayer(struct Hand* hand, struct Player* player);
 
 /**
  * @brief Function adds a card in a hand.
@@ -59,9 +59,10 @@ int hand_addPlayer(struct Hand *hand, struct Player *player);
  * @param player Pointer to the player which places the card.
  * @param card Pointer to pointer to the card which is added.
  *
- * @return NO_ERROR or 0 on success, other value on failure.
+ * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
-int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card);
+int hand_addCard(struct Hand* hand, const struct Player* player,
+                 struct Card** card);
 
 /**
  * @brief Function checks if a card can be put down.
@@ -76,8 +77,19 @@ int hand_addCard(struct Hand *hand, struct Player *player, struct Card **card);
  *         0 if the card can't be put down. 
  *         other value on failure.
  */
-int hand_checkCard(struct Hand *hand, struct Player *player,
-                   int cardId, struct Card *trump);
+int hand_checkCard(const struct Hand* hand, const struct Player* player,
+                   int cardId, const struct Card* trump);
+
+/**
+ * @brief Function get the id of the player.
+ *
+ * @param hand Pointer to the hand in which is the player.
+ * @param player Pointer to the player for which it get the id.
+ *
+ * @return A number between 0 and MAX_GAME_PLAYERS - 1 on success, a negative
+ *         value on failure.
+ */
+int hand_getPlayerId(const struct Hand* hand, const struct Player* player);
 
 #endif
 

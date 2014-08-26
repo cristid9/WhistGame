@@ -7,8 +7,9 @@
 #include "robot.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
-int robot_getBid(struct Player *player, struct Round *round)
+int robot_getBid(const struct Player* player, const struct Round* round)
 {
     if (player == NULL)
         return PLAYER_NULL;
@@ -19,12 +20,12 @@ int robot_getBid(struct Player *player, struct Round *round)
         for (int i = 0; i < MAX_CARDS; i++)
             if (player->hand[i] != NULL &&
                 player->hand[i]->suit == round->trump->suit) {
-                if (round_checkBid(round, player, 1) == NO_ERROR)
+                if (round_checkBid(round, player, 1) == FUNCTION_NO_ERROR)
                     return 1;
                 else
                     return 0;
             }
-        if (round_checkBid(round, player, 0) == NO_ERROR)
+        if (round_checkBid(round, player, 0) == FUNCTION_NO_ERROR)
             return 0;
         else
             return 1;
@@ -38,7 +39,7 @@ int robot_getBid(struct Player *player, struct Round *round)
                     player->hand[i]->value == 14)
                     bids++;
             }
-        if (round_checkBid(round, player, bids) == NO_ERROR)
+        if (round_checkBid(round, player, bids) == FUNCTION_NO_ERROR)
             return bids;
         if (bids - 1 < 0)
             return bids + 1;
@@ -53,7 +54,7 @@ int robot_getBid(struct Player *player, struct Round *round)
                 player->hand[i]->value >= 10) || player->hand[i]->value == 15)
                 bids++;
         }
-    if (round_checkBid(round, player, bids) == NO_ERROR)
+    if (round_checkBid(round, player, bids) == FUNCTION_NO_ERROR)
         return bids;
     if (bids - 1 < 0)
         return bids + 1;
@@ -61,7 +62,7 @@ int robot_getBid(struct Player *player, struct Round *round)
         return bids - 1;
 }
 
-int robot_getCardId(struct Player *player, struct Round *round)
+int robot_getCardId(const struct Player* player, const struct Round* round)
 {
     if (player == NULL)
         return PLAYER_NULL;
@@ -77,7 +78,7 @@ int robot_getCardId(struct Player *player, struct Round *round)
     if (round->hand->players[0] == player) {
         if (round->bids[playerId] > round->handsNumber[playerId]) {
             int max = 0;
-            int position = 0;
+            int position = -1;
             for (int i = 0; i < MAX_CARDS; i++)
                 if (player->hand[i] != NULL) {
                     if (player->hand[i]->value > max) {
@@ -85,30 +86,32 @@ int robot_getCardId(struct Player *player, struct Round *round)
                         position = i;
                     }
                 }
-            return position;
+            if (position > -1)
+                return position;
         } else {
-            int min = 15;
-            int position  = 0;
+            int min = 16;
+            int position  = -1;
             for (int i = 0; i < MAX_CARDS; i++)
                 if (player->hand[i] != NULL)
                     if (player->hand[i]->value < min) {
                         min = player->hand[i]->value;
                         position = i;
                     }
-            return position;
+            if (position > -1)
+                return position;
         }
     }
 
     int numberOfTrumps       =  0;
     int maxValueTrump        =  0;
     int posMaxValueTrump     = -1;
-    int minValueTrump        = 15;
+    int minValueTrump        = 16;
     int posMinValueTrump     = -1;
 
     int numberOfFirstCard    =  0;
     int maxValueFirstCard    =  0;
     int posMaxValueFirstCard = -1;
-    int minValueFirstCard    = 15;
+    int minValueFirstCard    = 16;
     int posMinValueFirstCard = -1;
 
     for (int i = 0; i < MAX_CARDS; i++) {
@@ -145,39 +148,41 @@ int robot_getCardId(struct Player *player, struct Round *round)
     }
 
     if (round->bids[playerId] > round->handsNumber[playerId]) {
-        if (numberOfFirstCard > 0) {
+        if (posMaxValueFirstCard >= 0 && numberOfFirstCard > 0) {
             return posMaxValueFirstCard;
         } else {
-            if (numberOfTrumps > 0) {
+            if (posMaxValueTrump >= 0 && numberOfTrumps > 0) {
                 return posMaxValueTrump;
             } else {
-                int min = 15;
-                int pos = 0;
+                int min = 16;
+                int pos = -1;
                 for (int i = 0; i < MAX_CARDS; i++)
                     if (player->hand[i] != NULL)
                         if (player->hand[i]->value < min) {
                             min = player->hand[i]->value;
                             pos = i;
                         }
-                return pos;
+                if (pos > -1)
+                    return pos;
             }
         }
     } else {
-        if (numberOfFirstCard > 0) {
+        if (posMinValueFirstCard >= 0 && numberOfFirstCard > 0) {
             return posMinValueFirstCard;
         } else {
-            if (numberOfTrumps > 0) {
+            if (posMinValueTrump >= 0 && numberOfTrumps > 0) {
                 return posMinValueTrump;
             } else {
                 int max = 0;
-                int pos = 0;
+                int pos = -1;
                 for (int i = 0; i < MAX_CARDS; i++)
                     if (player->hand[i] != NULL)
                         if (player->hand[i]->value > max) {
                             max = player->hand[i]->value;
                             pos = i;
                         }
-                return pos;
+                if (pos > -1)
+                    return pos;
             }
         }
     }

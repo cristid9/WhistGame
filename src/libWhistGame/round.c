@@ -33,7 +33,7 @@ struct Round *round_createRound(int roundType)
     return round;
 }
 
-int round_deleteRound(struct Round **round)
+int round_deleteRound(struct Round** round)
 {
     if (round == NULL)
         return POINTER_NULL;
@@ -51,10 +51,10 @@ int round_deleteRound(struct Round **round)
     free(*round);
     *round = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int round_addPlayer(struct Round *round, struct Player *player)
+int round_addPlayer(struct Round* round, struct Player* player)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -64,20 +64,20 @@ int round_addPlayer(struct Round *round, struct Player *player)
     int position = -1;
     for (int i = MAX_GAME_PLAYERS - 1; i >= 0; i--) {
         if (round->players[i] == player)
-            return DUPLICATE;
+            return DUPLICATE_POINTER;
         if (round->players[i] == NULL)
             position = i;
     }
 
     if (position != -1) {
         round->players[position] = player;
-        return NO_ERROR;
+        return FUNCTION_NO_ERROR;
     }
 
     return FULL;
 }
 
-int round_addHand(struct Round *round, struct Hand **hand)
+int round_addHand(struct Round* round, struct Hand** hand)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -92,10 +92,10 @@ int round_addHand(struct Round *round, struct Hand **hand)
     round->hand = *hand;
     *hand = NULL;    
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int round_addTrump(struct Round *round, struct Card **trump)
+int round_addTrump(struct Round* round, struct Card** trump)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -108,10 +108,10 @@ int round_addTrump(struct Round *round, struct Card **trump)
     round->trump = *trump;
     *trump = NULL;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int round_addPlayersInHand(struct Round *round, int firstPlayer)
+int round_addPlayersInHand(const struct Round* round, int firstPlayer)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -133,10 +133,10 @@ int round_addPlayersInHand(struct Round *round, int firstPlayer)
     for (int i = 0; i < firstPlayer; i++)
         hand_addPlayer(round->hand, round->players[i]);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int round_distributeCard(struct Round *round, struct Deck *deck)
+int round_distributeCard(const struct Round* round, struct Deck* deck)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -164,15 +164,15 @@ int round_distributeCard(struct Round *round, struct Deck *deck)
             i++;
         if (i < MAX_GAME_PLAYERS && j < DECK_SIZE) {
             int check = player_addCard(round->players[i], &deck->cards[j]);
-            if (check != NO_ERROR)
+            if (check != FUNCTION_NO_ERROR)
                 return check;
         }
     }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int round_distributeDeck(struct Round *round, struct Deck *deck)
+int round_distributeDeck(struct Round* round, struct Deck* deck)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -181,7 +181,7 @@ int round_distributeDeck(struct Round *round, struct Deck *deck)
 
     for (int i = MIN_CARDS; i <= round->roundType; i++) {
         int check = round_distributeCard(round, deck);
-        if (check != NO_ERROR)
+        if (check != FUNCTION_NO_ERROR)
             return check;
     }
 
@@ -192,10 +192,11 @@ int round_distributeDeck(struct Round *round, struct Deck *deck)
     if (i < DECK_SIZE)
         round_addTrump(round, &deck->cards[i]);
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int round_getPlayerId(struct Round *round, struct Player *player)
+int round_getPlayerId(const struct Round* round,
+                      const struct Player* player)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -209,7 +210,7 @@ int round_getPlayerId(struct Round *round, struct Player *player)
     return NOT_FOUND;
 }
 
-int round_getBidsSum(struct Round *round)
+int round_getBidsSum(const struct Round* round)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -222,14 +223,15 @@ int round_getBidsSum(struct Round *round)
     return sum;
 }
 
-int round_checkBid(struct Round *round, struct Player *player, int bid)
+int round_checkBid(const struct Round* round,
+                   const struct Player* player, int bid)
 {
     if (round == NULL)
         return ROUND_NULL;
     if (player == NULL)
         return PLAYER_NULL;
     if (bid < MIN_CARDS - 1 || bid > round->roundType)
-        return ILLEGAL_VALUE;
+        return ILLEGAL_BID;
 
     int position = round_getPlayerId(round, player);
     if (position < 0)
@@ -237,15 +239,15 @@ int round_checkBid(struct Round *round, struct Player *player, int bid)
 
     for (int i = position + 1; i < MAX_GAME_PLAYERS; i++)
         if (round->players[i] != NULL)
-            return NO_ERROR;
+            return FUNCTION_NO_ERROR;
 
     if (round_getBidsSum(round) + bid == round->roundType)
-        return 1;
+        return ILLEGAL_BID;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int round_placeBid(struct Round *round, struct Player *player, int bid)
+int round_placeBid(struct Round* round, const struct Player* player, int bid)
 {
     int check = round_checkBid(round, player, bid);
     if (check != 0)
@@ -254,10 +256,10 @@ int round_placeBid(struct Round *round, struct Player *player, int bid)
     int position = round_getPlayerId(round, player);
     round->bids[position] = bid;
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-struct Player *round_getPlayerWhichWonHand(struct Round *round)
+struct Player *round_getPlayerWhichWonHand(const struct Round* round)
 {
     if (round == NULL || round->hand == NULL)
         return NULL;
@@ -291,7 +293,7 @@ struct Player *round_getPlayerWhichWonHand(struct Round *round)
     return winningPlayer;
 }
 
-int round_determinesScore(struct Round *round)
+int round_determinesScore(struct Round* round)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -308,10 +310,10 @@ int round_determinesScore(struct Round *round)
             }
         }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int round_copyScore(struct Round *round1, struct Round *round2)
+int round_copyScore(const struct Round* round1, struct Round* round2)
 {
     if (round1 == NULL || round2 == NULL)
         return ROUND_NULL;
@@ -325,10 +327,10 @@ int round_copyScore(struct Round *round1, struct Round *round2)
                 return position;
         }
 
-    return NO_ERROR;
+    return FUNCTION_NO_ERROR;
 }
 
-int round_repeatRound(struct Round *round)
+int round_repeatRound(const struct Round* round)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -336,12 +338,12 @@ int round_repeatRound(struct Round *round)
     for (int i = 0; i < MAX_GAME_PLAYERS; i++)
         if (round->players[i] != NULL && 
             round->bids[i] == round->handsNumber[i])
-            return NO_ERROR;
+            return FUNCTION_NO_ERROR;
 
     return 1;
 }
 
-int round_reinitializeRound(struct Round *round)
+int round_reinitializeRound(struct Round* round)
 {
     if (round == NULL)
         return ROUND_NULL;
@@ -351,6 +353,9 @@ int round_reinitializeRound(struct Round *round)
         round->handsNumber[i] = 0;
     }
 
-    return NO_ERROR;
+    deck_deleteCard(&(round->trump));
+    hand_deleteHand(&(round->hand));
+
+    return FUNCTION_NO_ERROR;
 }
 

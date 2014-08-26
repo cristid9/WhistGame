@@ -22,7 +22,7 @@ void test_hand_createHand()
 void test_hand_deleteHand()
 {
     struct Hand *hand = hand_createHand();
-    cut_assert_equal_int(NO_ERROR, hand_deleteHand(&hand));
+    cut_assert_equal_int(FUNCTIOON_NO_ERROR, hand_deleteHand(&hand));
     cut_assert_equal_pointer(NULL, hand);
     cut_assert_equal_int(HAND_NULL, hand_deleteHand(&hand));
     cut_assert_equal_int(POINTER_NULL, hand_deleteHand(NULL));
@@ -40,8 +40,10 @@ void test_hand_addPlayer()
 
     for (int i = 1; i <= MAX_GAME_PLAYERS; i++) {
         players[i] = player_createPlayer("A", i);
-        cut_assert_equal_int(NO_ERROR, hand_addPlayer(hand, players[i]));
-        cut_assert_equal_int(DUPLICATE, hand_addPlayer(hand, players[i]));
+        cut_assert_equal_int(FUNCTIOON_NO_ERROR,
+                             hand_addPlayer(hand, players[i]));
+        cut_assert_equal_int(DUPLICATE_POINTER,
+                             hand_addPlayer(hand, players[i]));
         int check = 0;
         for (int j = 0; j < MAX_GAME_PLAYERS; j++)
             if (players[i] == hand->players[j])
@@ -66,7 +68,7 @@ void test_hand_addCard()
         hand_addPlayer(hand, players[i]);
         struct Card *card  = deck->cards[i];
         struct Card *card2 = deck->cards[i];
-        cut_assert_equal_int(NO_ERROR, 
+        cut_assert_equal_int(FUNCTIOON_NO_ERROR, 
                             hand_addCard(hand, players[i], &(deck->cards[i])));
         cut_assert_equal_pointer(NULL, deck->cards[i]);
         int check = 0;
