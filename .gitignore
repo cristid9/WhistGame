@@ -17,8 +17,8 @@ src/libWhistGame/.deps/
 src/libWhistGame/.dirstamp
 src/AI/.deps/
 src/AI/.dirstamp
-src/WhistGameGUI/.deps
-src/WhistGameGUI/.dirstamp
+src/Graphics/.deps
+src/Graphics/.dirstamp
 src/config.h
 src/stamp-h1
 src/Whist
