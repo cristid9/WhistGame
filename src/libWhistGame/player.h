@@ -28,6 +28,10 @@ struct Player {
     struct Card *hand[MAX_CARDS];
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Allocates and initializes a player.
  *
@@ -102,6 +106,10 @@ int player_getIdNumberthCardWhichIsNotNull(const struct Player* player,
  *         PLAYER_NULL on failure.
  */
 int player_getCardsNumber(const struct Player* player);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

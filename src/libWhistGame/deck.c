@@ -14,7 +14,7 @@
 /**
  * Constants for game values
  */
-const int VALUES[] = {3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, -1};
+static const int VALUES[] = {3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, -1};
 
 struct Card *deck_createCard(enum Suit suit, int value)
 {

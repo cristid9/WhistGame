@@ -26,6 +26,10 @@ struct Hand {
     struct Player *players[MAX_GAME_PLAYERS];
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Function allocates and initializes a hand.
  *
@@ -90,6 +94,10 @@ int hand_checkCard(const struct Hand* hand, const struct Player* player,
  *         value on failure.
  */
 int hand_getPlayerId(const struct Hand* hand, const struct Player* player);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

@@ -7,7 +7,6 @@
 #include "robot.h"
 
 #include <stdlib.h>
-#include <stdio.h>
 
 int robot_getBid(const struct Player* player, const struct Round* round)
 {

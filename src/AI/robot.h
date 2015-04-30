@@ -8,6 +8,10 @@
 
 #include <libWhistGame.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Function determines the number of bids on which him will bid the robot.
  *
@@ -30,6 +34,10 @@ int robot_getBid(const struct Player* player, const struct Round* round);
  *         failure.
  */
 int robot_getCardId(const struct Player* player, const struct Round* round);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

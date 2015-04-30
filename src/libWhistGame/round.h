@@ -46,6 +46,10 @@ struct Round {
     struct Hand *hand;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Function allocates and initializes a round.
  *
@@ -221,6 +225,10 @@ int round_repeatRound(const struct Round* round);
  * @return FUNCTION_NO_ERROR or 0 on success, other value on failure.
  */
 int round_reinitializeRound(struct Round* round);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

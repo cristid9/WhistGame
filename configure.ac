@@ -8,6 +8,9 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([subdir-objects])
 
+AC_PROG_CXX
+AC_LANG_PUSH([C++])
+AX_CXX_COMPILE_STDCXX_11
 AC_PROG_LIBTOOL
 
 AC_CHECK_CUTTER
@@ -16,5 +19,5 @@ AM_CONDITIONAL(CUTTER, test x"$cutter_use_cutter" = x"yes")
 AC_CONFIG_FILES([Makefile
                  src/Makefile
 		 test/Makefile])
-
+CXXFLAGS="$CXXFLAGS -std=c++0x -Wall"
 AC_OUTPUT

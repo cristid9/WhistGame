@@ -14,13 +14,6 @@
 enum Suit {DIAMONDS = 0, CLUBS, SPADES, HEARTS, SuitEnd};
 
 /**
- * @brief Game values for cards.
- *
- * -1 is a flag used when iterating.
- */
-const int VALUES[13];
-
-/**
  * @brief The maximum number of cards in a deck.
  */
 #define DECK_SIZE 48

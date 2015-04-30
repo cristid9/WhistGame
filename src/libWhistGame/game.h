@@ -38,6 +38,10 @@ struct Game {
     struct Round *rounds[MAX_GAME_ROUNDS];
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Function allocates and initializes a game.
  *
@@ -172,6 +176,10 @@ int game_getPlayerPosition(const struct Game *game,
  */
 int game_checkIfPlayerIsAtReward(const struct Game* game, int currentRound,
                                  const struct Player* player);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

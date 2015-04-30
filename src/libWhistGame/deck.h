@@ -36,6 +36,10 @@ struct Deck {
     struct Card *cards[DECK_SIZE];
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Allocates and initializes a card.
  *
@@ -106,6 +110,10 @@ int deck_shuffleDeck(struct Deck* deck);
 */
 int deck_compareCards(const struct Card* card1, const struct Card* card2,
                       enum Suit trump);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
