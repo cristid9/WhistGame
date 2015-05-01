@@ -19,6 +19,16 @@ src/AI/.deps/
 src/AI/.dirstamp
 src/Graphics/.deps
 src/Graphics/.dirstamp
+src/ClientWhist/.deps
+src/ClientWhist/.dirstamp
+src/ServerWhist/.deps
+src/ServerWhist/.dirstamp
+src/ServerWhist/database/.deps
+src/ServerWhist/database/.dirstamp
+src/ServerWhist/parser/.deps
+src/ServerWhist/parser/.dirstamp
+src/ServerWhist/server/.deps
+src/ServerWhist/server/.dirstamp
 src/config.h
 src/stamp-h1
 src/Whist
