@@ -22,6 +22,8 @@ src/Graphics/.dirstamp
 src/config.h
 src/stamp-h1
 src/Whist
+src/ClientTest
+src/Server
 autom4te.cache/
 test/run-test.sh.trs
 ipch/
