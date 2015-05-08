@@ -5,6 +5,8 @@
 #include <cutter.h>
 #include <stdlib.h>
 
+static const int VALUES[] = {3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, -1};
+
 void test_round_createRound()
 {
     cut_assert_equal_pointer(NULL, round_createRound(MIN_CARDS - 1));
@@ -35,7 +37,7 @@ void test_round_deleteRound()
 {
     struct Round *round = round_createRound(MIN_CARDS);
     cut_assert_equal_int(POINTER_NULL, round_deleteRound(NULL));
-    cut_assert_equal_int(FUNCTIOON_NO_ERROR, round_deleteRound(&round));
+    cut_assert_equal_int(FUNCTION_NO_ERROR, round_deleteRound(&round));
     cut_assert_equal_int(ROUND_NULL, round_deleteRound(&round));
     cut_assert_equal_pointer(NULL, round);
 }
@@ -53,7 +55,7 @@ void test_round_addPlayer()
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
         players[i] = player_createPlayer("A", i);
-        cut_assert_equal_int(FUNCTIOON_NO_ERROR,
+        cut_assert_equal_int(FUNCTION_NO_ERROR,
                              round_addPlayer(round, players[i]));
         cut_assert_equal_int(DUPLICATE_POINTER,
                              round_addPlayer(round, players[i]));
@@ -80,7 +82,7 @@ void test_round_addHand()
     cut_assert_equal_int(ROUND_NULL, round_addHand(NULL, &hand));
     cut_assert_equal_int(POINTER_NULL, round_addHand(round, NULL));
     cut_assert_operator_int(0, >, round_addHand(NULL, NULL));
-    cut_assert_equal_int(FUNCTIOON_NO_ERROR, round_addHand(round, &hand));
+    cut_assert_equal_int(FUNCTION_NO_ERROR, round_addHand(round, &hand));
     cut_assert_equal_int(HAND_NULL, round_addHand(round, &hand));
     cut_assert_equal_pointer(NULL, hand);
     int check = 0;
@@ -100,10 +102,10 @@ void test_round_addTrump()
     cut_assert_equal_int(ROUND_NULL, round_addTrump(NULL, &trump));
     cut_assert_equal_int(POINTER_NULL, round_addTrump(round, NULL));
     cut_assert_operator_int(0, >, round_addTrump(NULL, NULL));
-    cut_assert_equal_int(FUNCTIOON_NO_ERROR, round_addTrump(round, &trump));
+    cut_assert_equal_int(FUNCTION_NO_ERROR, round_addTrump(round, &trump));
     cut_assert_equal_pointer(NULL, trump);
     cut_assert_equal_pointer(trump2, round->trump);
-    cut_assert_equal_int(FUNCTIOON_NO_ERROR, round_addTrump(round, &trump));
+    cut_assert_equal_int(FUNCTION_NO_ERROR, round_addTrump(round, &trump));
     cut_assert_equal_pointer(NULL, trump);
     cut_assert_equal_pointer(NULL, round->trump);
 
@@ -129,7 +131,7 @@ void test_round_addPlayersInHand()
     }
 
     for (int i = 0 ; i < MAX_GAME_PLAYERS; i++) {
-        cut_assert_equal_int(FUNCTIOON_NO_ERROR,
+        cut_assert_equal_int(FUNCTION_NO_ERROR,
                              round_addPlayersInHand(round, i));
         int position = 0;
         for (int j = i; j < MAX_GAME_PLAYERS; j++) {
@@ -168,7 +170,7 @@ void test_round_disitrbuteCard()
     }
 
     for (int i = 0; i < MAX_CARDS; i++) {
-        cut_assert_equal_int(FUNCTIOON_NO_ERROR,
+        cut_assert_equal_int(FUNCTION_NO_ERROR,
                              round_distributeCard(round, deck));
         cut_assert_equal_int(DECK_SIZE - (i + 1) * MAX_GAME_PLAYERS,
                              deck_getDeckSize(deck));
@@ -201,7 +203,7 @@ void test_round_distributeDeck()
         round_addPlayer(round, players[i]);
     }
 
-    cut_assert_equal_int(FUNCTIOON_NO_ERROR, round_distributeDeck(round, deck));
+    cut_assert_equal_int(FUNCTION_NO_ERROR, round_distributeDeck(round, deck));
     cut_assert_equal_pointer(NULL, round->trump);
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
         int nullCards = 0;
@@ -283,13 +285,13 @@ void test_round_checkBid()
                          round_checkBid(round, players[0], MAX_CARDS + 1));
 
     for (int i = 0; i < MAX_GAME_PLAYERS - 1; i++) {
-        cut_assert_equal_int(FUNCTIOON_NO_ERROR,
+        cut_assert_equal_int(FUNCTION_NO_ERROR,
                              round_checkBid(round, players[i], 1));
         round->bids[i] = 1;
     }
 
     int i = MAX_GAME_PLAYERS - 1;
-    cut_assert_equal_int(FUNCTIOON_NO_ERROR,
+    cut_assert_equal_int(FUNCTION_NO_ERROR,
                          round_checkBid(round, players[i], 1));
     cut_assert_equal_int(ILLEGAL_BID,
                          round_checkBid(round, players[i], MAX_CARDS - i));
@@ -320,7 +322,7 @@ void test_round_placeBid()
                          round_placeBid(round, players[0], MAX_CARDS + 1));
 
     for (int i = 0; i < MAX_GAME_PLAYERS - 1; i++) {
-        cut_assert_equal_int(FUNCTIOON_NO_ERROR,
+        cut_assert_equal_int(FUNCTION_NO_ERROR,
                              round_placeBid(round, players[i], i));
         cut_assert_equal_int(i, round->bids[i]);
     }
@@ -419,7 +421,7 @@ void test_round_determinesScore()
     round->bids[2]        = 2;
     round->handsNumber[2] = 3;
 
-    cut_assert_equal_int(FUNCTIOON_NO_ERROR, round_determinesScore(round));
+    cut_assert_equal_int(FUNCTION_NO_ERROR, round_determinesScore(round));
 
     cut_assert_equal_int(7, round->pointsNumber[0]);
     cut_assert_equal_int(-1, round->pointsNumber[1]);
@@ -448,7 +450,7 @@ void test_round_copyScore()
         round1->pointsNumber[i] = i;
     }
 
-    cut_assert_equal_int(FUNCTIOON_NO_ERROR, round_copyScore(round1, round2));
+    cut_assert_equal_int(FUNCTION_NO_ERROR, round_copyScore(round1, round2));
     for (int i = 0; i < MAX_GAME_PLAYERS; i++)
         cut_assert_equal_int(round1->pointsNumber[i], round2->pointsNumber[i]);
 
@@ -478,7 +480,7 @@ void test_round_repeatRound()
     cut_assert_equal_int(1, round_repeatRound(round));
 
     round->handsNumber[0] = 0;
-    cut_assert_equal_int(FUNCTIOON_NO_ERROR, round_repeatRound(round));
+    cut_assert_equal_int(FUNCTION_NO_ERROR, round_repeatRound(round));
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++)
         player_deletePlayer(&players[i]);
@@ -496,7 +498,7 @@ void test_round_reinitializeRound()
     }
 
     cut_assert_equal_int(ROUND_NULL, round_reinitializeRound(NULL));
-    cut_assert_equal_int(FUNCTIOON_NO_ERROR, round_reinitializeRound(round));
+    cut_assert_equal_int(FUNCTION_NO_ERROR, round_reinitializeRound(round));
 
     for (int i = 0; i < MAX_GAME_PLAYERS; i++) {
         cut_assert_equal_int(0, round->bids[i]);

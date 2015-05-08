@@ -32,7 +32,7 @@ void test_player_deletePlayer()
 {
     struct Player *player = player_createPlayer("A", 1);
     cut_assert_equal_int(POINTER_NULL, player_deletePlayer(NULL));
-    cut_assert_equal_int(FUNCTIOON_NO_ERROR, player_deletePlayer(&player));
+    cut_assert_equal_int(FUNCTION_NO_ERROR, player_deletePlayer(&player));
     cut_assert_equal_pointer(NULL, player);
     cut_assert_equal_int(PLAYER_NULL, player_deletePlayer(&player));
 }
@@ -48,7 +48,7 @@ void test_player_addCard()
 
     int i;
     for (i = 0; i < MAX_CARDS; i++) {
-        cut_assert_equal_int(FUNCTIOON_NO_ERROR,
+        cut_assert_equal_int(FUNCTION_NO_ERROR,
                              player_addCard(player, &deck->cards[i]));
         cut_assert_equal_int(CARD_NULL, 
                              player_addCard(player, &deck->cards[i]));
